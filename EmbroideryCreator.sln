@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31410.357
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EmbroideryCreator", "EmbroideryCreator.csproj", "{584440FB-5DFA-4902-9A5D-8249F96C38DA}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{584440FB-5DFA-4902-9A5D-8249F96C38DA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{584440FB-5DFA-4902-9A5D-8249F96C38DA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{584440FB-5DFA-4902-9A5D-8249F96C38DA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{584440FB-5DFA-4902-9A5D-8249F96C38DA}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {E0CEEC33-66D8-41A9-BF6E-D6D5DC300C9B}
+	EndGlobalSection
+EndGlobal
