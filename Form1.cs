@@ -16,5 +16,10 @@ namespace EmbroideryCreator
         {
             InitializeComponent();
         }
+
+        private void widthSizeTrackBar_Scroll(object sender, EventArgs e)
+        {
+
+        }
     }
 }
