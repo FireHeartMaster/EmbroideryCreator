@@ -9,6 +9,8 @@ namespace EmbroideryCreator
 {
     public static class ImageTransformations
     {
+        private static Random rnd = new Random();
+
         public static Bitmap Pixelate(Bitmap originalImage, int newWidthSize)
         {
             float aspectRatio = ((float)originalImage.Height) / originalImage.Width;
@@ -18,7 +20,7 @@ namespace EmbroideryCreator
 
         public static Bitmap ReduceNumberOfColors(Bitmap imageToReduceColors, int newNumberOfColors, int numberOfIterations)
         {
-            int[][] matrixOfNewColors = InitializeColorClusters(imageToReduceColors.Width, imageToReduceColors.Height, newNumberOfColors);
+            int[,] matrixOfNewColors = InitializeColorClusters(imageToReduceColors.Width, imageToReduceColors.Height, newNumberOfColors);
             Color[] means = InitializeMeans(numberOfIterations);
 
             for (int i = 0; i < numberOfIterations; i++)
@@ -27,7 +29,7 @@ namespace EmbroideryCreator
                 {
                     for (int y = 0; y < imageToReduceColors.Height; y++)
                     {
-                        matrixOfNewColors[x][y] = FindNewNearestMean(means, imageToReduceColors.GetPixel(x, y));
+                        matrixOfNewColors[x, y] = FindNewNearestMean(means, imageToReduceColors.GetPixel(x, y));
                     }
                 }
 
@@ -42,7 +44,7 @@ namespace EmbroideryCreator
             {
                 for (int y = 0; y < imageToReduceColors.Height; y++)
                 {
-                    imageToReduceColors.SetPixel(x, y, means[matrixOfNewColors[x][y]]);
+                    imageToReduceColors.SetPixel(x, y, means[matrixOfNewColors[x, y]]);
                 }
             }
 
@@ -51,17 +53,48 @@ namespace EmbroideryCreator
 
         private static int FindNewNearestMean(Color[] means, Color color)
         {
-            throw new NotImplementedException();
+            //throw new NotImplementedException();
+
+            int minDistanceSquared = int.MaxValue;
+            int minIndex = -1;
+            for (int i = 0; i < means.Length; i++)
+            {
+                int distanceSquared = (means[i].R - color.R) * (means[i].R - color.R) + (means[i].G - color.G) * (means[i].G - color.G) + (means[i].B - color.B) * (means[i].B - color.B);
+                if(distanceSquared < minDistanceSquared)
+                {
+                    minDistanceSquared = distanceSquared;
+                    minIndex = i;
+                }
+            }
+
+            return minIndex;
         }
 
         private static Color[] InitializeMeans(int numberOfIterations)
         {
-            throw new NotImplementedException();
+            //Initializing color means randomly (we could instead initialize them as taking k values from the colors in the image
+            Color[] means = new Color[numberOfIterations];
+            for (int i = 0; i < means.Length; i++)
+            {
+                means[i] = Color.FromArgb(rnd.Next(0, 255), rnd.Next(0, 255), rnd.Next(0, 255));
+            }
+
+            return means;
         }
 
-        private static int[][] InitializeColorClusters(int width, int height, int newNumberOfColors)
+        private static int[,] InitializeColorClusters(int width, int height, int newNumberOfColors)
         {
-            throw new NotImplementedException();
+            int[,] matrixOfNewColors = new int[width, height];
+
+            for (int i = 0; i < width; i++)
+            {
+                for (int j = 0; j < width; j++)
+                {
+                    matrixOfNewColors[i, j] = rnd.Next(0, newNumberOfColors);
+                }
+            }
+
+            return matrixOfNewColors;
         }
     }
 }
