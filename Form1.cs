@@ -80,7 +80,14 @@ namespace EmbroideryCreator
 
         private void processImageButton_Click(object sender, EventArgs e)
         {
-            mainPictureBox.Image = ImageTransformations.Pixelate(imageAndOperationsData.originalImage, widthSizeTrackBar.Value);
+            if (imageAndOperationsData == null) return;
+
+            imageAndOperationsData.newWidth = widthSizeTrackBar.Value;
+            imageAndOperationsData.numberOfColors = numberOfColorsTrackBar.Value;
+
+            imageAndOperationsData.PixelateImage();
+            imageAndOperationsData.ReduceNumberOfColors();
+            mainPictureBox.Image = imageAndOperationsData.colorReducedImage;
         }
     }
 }

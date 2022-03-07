@@ -21,7 +21,8 @@ namespace EmbroideryCreator
         public static Bitmap ReduceNumberOfColors(Bitmap imageToReduceColors, int newNumberOfColors, int numberOfIterations)
         {
             int[,] matrixOfNewColors = InitializeColorClusters(imageToReduceColors.Width, imageToReduceColors.Height, newNumberOfColors);
-            Color[] means = InitializeMeans(numberOfIterations);
+            //Color[] means = InitializeMeans(newNumberOfColors);
+            Color[] means = InitializeMeansFromData(newNumberOfColors, imageToReduceColors);
 
             for (int i = 0; i < numberOfIterations; i++)
             {
@@ -42,7 +43,10 @@ namespace EmbroideryCreator
                 for (int meanIndex = 0; meanIndex < means.Length; meanIndex++)
                 {
                     //throw new NotImplementedException();
-                    means[meanIndex] = GetMeanColorOfCluster(clustersOfColors[meanIndex], imageToReduceColors); //Get new mean of all colors that are in this cluster
+                    if (clustersOfColors.ContainsKey(meanIndex))
+                    {
+                        means[meanIndex] = GetMeanColorOfCluster(clustersOfColors[meanIndex], imageToReduceColors); //Get new mean of all colors that are in this cluster
+                    }
                 }
             }
 
@@ -110,13 +114,27 @@ namespace EmbroideryCreator
             return means;
         }
 
+        private static Color[] InitializeMeansFromData(int numberOfColors, Bitmap imageToReduceColors)
+        {
+            //throw new NotImplementedException();
+            //Initializing color means randomly (we could instead initialize them as taking k values from the colors in the image
+            Color[] means = new Color[numberOfColors];
+            for (int i = 0; i < means.Length; i++)
+            {
+                //means[i] = Color.FromArgb(rnd.Next(0, 255), rnd.Next(0, 255), rnd.Next(0, 255));
+                means[i] = imageToReduceColors.GetPixel(rnd.Next(0, imageToReduceColors.Width), rnd.Next(0, imageToReduceColors.Height));
+            }
+
+            return means;
+        }
+
         private static int[,] InitializeColorClusters(int width, int height, int newNumberOfColors)
         {
             int[,] matrixOfNewColors = new int[width, height];
 
             for (int i = 0; i < width; i++)
             {
-                for (int j = 0; j < width; j++)
+                for (int j = 0; j < height; j++)
                 {
                     matrixOfNewColors[i, j] = rnd.Next(0, newNumberOfColors);
                 }
