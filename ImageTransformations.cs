@@ -25,18 +25,24 @@ namespace EmbroideryCreator
 
             for (int i = 0; i < numberOfIterations; i++)
             {
+                Dictionary<int, List<KeyValuePair<int, int>>> clustersOfColors = new Dictionary<int, List<KeyValuePair<int, int>>>();
                 for (int x = 0; x < imageToReduceColors.Width; x++)
                 {
                     for (int y = 0; y < imageToReduceColors.Height; y++)
                     {
                         matrixOfNewColors[x, y] = FindNewNearestMean(means, imageToReduceColors.GetPixel(x, y));
+                        if(!clustersOfColors.ContainsKey(matrixOfNewColors[x, y]))
+                        {
+                            clustersOfColors.Add(matrixOfNewColors[x, y], new List<KeyValuePair<int, int>>());
+                        }
+                        clustersOfColors[matrixOfNewColors[x, y]].Add(new KeyValuePair<int, int>(x, y));
                     }
                 }
 
                 for (int meanIndex = 0; meanIndex < means.Length; meanIndex++)
                 {
-                    throw new NotImplementedException();
-                    //means[meanIndex] = //Get new mean of all colors that are in this cluster
+                    //throw new NotImplementedException();
+                    means[meanIndex] = GetMeanColorOfCluster(clustersOfColors[meanIndex], imageToReduceColors); //Get new mean of all colors that are in this cluster
                 }
             }
 
@@ -49,6 +55,28 @@ namespace EmbroideryCreator
             }
 
             return imageToReduceColors; //do I need to really return this image since the reference is already being modified here
+        }
+
+        private static Color GetMeanColorOfCluster(List<KeyValuePair<int, int>> listOfPixelCoordinatesOnThisCluster, Bitmap imageToReduceColors)
+        {
+            //throw new NotImplementedException();
+
+            int red = 0;
+            int green = 0;
+            int blue = 0;
+
+            foreach (KeyValuePair<int, int> coordinate in listOfPixelCoordinatesOnThisCluster)
+            {
+                red += imageToReduceColors.GetPixel(coordinate.Key, coordinate.Value).R;
+                green += imageToReduceColors.GetPixel(coordinate.Key, coordinate.Value).G;
+                blue += imageToReduceColors.GetPixel(coordinate.Key, coordinate.Value).B;
+            }
+
+            red /= listOfPixelCoordinatesOnThisCluster.Count;
+            green /= listOfPixelCoordinatesOnThisCluster.Count;
+            blue /= listOfPixelCoordinatesOnThisCluster.Count;
+
+            return Color.FromArgb(red, green, blue);
         }
 
         private static int FindNewNearestMean(Color[] means, Color color)
