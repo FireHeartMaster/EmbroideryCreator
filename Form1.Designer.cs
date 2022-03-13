@@ -37,6 +37,10 @@ namespace EmbroideryCreator
             this.widthSizeLabel = new System.Windows.Forms.Label();
             this.numberOfColorsLabel = new System.Windows.Forms.Label();
             this.openNewImageFileDialog = new System.Windows.Forms.OpenFileDialog();
+            this.saveImageButton = new System.Windows.Forms.Button();
+            this.saveImageFileDialog = new System.Windows.Forms.SaveFileDialog();
+            this.numberOfColorsTrackBarLabel = new System.Windows.Forms.Label();
+            this.widthTrackBarLabel = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.mainPictureBox)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.widthSizeTrackBar)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numberOfColorsTrackBar)).BeginInit();
@@ -69,11 +73,12 @@ namespace EmbroideryCreator
             // 
             this.numberOfColorsTrackBar.Location = new System.Drawing.Point(12, 220);
             this.numberOfColorsTrackBar.Maximum = 50;
-            this.numberOfColorsTrackBar.Minimum = 4;
+            this.numberOfColorsTrackBar.Minimum = 2;
             this.numberOfColorsTrackBar.Name = "numberOfColorsTrackBar";
             this.numberOfColorsTrackBar.Size = new System.Drawing.Size(283, 45);
             this.numberOfColorsTrackBar.TabIndex = 2;
             this.numberOfColorsTrackBar.Value = 10;
+            this.numberOfColorsTrackBar.Scroll += new System.EventHandler(this.numberOfColorsTrackBar_Scroll);
             // 
             // chooseNewImageButton
             // 
@@ -119,11 +124,44 @@ namespace EmbroideryCreator
             // 
             this.openNewImageFileDialog.FileName = "openNewImageFileDialog";
             // 
+            // saveImageButton
+            // 
+            this.saveImageButton.Location = new System.Drawing.Point(158, 489);
+            this.saveImageButton.Name = "saveImageButton";
+            this.saveImageButton.Size = new System.Drawing.Size(137, 23);
+            this.saveImageButton.TabIndex = 7;
+            this.saveImageButton.Text = "Save Image";
+            this.saveImageButton.UseVisualStyleBackColor = true;
+            this.saveImageButton.Click += new System.EventHandler(this.saveImageButton_Click);
+            // 
+            // numberOfColorsTrackBarLabel
+            // 
+            this.numberOfColorsTrackBarLabel.AutoSize = true;
+            this.numberOfColorsTrackBarLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 15F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.numberOfColorsTrackBarLabel.Location = new System.Drawing.Point(193, 192);
+            this.numberOfColorsTrackBarLabel.Name = "numberOfColorsTrackBarLabel";
+            this.numberOfColorsTrackBarLabel.Size = new System.Drawing.Size(34, 25);
+            this.numberOfColorsTrackBarLabel.TabIndex = 8;
+            this.numberOfColorsTrackBarLabel.Text = "10";
+            // 
+            // widthTrackBarLabel
+            // 
+            this.widthTrackBarLabel.AutoSize = true;
+            this.widthTrackBarLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 15F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.widthTrackBarLabel.Location = new System.Drawing.Point(131, 85);
+            this.widthTrackBarLabel.Name = "widthTrackBarLabel";
+            this.widthTrackBarLabel.Size = new System.Drawing.Size(45, 25);
+            this.widthTrackBarLabel.TabIndex = 9;
+            this.widthTrackBarLabel.Text = "100";
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(842, 553);
+            this.Controls.Add(this.widthTrackBarLabel);
+            this.Controls.Add(this.numberOfColorsTrackBarLabel);
+            this.Controls.Add(this.saveImageButton);
             this.Controls.Add(this.numberOfColorsLabel);
             this.Controls.Add(this.widthSizeLabel);
             this.Controls.Add(this.processImageButton);
@@ -131,6 +169,7 @@ namespace EmbroideryCreator
             this.Controls.Add(this.numberOfColorsTrackBar);
             this.Controls.Add(this.widthSizeTrackBar);
             this.Controls.Add(this.mainPictureBox);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.Name = "MainForm";
             this.Text = "EmbroideryCreator";
             ((System.ComponentModel.ISupportInitialize)(this.mainPictureBox)).EndInit();
@@ -151,6 +190,10 @@ namespace EmbroideryCreator
         private System.Windows.Forms.Label widthSizeLabel;
         private System.Windows.Forms.Label numberOfColorsLabel;
         private System.Windows.Forms.OpenFileDialog openNewImageFileDialog;
+        private System.Windows.Forms.Button saveImageButton;
+        private System.Windows.Forms.SaveFileDialog saveImageFileDialog;
+        private System.Windows.Forms.Label numberOfColorsTrackBarLabel;
+        private System.Windows.Forms.Label widthTrackBarLabel;
     }
 }
 

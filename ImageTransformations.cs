@@ -142,5 +142,44 @@ namespace EmbroideryCreator
 
             return matrixOfNewColors;
         }
+
+        public static Bitmap RedimensionateImage(Bitmap imageBeforeRedimensioning, int newMaxSize)
+        {            
+            bool biggerIsWidth = imageBeforeRedimensioning.Width > imageBeforeRedimensioning.Height;
+
+            if (biggerIsWidth)
+            {
+                return new Bitmap(imageBeforeRedimensioning, newMaxSize, (int)((((float)imageBeforeRedimensioning.Height) / imageBeforeRedimensioning.Width) * newMaxSize));
+            }
+            else
+            {
+                return new Bitmap(imageBeforeRedimensioning, (int)((((float)imageBeforeRedimensioning.Width) / imageBeforeRedimensioning.Height) * newMaxSize), newMaxSize);
+            }
+        }
+
+        public static Bitmap ResizeBitmap(Bitmap sourceBMP, int newMaxSize)
+        {
+            int width; 
+            int height;
+            bool biggerIsWidth = sourceBMP.Width > sourceBMP.Height;
+            if (biggerIsWidth)
+            {
+                width = newMaxSize;
+                height = (int)((((float)sourceBMP.Height) / sourceBMP.Width) * newMaxSize);
+            }
+            else
+            {
+                width = (int)((((float)sourceBMP.Width) / sourceBMP.Height) * newMaxSize);
+                height = newMaxSize;
+            }
+
+            Bitmap result = new Bitmap(width, height);
+            using (Graphics g = Graphics.FromImage(result))
+            {
+                g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.NearestNeighbor;
+                g.DrawImage(sourceBMP, 0, 0, width, height);
+            }
+            return result;
+        }
     }
 }

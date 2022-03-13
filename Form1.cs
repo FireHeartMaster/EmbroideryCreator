@@ -21,11 +21,6 @@ namespace EmbroideryCreator
             InitializeComponent();
         }
 
-        private void widthSizeTrackBar_Scroll(object sender, EventArgs e)
-        {
-
-        }
-
         private void chooseNewImageButton_Click(object sender, EventArgs args)
         {
             SelectNewImageFile();
@@ -41,7 +36,7 @@ namespace EmbroideryCreator
             using (openNewImageFileDialog = new OpenFileDialog())
             {
                 //openNewImageFileDialog.InitialDirectory = "c:\\";
-                openNewImageFileDialog.Filter = "Image files|*.bmp;*.jpg;*.gif;*.png;*.tif|All files|*.*";
+                openNewImageFileDialog.Filter = "Image files|*.bmp;*.jpg;*.jpeg;*.gif;*.png;*.tif|All files|*.*";
                 //openNewImageFileDialog.FilterIndex = 2;
                 //openNewImageFileDialog.RestoreDirectory = true;
 
@@ -87,7 +82,39 @@ namespace EmbroideryCreator
 
             imageAndOperationsData.PixelateImage();
             imageAndOperationsData.ReduceNumberOfColors();
-            mainPictureBox.Image = imageAndOperationsData.colorReducedImage;
+            int newImageWidth = imageAndOperationsData.colorReducedImage.Width;
+            int newImageHeight = imageAndOperationsData.colorReducedImage.Height;
+            //mainPictureBox.Image = ImageTransformations.RedimensionateImage(imageAndOperationsData.colorReducedImage, mainPictureBox.Width*10);
+            mainPictureBox.Image = ImageTransformations.ResizeBitmap(imageAndOperationsData.colorReducedImage, mainPictureBox.Width*10);
+        }
+
+        private void saveImageButton_Click(object sender, EventArgs e)
+        {
+            if(imageAndOperationsData.colorReducedImage != null)
+            {
+                saveImageFileDialog.Filter = "Image files|*.bmp;*.jpg;*.jpeg;*.gif;*.png;*.tif|All files|*.*";
+
+                if (saveImageFileDialog.ShowDialog() == DialogResult.OK)
+                {
+                    //imageAndOperationsData.colorReducedImage.Save(saveImageFileDialog.FileNames[0]);
+                    ImageTransformations.RedimensionateImage(imageAndOperationsData.colorReducedImage, mainPictureBox.Width * 10).Save(saveImageFileDialog.FileNames[0]);
+                    //if ((myStream = saveImageFileDialog.OpenFile()) != null)
+                    //{
+                    //    // Code to write the stream goes here.
+                    //    myStream.Close();
+                    //}
+                }
+            }
+        }
+
+        private void widthSizeTrackBar_Scroll(object sender, EventArgs e)
+        {
+            widthTrackBarLabel.Text = widthSizeTrackBar.Value.ToString();
+        }
+
+        private void numberOfColorsTrackBar_Scroll(object sender, EventArgs e)
+        {
+            numberOfColorsTrackBarLabel.Text = numberOfColorsTrackBar.Value.ToString();
         }
     }
 }
