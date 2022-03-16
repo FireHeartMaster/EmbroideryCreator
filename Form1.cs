@@ -16,9 +16,14 @@ namespace EmbroideryCreator
         private ImageAndOperationsData imageAndOperationsData;
         private int defaultWidth = 100;
         private int defaultNumberOfColors = 10;
+        private int defaultNumberOfIterations = 10;
         public MainForm()
         {
             InitializeComponent();
+
+            widthSizeTrackBar.Value = defaultWidth;
+            numberOfColorsTrackBar.Value = defaultNumberOfColors;
+            numberOfIterationsTrackBar.Value = defaultNumberOfIterations;
         }
 
         private void chooseNewImageButton_Click(object sender, EventArgs args)
@@ -61,48 +66,45 @@ namespace EmbroideryCreator
                         Console.WriteLine("Exception");
                         Console.WriteLine(exception.Message);
                     }
-
-                    ////Read the contents of the file into a stream
-                    //var fileStream = openNewImageFileDialog.OpenFile();
-
-                    //using (StreamReader reader = new StreamReader(fileStream))
-                    //{
-                    //    fileContent = reader.ReadToEnd();
-                    //}
                 }
             }
         }
 
         private void processImageButton_Click(object sender, EventArgs e)
         {
+            ProcessImage();
+        }
+
+        private void ProcessImage()
+        {
             if (imageAndOperationsData == null) return;
 
             imageAndOperationsData.newWidth = widthSizeTrackBar.Value;
             imageAndOperationsData.numberOfColors = numberOfColorsTrackBar.Value;
+            imageAndOperationsData.numberOfIterations = numberOfIterationsTrackBar.Value;
 
-            imageAndOperationsData.PixelateImage();
-            imageAndOperationsData.ReduceNumberOfColors();
-            int newImageWidth = imageAndOperationsData.colorReducedImage.Width;
-            int newImageHeight = imageAndOperationsData.colorReducedImage.Height;
-            //mainPictureBox.Image = ImageTransformations.RedimensionateImage(imageAndOperationsData.colorReducedImage, mainPictureBox.Width*10);
-            mainPictureBox.Image = ImageTransformations.ResizeBitmap(imageAndOperationsData.colorReducedImage, mainPictureBox.Width*10);
+            imageAndOperationsData.ProcessImage();
+            int newImageWidth = imageAndOperationsData.resultingImage.Width;
+            int newImageHeight = imageAndOperationsData.resultingImage.Height;
+            mainPictureBox.Image = imageAndOperationsData.resultingImage;/*ImageTransformations.ResizeBitmap(imageAndOperationsData.resultingImage, mainPictureBox.Width * 10);*/
+        }
+        private void TryToProcessImage()
+        {
+            if (ProcessAtAllChangesCheckBox.Checked)
+            {
+                ProcessImage();
+            }
         }
 
         private void saveImageButton_Click(object sender, EventArgs e)
         {
-            if(imageAndOperationsData.colorReducedImage != null)
+            if(imageAndOperationsData.resultingImage != null)
             {
                 saveImageFileDialog.Filter = "Image files|*.bmp;*.jpg;*.jpeg;*.gif;*.png;*.tif|All files|*.*";
 
                 if (saveImageFileDialog.ShowDialog() == DialogResult.OK)
                 {
-                    //imageAndOperationsData.colorReducedImage.Save(saveImageFileDialog.FileNames[0]);
-                    ImageTransformations.RedimensionateImage(imageAndOperationsData.colorReducedImage, mainPictureBox.Width * 10).Save(saveImageFileDialog.FileNames[0]);
-                    //if ((myStream = saveImageFileDialog.OpenFile()) != null)
-                    //{
-                    //    // Code to write the stream goes here.
-                    //    myStream.Close();
-                    //}
+                    imageAndOperationsData.resultingImage.Save(saveImageFileDialog.FileNames[0]);
                 }
             }
         }
@@ -110,11 +112,19 @@ namespace EmbroideryCreator
         private void widthSizeTrackBar_Scroll(object sender, EventArgs e)
         {
             widthTrackBarLabel.Text = widthSizeTrackBar.Value.ToString();
+            TryToProcessImage();
         }
 
         private void numberOfColorsTrackBar_Scroll(object sender, EventArgs e)
         {
             numberOfColorsTrackBarLabel.Text = numberOfColorsTrackBar.Value.ToString();
+            TryToProcessImage();
+        }
+
+        private void numberOfIterationsTrackBar_Scroll(object sender, EventArgs e)
+        {
+            numberOfIterationsTrackBarLabel.Text = numberOfIterationsTrackBar.Value.ToString();
+            TryToProcessImage();
         }
     }
 }

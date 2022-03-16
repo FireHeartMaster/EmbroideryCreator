@@ -41,9 +41,14 @@ namespace EmbroideryCreator
             this.saveImageFileDialog = new System.Windows.Forms.SaveFileDialog();
             this.numberOfColorsTrackBarLabel = new System.Windows.Forms.Label();
             this.widthTrackBarLabel = new System.Windows.Forms.Label();
+            this.numberOfIterationsTrackBar = new System.Windows.Forms.TrackBar();
+            this.numberOfIterationsLabel = new System.Windows.Forms.Label();
+            this.numberOfIterationsTrackBarLabel = new System.Windows.Forms.Label();
+            this.ProcessAtAllChangesCheckBox = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.mainPictureBox)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.widthSizeTrackBar)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numberOfColorsTrackBar)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numberOfIterationsTrackBar)).BeginInit();
             this.SuspendLayout();
             // 
             // mainPictureBox
@@ -154,11 +159,56 @@ namespace EmbroideryCreator
             this.widthTrackBarLabel.TabIndex = 9;
             this.widthTrackBarLabel.Text = "100";
             // 
+            // numberOfIterationsTrackBar
+            // 
+            this.numberOfIterationsTrackBar.Location = new System.Drawing.Point(12, 312);
+            this.numberOfIterationsTrackBar.Maximum = 100;
+            this.numberOfIterationsTrackBar.Name = "numberOfIterationsTrackBar";
+            this.numberOfIterationsTrackBar.Size = new System.Drawing.Size(283, 45);
+            this.numberOfIterationsTrackBar.TabIndex = 10;
+            this.numberOfIterationsTrackBar.Value = 10;
+            this.numberOfIterationsTrackBar.Scroll += new System.EventHandler(this.numberOfIterationsTrackBar_Scroll);
+            // 
+            // numberOfIterationsLabel
+            // 
+            this.numberOfIterationsLabel.AutoSize = true;
+            this.numberOfIterationsLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 15F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.numberOfIterationsLabel.Location = new System.Drawing.Point(12, 284);
+            this.numberOfIterationsLabel.Name = "numberOfIterationsLabel";
+            this.numberOfIterationsLabel.Size = new System.Drawing.Size(192, 25);
+            this.numberOfIterationsLabel.TabIndex = 11;
+            this.numberOfIterationsLabel.Text = "Number of Iterations:";
+            // 
+            // numberOfIterationsTrackBarLabel
+            // 
+            this.numberOfIterationsTrackBarLabel.AutoSize = true;
+            this.numberOfIterationsTrackBarLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 15F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.numberOfIterationsTrackBarLabel.Location = new System.Drawing.Point(210, 284);
+            this.numberOfIterationsTrackBarLabel.Name = "numberOfIterationsTrackBarLabel";
+            this.numberOfIterationsTrackBarLabel.Size = new System.Drawing.Size(34, 25);
+            this.numberOfIterationsTrackBarLabel.TabIndex = 12;
+            this.numberOfIterationsTrackBarLabel.Text = "10";
+            // 
+            // ProcessAtAllChangesCheckBox
+            // 
+            this.ProcessAtAllChangesCheckBox.AutoSize = true;
+            this.ProcessAtAllChangesCheckBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.ProcessAtAllChangesCheckBox.Location = new System.Drawing.Point(12, 372);
+            this.ProcessAtAllChangesCheckBox.Name = "ProcessAtAllChangesCheckBox";
+            this.ProcessAtAllChangesCheckBox.Size = new System.Drawing.Size(212, 21);
+            this.ProcessAtAllChangesCheckBox.TabIndex = 13;
+            this.ProcessAtAllChangesCheckBox.Text = "Process image at all changes";
+            this.ProcessAtAllChangesCheckBox.UseVisualStyleBackColor = true;
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(842, 553);
+            this.Controls.Add(this.ProcessAtAllChangesCheckBox);
+            this.Controls.Add(this.numberOfIterationsTrackBarLabel);
+            this.Controls.Add(this.numberOfIterationsLabel);
+            this.Controls.Add(this.numberOfIterationsTrackBar);
             this.Controls.Add(this.widthTrackBarLabel);
             this.Controls.Add(this.numberOfColorsTrackBarLabel);
             this.Controls.Add(this.saveImageButton);
@@ -175,6 +225,7 @@ namespace EmbroideryCreator
             ((System.ComponentModel.ISupportInitialize)(this.mainPictureBox)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.widthSizeTrackBar)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numberOfColorsTrackBar)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numberOfIterationsTrackBar)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -194,6 +245,10 @@ namespace EmbroideryCreator
         private System.Windows.Forms.SaveFileDialog saveImageFileDialog;
         private System.Windows.Forms.Label numberOfColorsTrackBarLabel;
         private System.Windows.Forms.Label widthTrackBarLabel;
+        private System.Windows.Forms.TrackBar numberOfIterationsTrackBar;
+        private System.Windows.Forms.Label numberOfIterationsLabel;
+        private System.Windows.Forms.Label numberOfIterationsTrackBarLabel;
+        private System.Windows.Forms.CheckBox ProcessAtAllChangesCheckBox;
     }
 }
 
