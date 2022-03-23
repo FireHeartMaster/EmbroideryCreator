@@ -87,7 +87,25 @@ namespace EmbroideryCreator
             int newImageWidth = imageAndOperationsData.resultingImage.Width;
             int newImageHeight = imageAndOperationsData.resultingImage.Height;
             mainPictureBox.Image = imageAndOperationsData.resultingImage;/*ImageTransformations.ResizeBitmap(imageAndOperationsData.resultingImage, mainPictureBox.Width * 10);*/
-        }
+            int[,] matrixOfNewColors = imageAndOperationsData.GetMatrixOfColors();
+            Color[] colorMeans = imageAndOperationsData.GetColors();
+
+            flowLayoutPanelListOfColors.AutoScroll = true;
+            flowLayoutPanelListOfColors.FlowDirection = FlowDirection.TopDown;
+            flowLayoutPanelListOfColors.WrapContents = false;
+
+            flowLayoutPanelListOfColors.Controls.Clear();
+            for (int i = 0; i < colorMeans.Length; i++)
+            {
+                ReducedColorControl colorControl = new ReducedColorControl();
+                //Bitmap colorImage = new Bitmap(1, 1);
+                //colorImage.SetPixel(0, 0, Color.Red);
+                colorControl.reducedColorPictureBox.Image = ImageTransformations.CreateSolidColorBitmap(colorMeans[i], 30, 30);
+                colorControl.indexInTheList = i;
+                colorControl.myReferenceToMainForm = this;
+                flowLayoutPanelListOfColors.Controls.Add(colorControl);
+            }
+    }
         private void TryToProcessImage()
         {
             if (ProcessAtAllChangesCheckBox.Checked)
@@ -125,6 +143,12 @@ namespace EmbroideryCreator
         {
             numberOfIterationsTrackBarLabel.Text = numberOfIterationsTrackBar.Value.ToString();
             TryToProcessImage();
+        }
+
+        public void UpdateColorByIndex(int index, Color newColor)
+        {
+            imageAndOperationsData.UpdateColorByIndex(index, newColor);
+            mainPictureBox.Image = imageAndOperationsData.resultingImage;
         }
     }
 }

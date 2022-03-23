@@ -18,25 +18,38 @@ namespace EmbroideryCreator
             return pixelatedImage;
         }
 
-        public static Bitmap ReduceNumberOfColors(Bitmap imageToReduceColors, int newNumberOfColors, int numberOfIterations)
+        public static Bitmap ReduceNumberOfColors(Bitmap imageToReduceColors, int newNumberOfColors, int numberOfIterations, out int[,] matrixOfNewColors, out Color[] means, 
+            out Dictionary<int, List<Tuple<int, int>>> clustersOfColors)
         {
-            int[,] matrixOfNewColors = InitializeColorClusters(imageToReduceColors.Width, imageToReduceColors.Height, newNumberOfColors);
+            matrixOfNewColors = InitializeColorClusters(imageToReduceColors.Width, imageToReduceColors.Height, newNumberOfColors);
             //Color[] means = InitializeMeans(newNumberOfColors);
-            Color[] means = InitializeMeansFromData(newNumberOfColors, imageToReduceColors);
+            means = InitializeMeansFromData(newNumberOfColors, imageToReduceColors);
+
+            clustersOfColors = new Dictionary<int, List<Tuple<int, int>>>();
+            for (int i = 0; i < means.Length; i++)
+            {
+                clustersOfColors.Add(i, new List<Tuple<int, int>>());
+            }
 
             for (int i = 0; i < numberOfIterations; i++)
             {
-                Dictionary<int, List<KeyValuePair<int, int>>> clustersOfColors = new Dictionary<int, List<KeyValuePair<int, int>>>();
+                //clustersOfColors.Clear();
+
+                //clearing each list of positions without clearing the whole dictionary, this way we keep track of the same indexes throughout the matrixOfNewColors, means and clustersOfColors
+                for (int colorIndex = 0; colorIndex < clustersOfColors.Count; colorIndex++)
+                {
+                    clustersOfColors[colorIndex] = new List<Tuple<int, int>>();
+                }
                 for (int x = 0; x < imageToReduceColors.Width; x++)
                 {
                     for (int y = 0; y < imageToReduceColors.Height; y++)
                     {
                         matrixOfNewColors[x, y] = FindNewNearestMean(means, imageToReduceColors.GetPixel(x, y));
-                        if(!clustersOfColors.ContainsKey(matrixOfNewColors[x, y]))
-                        {
-                            clustersOfColors.Add(matrixOfNewColors[x, y], new List<KeyValuePair<int, int>>());
-                        }
-                        clustersOfColors[matrixOfNewColors[x, y]].Add(new KeyValuePair<int, int>(x, y));
+                        //if(!clustersOfColors.ContainsKey(matrixOfNewColors[x, y]))
+                        //{
+                        //    clustersOfColors.Add(matrixOfNewColors[x, y], new List<Tuple<int, int>>());
+                        //}
+                        clustersOfColors[matrixOfNewColors[x, y]].Add(new Tuple<int, int>(x, y));
                     }
                 }
 
@@ -61,19 +74,20 @@ namespace EmbroideryCreator
             return imageToReduceColors; //do I need to really return this image since the reference is already being modified here
         }
 
-        private static Color GetMeanColorOfCluster(List<KeyValuePair<int, int>> listOfPixelCoordinatesOnThisCluster, Bitmap imageToReduceColors)
+        private static Color GetMeanColorOfCluster(List<Tuple<int, int>> listOfPixelCoordinatesOnThisCluster, Bitmap imageToReduceColors)
         {
             //throw new NotImplementedException();
+            if (listOfPixelCoordinatesOnThisCluster.Count == 0) return Color.White;
 
             int red = 0;
             int green = 0;
             int blue = 0;
 
-            foreach (KeyValuePair<int, int> coordinate in listOfPixelCoordinatesOnThisCluster)
+            foreach (Tuple<int, int> coordinate in listOfPixelCoordinatesOnThisCluster)
             {
-                red += imageToReduceColors.GetPixel(coordinate.Key, coordinate.Value).R;
-                green += imageToReduceColors.GetPixel(coordinate.Key, coordinate.Value).G;
-                blue += imageToReduceColors.GetPixel(coordinate.Key, coordinate.Value).B;
+                red += imageToReduceColors.GetPixel(coordinate.Item1, coordinate.Item2).R;
+                green += imageToReduceColors.GetPixel(coordinate.Item1, coordinate.Item2).G;
+                blue += imageToReduceColors.GetPixel(coordinate.Item1, coordinate.Item2).B;
             }
 
             red /= listOfPixelCoordinatesOnThisCluster.Count;
@@ -180,6 +194,17 @@ namespace EmbroideryCreator
                 g.DrawImage(sourceBMP, 0, 0, width, height);
             }
             return result;
+        }
+
+        public static Bitmap CreateSolidColorBitmap(Color color, int width, int height)
+        {
+            Bitmap bitmap = new Bitmap(width, height);
+            using (Graphics graphics = Graphics.FromImage(bitmap))
+            using (SolidBrush brush = new SolidBrush(color))
+            {
+                graphics.FillRectangle(brush, 0, 0, width, height);
+            }
+            return bitmap;
         }
     }
 }

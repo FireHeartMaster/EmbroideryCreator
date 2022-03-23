@@ -45,6 +45,8 @@ namespace EmbroideryCreator
             this.numberOfIterationsLabel = new System.Windows.Forms.Label();
             this.numberOfIterationsTrackBarLabel = new System.Windows.Forms.Label();
             this.ProcessAtAllChangesCheckBox = new System.Windows.Forms.CheckBox();
+            this.flowLayoutPanelListOfColors = new System.Windows.Forms.FlowLayoutPanel();
+            this.ListOfColorsLabel = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.mainPictureBox)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.widthSizeTrackBar)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numberOfColorsTrackBar)).BeginInit();
@@ -200,11 +202,31 @@ namespace EmbroideryCreator
             this.ProcessAtAllChangesCheckBox.Text = "Process image at all changes";
             this.ProcessAtAllChangesCheckBox.UseVisualStyleBackColor = true;
             // 
+            // flowLayoutPanelListOfColors
+            // 
+            this.flowLayoutPanelListOfColors.BackColor = System.Drawing.SystemColors.GradientInactiveCaption;
+            this.flowLayoutPanelListOfColors.Location = new System.Drawing.Point(847, 47);
+            this.flowLayoutPanelListOfColors.Name = "flowLayoutPanelListOfColors";
+            this.flowLayoutPanelListOfColors.Size = new System.Drawing.Size(75, 494);
+            this.flowLayoutPanelListOfColors.TabIndex = 14;
+            // 
+            // ListOfColorsLabel
+            // 
+            this.ListOfColorsLabel.AutoSize = true;
+            this.ListOfColorsLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 15F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.ListOfColorsLabel.Location = new System.Drawing.Point(842, 19);
+            this.ListOfColorsLabel.Name = "ListOfColorsLabel";
+            this.ListOfColorsLabel.Size = new System.Drawing.Size(75, 25);
+            this.ListOfColorsLabel.TabIndex = 15;
+            this.ListOfColorsLabel.Text = "Colors:";
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(842, 553);
+            this.ClientSize = new System.Drawing.Size(939, 553);
+            this.Controls.Add(this.ListOfColorsLabel);
+            this.Controls.Add(this.flowLayoutPanelListOfColors);
             this.Controls.Add(this.ProcessAtAllChangesCheckBox);
             this.Controls.Add(this.numberOfIterationsTrackBarLabel);
             this.Controls.Add(this.numberOfIterationsLabel);
@@ -249,6 +271,8 @@ namespace EmbroideryCreator
         private System.Windows.Forms.Label numberOfIterationsLabel;
         private System.Windows.Forms.Label numberOfIterationsTrackBarLabel;
         private System.Windows.Forms.CheckBox ProcessAtAllChangesCheckBox;
+        private System.Windows.Forms.FlowLayoutPanel flowLayoutPanelListOfColors;
+        private System.Windows.Forms.Label ListOfColorsLabel;
     }
 }
 

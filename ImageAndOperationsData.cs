@@ -22,6 +22,54 @@ namespace EmbroideryCreator
 
         private int newPixelSize = 10;
 
+        private int[,] matrixOfNewColors;
+        private Color[] colorMeans;
+        private Dictionary<int, List<Tuple<int, int>>> positionsOfEachColor = new Dictionary<int, List<Tuple<int, int>>>();
+
+        public int[,] GetMatrixOfColors() => matrixOfNewColors;
+        public Color[] GetColors() => colorMeans;
+        public Dictionary<int, List<Tuple<int, int>>> GetPositionsOfEachColor() => positionsOfEachColor;
+
+
+        private int borderThicknessInNumberOfPixels = 1;
+        private int gridThicknessInNumberOfPixels = 1;
+
+        public void UpdateColorByIndex(int indexToUpdate, Color newColor)
+        {
+            if(indexToUpdate >= 0 && indexToUpdate < colorMeans.Length)
+            {
+                colorMeans[indexToUpdate] = newColor;
+                PaintNewColorOnImage(indexToUpdate, newColor);
+            }
+        }
+
+        private void PaintNewColorOnImage(int indexToUpdate, Color newColor)
+        {
+            foreach (Tuple<int, int> position in positionsOfEachColor[indexToUpdate])
+            {
+                using (var graphics = Graphics.FromImage(resultingImage))
+                {
+                    //Color penColor = newColor;
+                    //int penSize = newPixelSize;
+                    //Pen pen = new Pen(penColor, penSize);
+                    //graphics.DrawRectangle(pen, borderThicknessInNumberOfPixels + position.Item1 * (newPixelSize + gridThicknessInNumberOfPixels),
+                    //                            borderThicknessInNumberOfPixels + position.Item2 * (newPixelSize + gridThicknessInNumberOfPixels),
+                    //                            newPixelSize * 0.5f,
+                    //                            newPixelSize * 0.5f);
+                    //pen = new Pen(penColor, newPixelSize - gridThicknessInNumberOfPixels - 1);
+                    ////graphics.DrawRectangle(pen, borderThicknessInNumberOfPixels + 12 * (newPixelSize) - (newPixelSize * 0.5f + 1),
+                    ////                            borderThicknessInNumberOfPixels + 12 * (newPixelSize) - (newPixelSize * 0.5f + 1),
+                    ////                            1,
+                    ////                            1);
+                    graphics.FillRectangle(new SolidBrush(newColor), 
+                                                borderThicknessInNumberOfPixels + (position.Item1 - 1) * (newPixelSize),
+                                                borderThicknessInNumberOfPixels + (position.Item2 - 1) * (newPixelSize),
+                                                newPixelSize - gridThicknessInNumberOfPixels,
+                                                newPixelSize - gridThicknessInNumberOfPixels);
+                }
+            }
+        }
+
         public ImageAndOperationsData(Bitmap importedImage)
         {
             originalImage = new Bitmap(importedImage);
@@ -34,7 +82,7 @@ namespace EmbroideryCreator
 
         private void ReduceNumberOfColors(int numberOfIterations = 10)
         {
-            colorReducedImage = ImageTransformations.ReduceNumberOfColors(pixelatedImage, numberOfColors, numberOfIterations);
+            colorReducedImage = ImageTransformations.ReduceNumberOfColors(pixelatedImage, numberOfColors, numberOfIterations, out matrixOfNewColors, out colorMeans, out positionsOfEachColor);
         }
 
         private void AddGrid()
@@ -43,21 +91,24 @@ namespace EmbroideryCreator
             augmentedImage = ImageTransformations.ResizeBitmap(colorReducedImage, (largerIsWidth ? colorReducedImage.Width : colorReducedImage.Height) * newPixelSize);
 
             withGridImage = new Bitmap(augmentedImage);
+            int intervalForDarkerLines = 10;
             using (var graphics = Graphics.FromImage(withGridImage))
             {
                 //vertical lines
                 for (int x = 0; x <= colorReducedImage.Width; x++)
                 {
-                    Color penColor = x % newPixelSize == 0 ? Color.Black : Color.Gray;
+                    Color penColor = x % intervalForDarkerLines == 0 ? Color.Black : Color.Gray;
                     Pen pen = new Pen(penColor, 1.0f);
+                    gridThicknessInNumberOfPixels = 1;
                     graphics.DrawLine(pen, x * newPixelSize - newPixelSize*0.5f, 0, x * newPixelSize - newPixelSize*0.5f, withGridImage.Height - 1);
                 }
 
                 //horizontal lines
                 for (int y = 0; y <= colorReducedImage.Height; y++)
                 {
-                    Color penColor = y % newPixelSize == 0 ? Color.Black : Color.Gray;
+                    Color penColor = y % intervalForDarkerLines == 0 ? Color.Black : Color.Gray;
                     Pen pen = new Pen(penColor, 1.0f);
+                    gridThicknessInNumberOfPixels = 1;
                     graphics.DrawLine(pen, 0, y * newPixelSize - newPixelSize*0.5f, withGridImage.Width - 1, y * newPixelSize - newPixelSize*0.5f);
                 }
             }
@@ -71,6 +122,7 @@ namespace EmbroideryCreator
                 int penSize = (int)(newPixelSize * 0.5f) + 1;
                 Pen pen = new Pen(penColor, penSize);
                 int offset = (int)(penSize % 2 == 0 ? penSize * 0.5f : (penSize + 1) * 0.5f);
+                borderThicknessInNumberOfPixels = penSize;
 
                 graphics.DrawLine(pen, 0, offset, withGridImage.Width, offset); //upper border
                 graphics.DrawLine(pen, offset, 0, offset, withGridImage.Height); //left border
@@ -86,6 +138,7 @@ namespace EmbroideryCreator
             AddBorder();
             resultingImage = withGridImage;
         }
+
 
     }
 }
