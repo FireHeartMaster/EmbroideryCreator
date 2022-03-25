@@ -83,11 +83,10 @@ namespace EmbroideryCreator
             imageAndOperationsData.numberOfColors = numberOfColorsTrackBar.Value;
             imageAndOperationsData.numberOfIterations = numberOfIterationsTrackBar.Value;
 
-            imageAndOperationsData.ProcessImageAlternateOrder();
+            imageAndOperationsData.ProcessImage();
             int newImageWidth = imageAndOperationsData.resultingImage.Width;
             int newImageHeight = imageAndOperationsData.resultingImage.Height;
             mainPictureBox.Image = imageAndOperationsData.resultingImage;/*ImageTransformations.ResizeBitmap(imageAndOperationsData.resultingImage, mainPictureBox.Width * 10);*/
-            int[,] matrixOfNewColors = imageAndOperationsData.GetMatrixOfColors();
             Color[] colorMeans = imageAndOperationsData.GetColors();
 
             flowLayoutPanelListOfColors.AutoScroll = true;

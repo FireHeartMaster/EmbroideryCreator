@@ -19,7 +19,7 @@ namespace EmbroideryCreator
         }
 
         public static Bitmap PixelateAlternateOrder(Bitmap originalImage, int newWidthSize, 
-            ref int[,] matrixOfNewColors, ref Color[] means, ref Dictionary<int, List<Tuple<int, int>>> clustersOfColors)
+            ref Color[] means, ref Dictionary<int, List<Tuple<int, int>>> clustersOfColors)
         {
             float aspectRatio = ((float)originalImage.Height) / originalImage.Width;
             int newHeightSize = (int)(newWidthSize * aspectRatio);
@@ -30,7 +30,6 @@ namespace EmbroideryCreator
             {
                 clustersOfColors.Add(i, new List<Tuple<int, int>>());
             }
-            matrixOfNewColors = new int[pixelatedImage.Width, pixelatedImage.Height];
 
             for (int x = 0; x < pixelatedImage.Width; x++)
             {
@@ -61,7 +60,6 @@ namespace EmbroideryCreator
                     int closestColorIndex = FindClosestColor(colorMean, means);
                     pixelatedImage.SetPixel(x, y, means[closestColorIndex]);
                     clustersOfColors[closestColorIndex].Add(new Tuple<int, int>(x, y));
-                    matrixOfNewColors[x, y] = closestColorIndex;
                 }
             }
 
@@ -88,12 +86,11 @@ namespace EmbroideryCreator
             }
             return closestIndex;
         }
-
-        //TODO: remove matrixOfNewColors, it's useless in the whole code
-        public static Bitmap ReduceNumberOfColors(Bitmap imageToReduceColors, int newNumberOfColors, int numberOfIterations, out int[,] matrixOfNewColors, out Color[] means, 
+        
+        public static Bitmap ReduceNumberOfColors(Bitmap imageToReduceColors, int newNumberOfColors, int numberOfIterations, out Color[] means, 
             out Dictionary<int, List<Tuple<int, int>>> clustersOfColors)
         {
-            matrixOfNewColors = InitializeColorClusters(imageToReduceColors.Width, imageToReduceColors.Height, newNumberOfColors);
+            int[,] matrixOfNewColors = new int[imageToReduceColors.Width, imageToReduceColors.Height];
             //Color[] means = InitializeMeans(newNumberOfColors);
             means = InitializeMeansFromData(newNumberOfColors, imageToReduceColors);
 

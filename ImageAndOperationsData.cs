@@ -22,12 +22,10 @@ namespace EmbroideryCreator
         public int numberOfIterations = 10;
 
         private int newPixelSize = 10;
-
-        private int[,] matrixOfNewColors;
+        
         private Color[] colorMeans;
         private Dictionary<int, List<Tuple<int, int>>> positionsOfEachColor = new Dictionary<int, List<Tuple<int, int>>>();
 
-        public int[,] GetMatrixOfColors() => matrixOfNewColors;
         public Color[] GetColors() => colorMeans;
         public Dictionary<int, List<Tuple<int, int>>> GetPositionsOfEachColor() => positionsOfEachColor;
 
@@ -84,13 +82,13 @@ namespace EmbroideryCreator
 
         private Bitmap PixelateImageAlternateOrder(Bitmap originalImage)
         {
-            Bitmap pixelatedImage = ImageTransformations.PixelateAlternateOrder(originalImage, newWidth, ref matrixOfNewColors, ref colorMeans, ref positionsOfEachColor);
+            Bitmap pixelatedImage = ImageTransformations.PixelateAlternateOrder(originalImage, newWidth, ref colorMeans, ref positionsOfEachColor);
             return pixelatedImage;
         }
 
         private Bitmap ReduceNumberOfColors(Bitmap pixelatedImage, int numberOfIterations = 10)
         {
-            Bitmap colorReducedImage = ImageTransformations.ReduceNumberOfColors(pixelatedImage, numberOfColors, numberOfIterations, out matrixOfNewColors, out colorMeans, out positionsOfEachColor);
+            Bitmap colorReducedImage = ImageTransformations.ReduceNumberOfColors(pixelatedImage, numberOfColors, numberOfIterations, out colorMeans, out positionsOfEachColor);
             return colorReducedImage;
         }
 
