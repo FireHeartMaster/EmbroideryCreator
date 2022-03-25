@@ -171,11 +171,12 @@ namespace EmbroideryCreator
             }
         }
 
-        public static Bitmap ResizeBitmap(Bitmap sourceBMP, int newMaxSize)
+        public static Bitmap ResizeBitmap(Bitmap sourceBMP, int newPixelSize)
         {
-            int width; 
-            int height;
             bool biggerIsWidth = sourceBMP.Width > sourceBMP.Height;
+            int newMaxSize = (biggerIsWidth ? sourceBMP.Width : sourceBMP.Height) * newPixelSize;
+            int width; 
+            int height;            
             if (biggerIsWidth)
             {
                 width = newMaxSize;
@@ -188,10 +189,14 @@ namespace EmbroideryCreator
             }
 
             Bitmap result = new Bitmap(width, height);
-            using (Graphics g = Graphics.FromImage(result))
+            using (Graphics graphics = Graphics.FromImage(result))
             {
-                g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.NearestNeighbor;
-                g.DrawImage(sourceBMP, 0, 0, width, height);
+                graphics.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.NearestNeighbor;
+                graphics.PixelOffsetMode = System.Drawing.Drawing2D.PixelOffsetMode.HighQuality;
+                //int positionOffset = newPixelSize / 2; //Because of a bug with DrawImage, the source image isn't drawn in the correct position on the target image,
+                                                         //it ended up slightly more to the top and to the left, that's why we need to use an offset or to set the pixel
+                                                         //offset mode to high quality
+                graphics.DrawImage(sourceBMP, /*positionOffset*/0, /*positionOffset*/0, width, height);
             }
             return result;
         }
