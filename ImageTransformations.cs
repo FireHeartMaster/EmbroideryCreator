@@ -18,6 +18,78 @@ namespace EmbroideryCreator
             return pixelatedImage;
         }
 
+        public static Bitmap PixelateAlternateOrder(Bitmap originalImage, int newWidthSize, 
+            ref int[,] matrixOfNewColors, ref Color[] means, ref Dictionary<int, List<Tuple<int, int>>> clustersOfColors)
+        {
+            float aspectRatio = ((float)originalImage.Height) / originalImage.Width;
+            int newHeightSize = (int)(newWidthSize * aspectRatio);
+            Bitmap pixelatedImage = new Bitmap(newWidthSize, newHeightSize);
+
+            clustersOfColors = new Dictionary<int, List<Tuple<int, int>>>();
+            for (int i = 0; i < means.Length; i++)
+            {
+                clustersOfColors.Add(i, new List<Tuple<int, int>>());
+            }
+            matrixOfNewColors = new int[pixelatedImage.Width, pixelatedImage.Height];
+
+            for (int x = 0; x < pixelatedImage.Width; x++)
+            {
+                for (int y = 0; y < pixelatedImage.Height; y++)
+                {
+
+                    int redSum = 0;
+                    int greenSum = 0;
+                    int blueSum = 0;
+
+                    int amountOfPixels = 0;
+
+                    for (int xOriginalImage = (int)(x * (((float)originalImage.Width) / newWidthSize)); xOriginalImage < (x + 1) * (((float)originalImage.Width) / newWidthSize); xOriginalImage++)
+                    {
+                        for (int yOriginalImage = (int)(y * (((float)originalImage.Height) / newHeightSize)); yOriginalImage < (y + 1) * (((float)originalImage.Height) / newHeightSize); yOriginalImage++)
+                        {
+                            Color currentPixelColor = originalImage.GetPixel(xOriginalImage, yOriginalImage);
+                            redSum += currentPixelColor.R;
+                            greenSum += currentPixelColor.G;
+                            blueSum += currentPixelColor.B;
+
+                            amountOfPixels++;
+                        }
+                    }
+
+                    Color colorMean = Color.FromArgb((int)(((float)redSum) / amountOfPixels), (int)(((float)greenSum) / amountOfPixels), (int)(((float)blueSum) / amountOfPixels));
+
+                    int closestColorIndex = FindClosestColor(colorMean, means);
+                    pixelatedImage.SetPixel(x, y, means[closestColorIndex]);
+                    clustersOfColors[closestColorIndex].Add(new Tuple<int, int>(x, y));
+                    matrixOfNewColors[x, y] = closestColorIndex;
+                }
+            }
+
+            return pixelatedImage;
+        }
+
+        private static int FindClosestColor(Color originalColor, Color[] colors)
+        {
+            int minSquaredDistance = int.MaxValue;
+            int closestIndex = -1;
+
+            for (int i = 0; i < colors.Length; i++)
+            {
+                int redDistance = originalColor.R - colors[i].R;
+                int greenDistance = originalColor.G - colors[i].G;
+                int blueDistance = originalColor.B - colors[i].B;
+
+                int squaredDistance = redDistance * redDistance + greenDistance * greenDistance + blueDistance * blueDistance;
+                if(squaredDistance < minSquaredDistance)
+                {
+                    minSquaredDistance = squaredDistance;
+                    closestIndex = i;
+                }
+            }
+            return closestIndex;
+        }
+
+        //TODO: remove matrixOfNewColors, it's useless in the whole code
         public static Bitmap ReduceNumberOfColors(Bitmap imageToReduceColors, int newNumberOfColors, int numberOfIterations, out int[,] matrixOfNewColors, out Color[] means, 
             out Dictionary<int, List<Tuple<int, int>>> clustersOfColors)
         {

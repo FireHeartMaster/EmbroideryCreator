@@ -10,11 +10,11 @@ namespace EmbroideryCreator
     public class ImageAndOperationsData
     {
         private Bitmap originalImage;
-        private Bitmap pixelatedImage;
-        private Bitmap colorReducedImage;
-        private Bitmap augmentedImage;
-        private Bitmap withGridImage;
-        private Bitmap withBorderImage;
+        //private Bitmap pixelatedImage;
+        //private Bitmap colorReducedImage;
+        //private Bitmap augmentedImage;
+        //private Bitmap withGridImage;
+        //private Bitmap withBorderImage;
         public Bitmap resultingImage { get; private set; }
 
         public int newWidth = 100;
@@ -40,15 +40,15 @@ namespace EmbroideryCreator
             if(indexToUpdate >= 0 && indexToUpdate < colorMeans.Length)
             {
                 colorMeans[indexToUpdate] = newColor;
-                PaintNewColorOnImage(indexToUpdate, newColor);
+                PaintNewColorOnImage(indexToUpdate, newColor, resultingImage);
             }
         }
 
-        private void PaintNewColorOnImage(int indexToUpdate, Color newColor)
-        {
+        private void PaintNewColorOnImage(int indexToUpdate, Color newColor, Bitmap image)
+        {            
             foreach (Tuple<int, int> position in positionsOfEachColor[indexToUpdate])
             {
-                using (var graphics = Graphics.FromImage(resultingImage))
+                using (var graphics = Graphics.FromImage(image))
                 {
                     //Color penColor = newColor;
                     //int penSize = newPixelSize;
@@ -76,22 +76,30 @@ namespace EmbroideryCreator
             originalImage = new Bitmap(importedImage);
         }
 
-        private void PixelateImage()
+        private Bitmap PixelateImage(Bitmap originalImage)
         {
-            pixelatedImage = ImageTransformations.Pixelate(originalImage, newWidth);
+            Bitmap pixelatedImage = ImageTransformations.Pixelate(originalImage, newWidth);
+            return pixelatedImage;
         }
 
-        private void ReduceNumberOfColors(int numberOfIterations = 10)
+        private Bitmap PixelateImageAlternateOrder(Bitmap originalImage)
         {
-            colorReducedImage = ImageTransformations.ReduceNumberOfColors(pixelatedImage, numberOfColors, numberOfIterations, out matrixOfNewColors, out colorMeans, out positionsOfEachColor);
+            Bitmap pixelatedImage = ImageTransformations.PixelateAlternateOrder(originalImage, newWidth, ref matrixOfNewColors, ref colorMeans, ref positionsOfEachColor);
+            return pixelatedImage;
         }
 
-        private void AddGrid()
+        private Bitmap ReduceNumberOfColors(Bitmap pixelatedImage, int numberOfIterations = 10)
+        {
+            Bitmap colorReducedImage = ImageTransformations.ReduceNumberOfColors(pixelatedImage, numberOfColors, numberOfIterations, out matrixOfNewColors, out colorMeans, out positionsOfEachColor);
+            return colorReducedImage;
+        }
+
+        private Bitmap AddGrid(Bitmap colorReducedImage)
         {
             //bool largerIsWidth = colorReducedImage.Width > colorReducedImage.Height;
-            augmentedImage = ImageTransformations.ResizeBitmap(colorReducedImage, newPixelSize);
+            Bitmap augmentedImage = ImageTransformations.ResizeBitmap(colorReducedImage, newPixelSize);
 
-            withGridImage = new Bitmap(augmentedImage);
+            Bitmap withGridImage = new Bitmap(augmentedImage);
             int intervalForDarkerLines = 10;
             using (var graphics = Graphics.FromImage(withGridImage))
             {
@@ -113,11 +121,13 @@ namespace EmbroideryCreator
                     graphics.DrawLine(pen, 0, y * newPixelSize/* - newPixelSize*0.5f*/, withGridImage.Width - 1, y * newPixelSize/* - newPixelSize*0.5f*/);
                 }
             }
+            return withGridImage;
         }
 
-        private void AddBorder()
+        private Bitmap AddBorder(Bitmap withGridImage)
         {
-            using (var graphics = Graphics.FromImage(withGridImage))
+            Bitmap withBorderImage = (Bitmap)withGridImage.Clone();
+            using (var graphics = Graphics.FromImage(withBorderImage))
             {
                 Color penColor = Color.Black;
                 int penSize = (int)(newPixelSize * 0.5f) + 1;
@@ -130,16 +140,17 @@ namespace EmbroideryCreator
                 graphics.DrawLine(pen, 0, withGridImage.Height - offset + 1, withGridImage.Width, withGridImage.Height - offset + 1); //bottom border
                 graphics.DrawLine(pen, withGridImage.Width - offset + 1, 0, withGridImage.Width - offset + 1, withGridImage.Height); //right border
             }
+            return withBorderImage;
         }
 
-        private void AddBorderIncresingSizeOfOriginalImage()
+        private Bitmap AddBorderIncresingSizeOfOriginalImage(Bitmap withGridImage)
         {
             Color penColor = Color.Black;
             int penSize = (int)(newPixelSize * 0.5f)/* + 1*/;
             Pen pen = new Pen(penColor, penSize);
             borderThicknessInNumberOfPixels = penSize;
 
-            withBorderImage = new Bitmap(withGridImage.Width + 2 * borderThicknessInNumberOfPixels - gridThicknessInNumberOfPixels, withGridImage.Height + 2 * borderThicknessInNumberOfPixels - gridThicknessInNumberOfPixels);
+            Bitmap withBorderImage = new Bitmap(withGridImage.Width + 2 * borderThicknessInNumberOfPixels - gridThicknessInNumberOfPixels, withGridImage.Height + 2 * borderThicknessInNumberOfPixels - gridThicknessInNumberOfPixels);
             //I'm subtracting the grid thickness here to add a small offset to hide the first top horizontal and the first left vertical lines of the grid,
             //otherwise we end up with an asymmetric grid starting with black lines at the top and at the left but with no lines on the right and at the bottom
 
@@ -160,22 +171,31 @@ namespace EmbroideryCreator
                 graphics.DrawLine(pen, offsetForBorder, 0, offsetForBorder, withBorderImage.Height); //left border
                 graphics.DrawLine(pen, 0, withBorderImage.Height - offsetForBorder + 1, withBorderImage.Width, withBorderImage.Height - offsetForBorder + 1); //bottom border
                 graphics.DrawLine(pen, withBorderImage.Width - offset - 1, 0, withBorderImage.Width - offset - 1, withBorderImage.Height); //right border
-
-
-
             }
+            return withBorderImage;
         }
 
         public void ProcessImage()
         {
-            PixelateImage();
-            ReduceNumberOfColors();
-            AddGrid();
-            AddBorderIncresingSizeOfOriginalImage();
+            Bitmap processedImage = originalImage;
+            processedImage = PixelateImage(processedImage);
+            processedImage = ReduceNumberOfColors(processedImage);
+            processedImage = AddGrid(processedImage);
+            processedImage = AddBorderIncresingSizeOfOriginalImage(processedImage);
             //resultingImage = withBorderImage;
-            resultingImage = withBorderImage;
+            resultingImage = processedImage;
         }
 
+        //extremmely long time to execute and resource consuming
+        public void ProcessImageAlternateOrder()
+        {
+            Bitmap processedImage = originalImage;
+            processedImage = ReduceNumberOfColors(processedImage);
+            processedImage = PixelateImageAlternateOrder(processedImage);
+            processedImage = AddGrid(processedImage);
+            processedImage = AddBorderIncresingSizeOfOriginalImage(processedImage);
+            resultingImage = processedImage;
+        }
 
     }
 }
