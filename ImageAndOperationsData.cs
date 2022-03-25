@@ -195,5 +195,10 @@ namespace EmbroideryCreator
             resultingImage = processedImage;
         }
 
+        public void MergeTwoColors(int firstIndex, int otherIndex)
+        {
+
+        }
+
     }
 }

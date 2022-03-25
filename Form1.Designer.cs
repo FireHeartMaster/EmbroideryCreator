@@ -47,6 +47,8 @@ namespace EmbroideryCreator
             this.ProcessAtAllChangesCheckBox = new System.Windows.Forms.CheckBox();
             this.flowLayoutPanelListOfColors = new System.Windows.Forms.FlowLayoutPanel();
             this.ListOfColorsLabel = new System.Windows.Forms.Label();
+            this.mergeColorsButton = new System.Windows.Forms.Button();
+            this.addColorButton = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.mainPictureBox)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.widthSizeTrackBar)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numberOfColorsTrackBar)).BeginInit();
@@ -207,7 +209,7 @@ namespace EmbroideryCreator
             this.flowLayoutPanelListOfColors.BackColor = System.Drawing.SystemColors.GradientInactiveCaption;
             this.flowLayoutPanelListOfColors.Location = new System.Drawing.Point(847, 47);
             this.flowLayoutPanelListOfColors.Name = "flowLayoutPanelListOfColors";
-            this.flowLayoutPanelListOfColors.Size = new System.Drawing.Size(75, 494);
+            this.flowLayoutPanelListOfColors.Size = new System.Drawing.Size(98, 436);
             this.flowLayoutPanelListOfColors.TabIndex = 14;
             // 
             // ListOfColorsLabel
@@ -220,11 +222,32 @@ namespace EmbroideryCreator
             this.ListOfColorsLabel.TabIndex = 15;
             this.ListOfColorsLabel.Text = "Colors:";
             // 
+            // mergeColorsButton
+            // 
+            this.mergeColorsButton.Location = new System.Drawing.Point(848, 489);
+            this.mergeColorsButton.Name = "mergeColorsButton";
+            this.mergeColorsButton.Size = new System.Drawing.Size(98, 23);
+            this.mergeColorsButton.TabIndex = 16;
+            this.mergeColorsButton.Text = "Merge colors";
+            this.mergeColorsButton.UseVisualStyleBackColor = true;
+            this.mergeColorsButton.Click += new System.EventHandler(this.mergeColorsButton_Click);
+            // 
+            // addColorButton
+            // 
+            this.addColorButton.Location = new System.Drawing.Point(848, 518);
+            this.addColorButton.Name = "addColorButton";
+            this.addColorButton.Size = new System.Drawing.Size(98, 23);
+            this.addColorButton.TabIndex = 17;
+            this.addColorButton.Text = "Add color";
+            this.addColorButton.UseVisualStyleBackColor = true;
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(939, 553);
+            this.ClientSize = new System.Drawing.Size(958, 553);
+            this.Controls.Add(this.addColorButton);
+            this.Controls.Add(this.mergeColorsButton);
             this.Controls.Add(this.ListOfColorsLabel);
             this.Controls.Add(this.flowLayoutPanelListOfColors);
             this.Controls.Add(this.ProcessAtAllChangesCheckBox);
@@ -273,6 +296,8 @@ namespace EmbroideryCreator
         private System.Windows.Forms.CheckBox ProcessAtAllChangesCheckBox;
         private System.Windows.Forms.FlowLayoutPanel flowLayoutPanelListOfColors;
         private System.Windows.Forms.Label ListOfColorsLabel;
+        private System.Windows.Forms.Button mergeColorsButton;
+        private System.Windows.Forms.Button addColorButton;
     }
 }
 

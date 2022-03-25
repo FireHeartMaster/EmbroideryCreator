@@ -17,6 +17,9 @@ namespace EmbroideryCreator
         private int defaultWidth = 100;
         private int defaultNumberOfColors = 10;
         private int defaultNumberOfIterations = 10;
+
+        public List<ReducedColorControl> selectedColorsControlsList = new List<ReducedColorControl>();
+
         public MainForm()
         {
             InitializeComponent();
@@ -99,12 +102,12 @@ namespace EmbroideryCreator
                 ReducedColorControl colorControl = new ReducedColorControl();
                 //Bitmap colorImage = new Bitmap(1, 1);
                 //colorImage.SetPixel(0, 0, Color.Red);
-                colorControl.reducedColorPictureBox.Image = ImageTransformations.CreateSolidColorBitmap(colorMeans[i], 30, 30);
-                colorControl.indexInTheList = i;
-                colorControl.myReferenceToMainForm = this;
+                colorControl.InitializeReducedColorControl(colorMeans[i], i, colorControl, this);
                 flowLayoutPanelListOfColors.Controls.Add(colorControl);
             }
-    }
+        }
+
+
         private void TryToProcessImage()
         {
             if (ProcessAtAllChangesCheckBox.Checked)
@@ -148,6 +151,28 @@ namespace EmbroideryCreator
         {
             imageAndOperationsData.UpdateColorByIndex(index, newColor);
             mainPictureBox.Image = imageAndOperationsData.resultingImage;
+        }
+
+        private void mergeColorsButton_Click(object sender, EventArgs e)
+        {
+            //int amountOfSelectedColors = selectedColorsControlsList.Count;
+
+            //int redSum = 0;
+            //int greenSum = 0;
+            //int blueSum = 0;
+
+            //foreach (ReducedColorControl reducedColorControl in selectedColorsControlsList)
+            //{
+            //    redSum += reducedColorControl.color.R;
+            //    greenSum += reducedColorControl.color.G;
+            //    blueSum += reducedColorControl.color.B;
+            //}
+
+            //Color averageColor = 
+
+
+
+
         }
     }
 }
