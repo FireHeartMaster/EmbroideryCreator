@@ -25,15 +25,15 @@ namespace EmbroideryCreator
         
         private List<Color> colorMeans;
         private Dictionary<int, List<Tuple<int, int>>> positionsOfEachColor = new Dictionary<int, List<Tuple<int, int>>>();
+        private int[,] matrixOfNewColors;
 
         public List<Color> GetColors() => colorMeans;
         public Dictionary<int, List<Tuple<int, int>>> GetPositionsOfEachColor() => positionsOfEachColor;
 
-
         private int borderThicknessInNumberOfPixels = 1;
         private int gridThicknessInNumberOfPixels = 1;
 
-        public void UpdateColorByIndex(int indexToUpdate, Color newColor)
+        public void ChangeColorByIndex(int indexToUpdate, Color newColor)
         {
             if(indexToUpdate >= 0 && indexToUpdate < colorMeans.Count)
             {
@@ -88,7 +88,8 @@ namespace EmbroideryCreator
 
         private Bitmap ReduceNumberOfColors(Bitmap pixelatedImage, int numberOfIterations = 10)
         {
-            Bitmap colorReducedImage = ImageTransformations.ReduceNumberOfColors(pixelatedImage, numberOfColors, numberOfIterations, out colorMeans, out positionsOfEachColor);
+            Bitmap colorReducedImage = ImageTransformations.ReduceNumberOfColors(pixelatedImage, numberOfColors, numberOfIterations, 
+                                                                                out colorMeans, out positionsOfEachColor, out matrixOfNewColors);
             return colorReducedImage;
         }
 
@@ -199,6 +200,12 @@ namespace EmbroideryCreator
         {
             //I can't simply remove the corresponding keys from the dictionary because the values of the keys also is used as the position in the colors list
 
+
+            foreach (Tuple<int, int> position in positionsOfEachColor[otherIndex])
+            {
+                matrixOfNewColors[position.Item1, position.Item2] = firstIndex;
+            }
+
             //Before starting removing and reordering everything, let's add all elements from the removed key to the list of the key that remains
             foreach (Tuple<int, int> position in positionsOfEachColor[otherIndex])
             {
@@ -211,6 +218,11 @@ namespace EmbroideryCreator
             for (int i = otherIndex; i < colorMeans.Count - 1; i++)
             {
                 positionsOfEachColor[i] = positionsOfEachColor[i + 1];
+
+                foreach (Tuple<int, int> position in positionsOfEachColor[i])
+                {
+                    matrixOfNewColors[position.Item1, position.Item2] = i;
+                }
             }
 
             //Now let's finally remove the last one from the dictionary once all others now have their positions/indexes corrected
@@ -218,7 +230,6 @@ namespace EmbroideryCreator
             //Also let's remove it from the list of colors, for this one we can simply remove it without any reordering
             //That's why here we remove from the specified index instead of removing the last element
             colorMeans.RemoveAt(otherIndex);
-
         }
 
     }

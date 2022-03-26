@@ -88,9 +88,9 @@ namespace EmbroideryCreator
         }
         
         public static Bitmap ReduceNumberOfColors(Bitmap imageToReduceColors, int newNumberOfColors, int numberOfIterations, out List<Color> means, 
-            out Dictionary<int, List<Tuple<int, int>>> clustersOfColors)
+            out Dictionary<int, List<Tuple<int, int>>> clustersOfColors, out int[,] matrixOfNewColors)
         {
-            int[,] matrixOfNewColors = new int[imageToReduceColors.Width, imageToReduceColors.Height];
+            matrixOfNewColors = new int[imageToReduceColors.Width, imageToReduceColors.Height];
             //Color[] means = InitializeMeans(newNumberOfColors);
             means = InitializeMeansFromData(newNumberOfColors, imageToReduceColors);
 

@@ -150,7 +150,7 @@ namespace EmbroideryCreator
 
         public void UpdateColorByIndex(int index, Color newColor)
         {
-            imageAndOperationsData.UpdateColorByIndex(index, newColor);
+            imageAndOperationsData.ChangeColorByIndex(index, newColor);
             mainPictureBox.Image = imageAndOperationsData.resultingImage;
         }
 
