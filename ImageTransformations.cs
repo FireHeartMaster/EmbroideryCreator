@@ -19,14 +19,14 @@ namespace EmbroideryCreator
         }
 
         public static Bitmap PixelateAlternateOrder(Bitmap originalImage, int newWidthSize, 
-            ref Color[] means, ref Dictionary<int, List<Tuple<int, int>>> clustersOfColors)
+            ref List<Color> means, ref Dictionary<int, List<Tuple<int, int>>> clustersOfColors)
         {
             float aspectRatio = ((float)originalImage.Height) / originalImage.Width;
             int newHeightSize = (int)(newWidthSize * aspectRatio);
             Bitmap pixelatedImage = new Bitmap(newWidthSize, newHeightSize);
 
             clustersOfColors = new Dictionary<int, List<Tuple<int, int>>>();
-            for (int i = 0; i < means.Length; i++)
+            for (int i = 0; i < means.Count; i++)
             {
                 clustersOfColors.Add(i, new List<Tuple<int, int>>());
             }
@@ -66,12 +66,12 @@ namespace EmbroideryCreator
             return pixelatedImage;
         }
 
-        private static int FindClosestColor(Color originalColor, Color[] colors)
+        private static int FindClosestColor(Color originalColor, List<Color> colors)
         {
             int minSquaredDistance = int.MaxValue;
             int closestIndex = -1;
 
-            for (int i = 0; i < colors.Length; i++)
+            for (int i = 0; i < colors.Count; i++)
             {
                 int redDistance = originalColor.R - colors[i].R;
                 int greenDistance = originalColor.G - colors[i].G;
@@ -87,7 +87,7 @@ namespace EmbroideryCreator
             return closestIndex;
         }
         
-        public static Bitmap ReduceNumberOfColors(Bitmap imageToReduceColors, int newNumberOfColors, int numberOfIterations, out Color[] means, 
+        public static Bitmap ReduceNumberOfColors(Bitmap imageToReduceColors, int newNumberOfColors, int numberOfIterations, out List<Color> means, 
             out Dictionary<int, List<Tuple<int, int>>> clustersOfColors)
         {
             int[,] matrixOfNewColors = new int[imageToReduceColors.Width, imageToReduceColors.Height];
@@ -95,7 +95,7 @@ namespace EmbroideryCreator
             means = InitializeMeansFromData(newNumberOfColors, imageToReduceColors);
 
             clustersOfColors = new Dictionary<int, List<Tuple<int, int>>>();
-            for (int i = 0; i < means.Length; i++)
+            for (int i = 0; i < means.Count; i++)
             {
                 clustersOfColors.Add(i, new List<Tuple<int, int>>());
             }
@@ -122,7 +122,7 @@ namespace EmbroideryCreator
                     }
                 }
 
-                for (int meanIndex = 0; meanIndex < means.Length; meanIndex++)
+                for (int meanIndex = 0; meanIndex < means.Count; meanIndex++)
                 {
                     //throw new NotImplementedException();
                     if (clustersOfColors.ContainsKey(meanIndex))
@@ -166,13 +166,13 @@ namespace EmbroideryCreator
             return Color.FromArgb(red, green, blue);
         }
 
-        private static int FindNewNearestMean(Color[] means, Color color)
+        private static int FindNewNearestMean(List<Color> means, Color color)
         {
             //throw new NotImplementedException();
 
             int minDistanceSquared = int.MaxValue;
             int minIndex = -1;
-            for (int i = 0; i < means.Length; i++)
+            for (int i = 0; i < means.Count; i++)
             {
                 int distanceSquared = (means[i].R - color.R) * (means[i].R - color.R) + (means[i].G - color.G) * (means[i].G - color.G) + (means[i].B - color.B) * (means[i].B - color.B);
                 if(distanceSquared < minDistanceSquared)
@@ -197,12 +197,16 @@ namespace EmbroideryCreator
             return means;
         }
 
-        private static Color[] InitializeMeansFromData(int numberOfColors, Bitmap imageToReduceColors)
+        private static List<Color> InitializeMeansFromData(int numberOfColors, Bitmap imageToReduceColors)
         {
             //throw new NotImplementedException();
             //Initializing color means randomly (we could instead initialize them as taking k values from the colors in the image
-            Color[] means = new Color[numberOfColors];
-            for (int i = 0; i < means.Length; i++)
+            //Color[] means = new Color[numberOfColors];
+            List<Color> means = new List<Color>(new Color[numberOfColors]); //I need to initialize means 
+                                                                            //explicitly specifying its size as numberOfColors
+                                                                            //to guarantee we will have the desired number of colors
+                                                                            //even if the original image itself doesn't have that many colors
+            for (int i = 0; i < means.Count; i++)
             {
                 //means[i] = Color.FromArgb(rnd.Next(0, 255), rnd.Next(0, 255), rnd.Next(0, 255));
                 means[i] = imageToReduceColors.GetPixel(rnd.Next(0, imageToReduceColors.Width), rnd.Next(0, imageToReduceColors.Height));

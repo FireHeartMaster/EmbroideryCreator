@@ -90,14 +90,15 @@ namespace EmbroideryCreator
             int newImageWidth = imageAndOperationsData.resultingImage.Width;
             int newImageHeight = imageAndOperationsData.resultingImage.Height;
             mainPictureBox.Image = imageAndOperationsData.resultingImage;/*ImageTransformations.ResizeBitmap(imageAndOperationsData.resultingImage, mainPictureBox.Width * 10);*/
-            Color[] colorMeans = imageAndOperationsData.GetColors();
+            List<Color> colorMeans = imageAndOperationsData.GetColors();
 
             flowLayoutPanelListOfColors.AutoScroll = true;
             flowLayoutPanelListOfColors.FlowDirection = FlowDirection.TopDown;
             flowLayoutPanelListOfColors.WrapContents = false;
 
             flowLayoutPanelListOfColors.Controls.Clear();
-            for (int i = 0; i < colorMeans.Length; i++)
+            selectedColorsControlsList.Clear();
+            for (int i = 0; i < colorMeans.Count; i++)
             {
                 ReducedColorControl colorControl = new ReducedColorControl();
                 //Bitmap colorImage = new Bitmap(1, 1);
@@ -155,22 +156,40 @@ namespace EmbroideryCreator
 
         private void mergeColorsButton_Click(object sender, EventArgs e)
         {
-            //int amountOfSelectedColors = selectedColorsControlsList.Count;
+            //TODO: There's still a bug here somewhere
+            if (selectedColorsControlsList.Count < 2) return;
 
-            //int redSum = 0;
-            //int greenSum = 0;
-            //int blueSum = 0;
+            //int firstIndex = selectedColorsControlsList[0].colorIndex;
 
-            //foreach (ReducedColorControl reducedColorControl in selectedColorsControlsList)
-            //{
-            //    redSum += reducedColorControl.color.R;
-            //    greenSum += reducedColorControl.color.G;
-            //    blueSum += reducedColorControl.color.B;
-            //}
+            while(selectedColorsControlsList.Count > 1)
+            {
+                int firstIndex = selectedColorsControlsList[0].colorIndex;
+                int otherIndex = selectedColorsControlsList[1].colorIndex;
 
-            //Color averageColor = 
+                //The following code deals with the list and dictionary management of the indexes, but first let's paint the pixels of the removed index
+                //with the color of the index that will stay
+                UpdateColorByIndex(otherIndex, imageAndOperationsData.GetColors()[firstIndex]);
 
+                //Remove the desired index from the backend's list
+                imageAndOperationsData.MergeTwoColors(firstIndex, selectedColorsControlsList[1].colorIndex);
 
+                //Redistribute index values to the list of the frontend
+                foreach (object control in flowLayoutPanelListOfColors.Controls)
+                {
+                    ReducedColorControl reducedColorControl = (ReducedColorControl)control;
+                    if (reducedColorControl.colorIndex > otherIndex)
+                    {
+                        reducedColorControl.colorIndex--;
+                    }
+                }
+
+                ////Now I can remove the desired control from both the selection list and from the collection of controls of the panel
+                selectedColorsControlsList[1].ModifySelectionCheckBox(false);
+                flowLayoutPanelListOfColors.Controls.RemoveAt(otherIndex); //HACK: does this work?
+                //I don't need to remove it from the list of selected colors because it already was when I removed it from the panel
+                //(maybe because its checkbox changed its state and then auto removed itself?)
+                //selectedColorsControlsList.RemoveAt(1);
+            }
 
 
         }

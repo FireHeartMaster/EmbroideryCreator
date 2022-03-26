@@ -23,10 +23,10 @@ namespace EmbroideryCreator
 
         private int newPixelSize = 10;
         
-        private Color[] colorMeans;
+        private List<Color> colorMeans;
         private Dictionary<int, List<Tuple<int, int>>> positionsOfEachColor = new Dictionary<int, List<Tuple<int, int>>>();
 
-        public Color[] GetColors() => colorMeans;
+        public List<Color> GetColors() => colorMeans;
         public Dictionary<int, List<Tuple<int, int>>> GetPositionsOfEachColor() => positionsOfEachColor;
 
 
@@ -35,7 +35,7 @@ namespace EmbroideryCreator
 
         public void UpdateColorByIndex(int indexToUpdate, Color newColor)
         {
-            if(indexToUpdate >= 0 && indexToUpdate < colorMeans.Length)
+            if(indexToUpdate >= 0 && indexToUpdate < colorMeans.Count)
             {
                 colorMeans[indexToUpdate] = newColor;
                 PaintNewColorOnImage(indexToUpdate, newColor, resultingImage);
@@ -197,6 +197,27 @@ namespace EmbroideryCreator
 
         public void MergeTwoColors(int firstIndex, int otherIndex)
         {
+            //I can't simply remove the corresponding keys from the dictionary because the values of the keys also is used as the position in the colors list
+
+            //Before starting removing and reordering everything, let's add all elements from the removed key to the list of the key that remains
+            foreach (Tuple<int, int> position in positionsOfEachColor[otherIndex])
+            {
+                positionsOfEachColor[firstIndex].Add(position); //We don't need to remove it from the other list because it's already going to be overwritten right afterward
+            }
+
+            //Let's reorder the indexes and their lists of positions to counter the removal of one of them
+            //If the key to remove actually corresponded to the last one, we don't need to worry, it simply means that
+            //we can safely remove it without having to reorder things
+            for (int i = otherIndex; i < colorMeans.Count - 2; i++)
+            {
+                positionsOfEachColor[i] = positionsOfEachColor[i + 1];
+            }
+
+            //Now let's finally remove the last one from the dictionary once all others now have their positions/indexes corrected
+            positionsOfEachColor.Remove(colorMeans.Count - 1);
+            //Also let's remove it from the list of colors, for this one we can simply remove it without any reordering
+            //That's why here we remove from the specified index instead of removing the last element
+            colorMeans.RemoveAt(otherIndex);
 
         }
 

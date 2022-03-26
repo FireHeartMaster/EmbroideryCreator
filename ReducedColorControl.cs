@@ -66,5 +66,10 @@ namespace EmbroideryCreator
         {
             myReferenceToMainForm.selectedColorsControlsList.Remove(this);
         }
+
+        public void ModifySelectionCheckBox(bool state)
+        {
+            selectionCheckBox.Checked = state;
+        }
     }
 }
