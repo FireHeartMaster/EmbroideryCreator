@@ -208,7 +208,7 @@ namespace EmbroideryCreator
             //Let's reorder the indexes and their lists of positions to counter the removal of one of them
             //If the key to remove actually corresponded to the last one, we don't need to worry, it simply means that
             //we can safely remove it without having to reorder things
-            for (int i = otherIndex; i < colorMeans.Count - 2; i++)
+            for (int i = otherIndex; i < colorMeans.Count - 1; i++)
             {
                 positionsOfEachColor[i] = positionsOfEachColor[i + 1];
             }

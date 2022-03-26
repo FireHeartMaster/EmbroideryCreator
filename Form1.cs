@@ -156,7 +156,6 @@ namespace EmbroideryCreator
 
         private void mergeColorsButton_Click(object sender, EventArgs e)
         {
-            //TODO: There's still a bug here somewhere
             if (selectedColorsControlsList.Count < 2) return;
 
             //int firstIndex = selectedColorsControlsList[0].colorIndex;
@@ -171,7 +170,7 @@ namespace EmbroideryCreator
                 UpdateColorByIndex(otherIndex, imageAndOperationsData.GetColors()[firstIndex]);
 
                 //Remove the desired index from the backend's list
-                imageAndOperationsData.MergeTwoColors(firstIndex, selectedColorsControlsList[1].colorIndex);
+                imageAndOperationsData.MergeTwoColors(firstIndex, otherIndex);
 
                 //Redistribute index values to the list of the frontend
                 foreach (object control in flowLayoutPanelListOfColors.Controls)
@@ -184,14 +183,12 @@ namespace EmbroideryCreator
                 }
 
                 ////Now I can remove the desired control from both the selection list and from the collection of controls of the panel
-                selectedColorsControlsList[1].ModifySelectionCheckBox(false);
-                flowLayoutPanelListOfColors.Controls.RemoveAt(otherIndex); //HACK: does this work?
-                //I don't need to remove it from the list of selected colors because it already was when I removed it from the panel
-                //(maybe because its checkbox changed its state and then auto removed itself?)
-                //selectedColorsControlsList.RemoveAt(1);
+                flowLayoutPanelListOfColors.Controls.Remove(selectedColorsControlsList[1]);
+                //selectedColorsControlsList[1].ModifySelectionCheckBox(false);
+                ReducedColorControl controlToRemove = selectedColorsControlsList[1];
+                controlToRemove.Dispose();
+                selectedColorsControlsList.RemoveAt(1);
             }
-
-
         }
     }
 }
