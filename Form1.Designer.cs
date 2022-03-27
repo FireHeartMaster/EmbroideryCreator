@@ -66,6 +66,9 @@ namespace EmbroideryCreator
             this.mainPictureBox.TabIndex = 0;
             this.mainPictureBox.TabStop = false;
             this.mainPictureBox.Click += new System.EventHandler(this.mainPictureBox_Click);
+            this.mainPictureBox.DoubleClick += new System.EventHandler(this.mainPictureBox_DoubleClick);
+            this.mainPictureBox.MouseDown += new System.Windows.Forms.MouseEventHandler(this.mainPictureBox_MouseDown);
+            this.mainPictureBox.MouseUp += new System.Windows.Forms.MouseEventHandler(this.mainPictureBox_MouseUp);
             // 
             // widthSizeTrackBar
             // 

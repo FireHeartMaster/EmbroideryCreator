@@ -36,7 +36,13 @@ namespace EmbroideryCreator
 
         private void mainPictureBox_Click(object sender, EventArgs e)
         {
-            SelectNewImageFile();
+            //SelectNewImageFile();
+            Console.WriteLine("Simple Click");
+        }
+
+        private void mainPictureBox_DoubleClick(object sender, EventArgs e)
+        {
+            Console.WriteLine("Double Click");
         }
 
         private void SelectNewImageFile()
@@ -189,6 +195,16 @@ namespace EmbroideryCreator
                 controlToRemove.Dispose();
                 selectedColorsControlsList.RemoveAt(1);
             }
+        }
+
+        private void mainPictureBox_MouseDown(object sender, MouseEventArgs e)
+        {
+            Console.WriteLine("Mouse Down");
+        }
+
+        private void mainPictureBox_MouseUp(object sender, MouseEventArgs e)
+        {
+            Console.WriteLine("Mouse Up");
         }
     }
 }

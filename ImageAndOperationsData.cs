@@ -48,24 +48,24 @@ namespace EmbroideryCreator
             {
                 using (var graphics = Graphics.FromImage(image))
                 {
-                    //Color penColor = newColor;
-                    //int penSize = newPixelSize;
-                    //Pen pen = new Pen(penColor, penSize);
-                    //graphics.DrawRectangle(pen, borderThicknessInNumberOfPixels + position.Item1 * (newPixelSize + gridThicknessInNumberOfPixels),
-                    //                            borderThicknessInNumberOfPixels + position.Item2 * (newPixelSize + gridThicknessInNumberOfPixels),
-                    //                            newPixelSize * 0.5f,
-                    //                            newPixelSize * 0.5f);
-                    //pen = new Pen(penColor, newPixelSize - gridThicknessInNumberOfPixels - 1);
-                    ////graphics.DrawRectangle(pen, borderThicknessInNumberOfPixels + 12 * (newPixelSize) - (newPixelSize * 0.5f + 1),
-                    ////                            borderThicknessInNumberOfPixels + 12 * (newPixelSize) - (newPixelSize * 0.5f + 1),
-                    ////                            1,
-                    ////                            1);
                     graphics.FillRectangle(new SolidBrush(newColor), 
                                                 borderThicknessInNumberOfPixels + (position.Item1/* - 1*/) * (newPixelSize),
                                                 borderThicknessInNumberOfPixels + (position.Item2/* - 1*/) * (newPixelSize),
                                                 newPixelSize - gridThicknessInNumberOfPixels,
                                                 newPixelSize - gridThicknessInNumberOfPixels);
                 }
+            }
+        }
+
+        private void PaintNewColorOnPixelPosition(Tuple<int, int> position, Color newColor, Bitmap image)
+        {
+            using (var graphics = Graphics.FromImage(image))
+            {
+                graphics.FillRectangle(new SolidBrush(newColor),
+                                            borderThicknessInNumberOfPixels + (position.Item1) * (newPixelSize),
+                                            borderThicknessInNumberOfPixels + (position.Item2) * (newPixelSize),
+                                            newPixelSize - gridThicknessInNumberOfPixels,
+                                            newPixelSize - gridThicknessInNumberOfPixels);
             }
         }
 
@@ -230,6 +230,19 @@ namespace EmbroideryCreator
             //Also let's remove it from the list of colors, for this one we can simply remove it without any reordering
             //That's why here we remove from the specified index instead of removing the last element
             colorMeans.RemoveAt(otherIndex);
+        }
+
+        public void PaintPixelInPositionWithColorOfIndex(Tuple<int, int> position, int colorIndexToPaint)
+        {
+            int originalColorIndex = matrixOfNewColors[position.Item1, position.Item2];
+            matrixOfNewColors[position.Item1, position.Item2] = colorIndexToPaint;
+
+            //TODO:remove this position from its original group of positions and put it on the group of the new index
+            positionsOfEachColor[originalColorIndex].Remove(position);
+            positionsOfEachColor[colorIndexToPaint].Add(position);
+
+            //TODO:repaint that pixel position
+            PaintNewColorOnPixelPosition(position, colorMeans[colorIndexToPaint], resultingImage);
         }
 
     }
