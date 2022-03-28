@@ -46,6 +46,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DrawingToolsControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="DrawingToolsControl.Designer.cs">
+      <DependentUpon>DrawingToolsControl.cs</DependentUpon>
+    </Compile>
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -62,6 +68,9 @@
     <Compile Include="ReducedColorControl.Designer.cs">
       <DependentUpon>ReducedColorControl.cs</DependentUpon>
     </Compile>
+    <EmbeddedResource Include="DrawingToolsControl.resx">
+      <DependentUpon>DrawingToolsControl.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
     </EmbeddedResource>
@@ -92,6 +101,9 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Resources\SelectedToolIcon.png" />
+    <None Include="Resources\PencilIcon.png" />
+    <None Include="Resources\BucketIcon.png" />
     <Content Include="Resources\ChooseImagePicture.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

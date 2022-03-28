@@ -29,7 +29,6 @@ namespace EmbroideryCreator
         /// </summary>
         private void InitializeComponent()
         {
-            this.mainPictureBox = new System.Windows.Forms.PictureBox();
             this.widthSizeTrackBar = new System.Windows.Forms.TrackBar();
             this.numberOfColorsTrackBar = new System.Windows.Forms.TrackBar();
             this.chooseNewImageButton = new System.Windows.Forms.Button();
@@ -50,27 +49,13 @@ namespace EmbroideryCreator
             this.mergeColorsButton = new System.Windows.Forms.Button();
             this.addColorButton = new System.Windows.Forms.Button();
             this.addColorDialog = new System.Windows.Forms.ColorDialog();
-            ((System.ComponentModel.ISupportInitialize)(this.mainPictureBox)).BeginInit();
+            this.mainPictureBox = new System.Windows.Forms.PictureBox();
+            this.drawingToolsControl = new EmbroideryCreator.DrawingToolsControl();
             ((System.ComponentModel.ISupportInitialize)(this.widthSizeTrackBar)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numberOfColorsTrackBar)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numberOfIterationsTrackBar)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.mainPictureBox)).BeginInit();
             this.SuspendLayout();
-            // 
-            // mainPictureBox
-            // 
-            this.mainPictureBox.Image = global::EmbroideryCreator.Properties.Resources.ChooseImagePicture;
-            this.mainPictureBox.InitialImage = global::EmbroideryCreator.Properties.Resources.ChooseImagePicture;
-            this.mainPictureBox.Location = new System.Drawing.Point(301, 12);
-            this.mainPictureBox.Name = "mainPictureBox";
-            this.mainPictureBox.Size = new System.Drawing.Size(529, 529);
-            this.mainPictureBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
-            this.mainPictureBox.TabIndex = 0;
-            this.mainPictureBox.TabStop = false;
-            this.mainPictureBox.Click += new System.EventHandler(this.mainPictureBox_Click);
-            this.mainPictureBox.DoubleClick += new System.EventHandler(this.mainPictureBox_DoubleClick);
-            this.mainPictureBox.MouseDown += new System.Windows.Forms.MouseEventHandler(this.mainPictureBox_MouseDown);
-            this.mainPictureBox.MouseMove += new System.Windows.Forms.MouseEventHandler(this.mainPictureBox_MouseMove);
-            this.mainPictureBox.MouseUp += new System.Windows.Forms.MouseEventHandler(this.mainPictureBox_MouseUp);
             // 
             // widthSizeTrackBar
             // 
@@ -212,16 +197,16 @@ namespace EmbroideryCreator
             // flowLayoutPanelListOfColors
             // 
             this.flowLayoutPanelListOfColors.BackColor = System.Drawing.SystemColors.GradientInactiveCaption;
-            this.flowLayoutPanelListOfColors.Location = new System.Drawing.Point(847, 47);
+            this.flowLayoutPanelListOfColors.Location = new System.Drawing.Point(847, 85);
             this.flowLayoutPanelListOfColors.Name = "flowLayoutPanelListOfColors";
-            this.flowLayoutPanelListOfColors.Size = new System.Drawing.Size(98, 436);
+            this.flowLayoutPanelListOfColors.Size = new System.Drawing.Size(98, 398);
             this.flowLayoutPanelListOfColors.TabIndex = 14;
             // 
             // ListOfColorsLabel
             // 
             this.ListOfColorsLabel.AutoSize = true;
             this.ListOfColorsLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 15F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.ListOfColorsLabel.Location = new System.Drawing.Point(842, 19);
+            this.ListOfColorsLabel.Location = new System.Drawing.Point(842, 59);
             this.ListOfColorsLabel.Name = "ListOfColorsLabel";
             this.ListOfColorsLabel.Size = new System.Drawing.Size(75, 25);
             this.ListOfColorsLabel.TabIndex = 15;
@@ -247,11 +232,37 @@ namespace EmbroideryCreator
             this.addColorButton.UseVisualStyleBackColor = true;
             this.addColorButton.Click += new System.EventHandler(this.addColorButton_Click);
             // 
+            // mainPictureBox
+            // 
+            this.mainPictureBox.Image = global::EmbroideryCreator.Properties.Resources.ChooseImagePicture;
+            this.mainPictureBox.InitialImage = global::EmbroideryCreator.Properties.Resources.ChooseImagePicture;
+            this.mainPictureBox.Location = new System.Drawing.Point(301, 12);
+            this.mainPictureBox.Name = "mainPictureBox";
+            this.mainPictureBox.Size = new System.Drawing.Size(529, 529);
+            this.mainPictureBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.mainPictureBox.TabIndex = 0;
+            this.mainPictureBox.TabStop = false;
+            this.mainPictureBox.Click += new System.EventHandler(this.mainPictureBox_Click);
+            this.mainPictureBox.DoubleClick += new System.EventHandler(this.mainPictureBox_DoubleClick);
+            this.mainPictureBox.MouseDown += new System.Windows.Forms.MouseEventHandler(this.mainPictureBox_MouseDown);
+            this.mainPictureBox.MouseMove += new System.Windows.Forms.MouseEventHandler(this.mainPictureBox_MouseMove);
+            this.mainPictureBox.MouseUp += new System.Windows.Forms.MouseEventHandler(this.mainPictureBox_MouseUp);
+            // 
+            // drawingToolsControl
+            // 
+            this.drawingToolsControl.BackColor = System.Drawing.SystemColors.ActiveBorder;
+            this.drawingToolsControl.Location = new System.Drawing.Point(848, 13);
+            this.drawingToolsControl.Name = "drawingToolsControl";
+            this.drawingToolsControl.Padding = new System.Windows.Forms.Padding(3);
+            this.drawingToolsControl.Size = new System.Drawing.Size(89, 45);
+            this.drawingToolsControl.TabIndex = 18;
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(958, 553);
+            this.Controls.Add(this.drawingToolsControl);
             this.Controls.Add(this.addColorButton);
             this.Controls.Add(this.mergeColorsButton);
             this.Controls.Add(this.ListOfColorsLabel);
@@ -274,10 +285,10 @@ namespace EmbroideryCreator
             this.Name = "MainForm";
             this.Text = "EmbroideryCreator";
             this.Deactivate += new System.EventHandler(this.MainForm_Deactivate);
-            ((System.ComponentModel.ISupportInitialize)(this.mainPictureBox)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.widthSizeTrackBar)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numberOfColorsTrackBar)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numberOfIterationsTrackBar)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.mainPictureBox)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -306,6 +317,7 @@ namespace EmbroideryCreator
         private System.Windows.Forms.Button mergeColorsButton;
         private System.Windows.Forms.Button addColorButton;
         private System.Windows.Forms.ColorDialog addColorDialog;
+        private DrawingToolsControl drawingToolsControl;
     }
 }
 

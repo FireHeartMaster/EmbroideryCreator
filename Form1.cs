@@ -63,7 +63,7 @@ namespace EmbroideryCreator
             isDrawing = false;
             //Console.WriteLine(mainPictureBox.Size.Width + " " + mainPictureBox.Size.Height);
         }
-        int line = 0;
+        
         private void mainPictureBox_MouseMove(object sender, MouseEventArgs e)
         {
             if (isDrawing)
@@ -80,21 +80,24 @@ namespace EmbroideryCreator
 
         private void DrawOnPictureBox(Point positionOnImage)
         {
-            //using(var graphics = Graphics.FromImage(mainPictureBox.Image))
-            //{
-            //    Tuple<int, int> pictureBoxPosition = new Tuple<int, int>(positionOnImage.X, positionOnImage.Y);
-            //    Tuple<int, int> realImagePosition = ConvertFromPictureBoxToRealImage(pictureBoxPosition);
-            //    graphics.FillRectangle(new SolidBrush(Color.Black), realImagePosition.Item1, realImagePosition.Item2, 10, 10);
-            //}
-            //mainPictureBox.Invalidate();
-
             if (imageAndOperationsData == null || imageAndOperationsData.resultingImage == null) return;
 
             Tuple<int, int> realImagePosition = ConvertFromPictureBoxToRealImage(new Tuple<int, int>(positionOnImage.X, positionOnImage.Y));
 
             int colorIndexToPaint = selectedColorsControlsList.Count > 0 ? selectedColorsControlsList[0].colorIndex : ((ReducedColorControl)flowLayoutPanelListOfColors.Controls[0]).colorIndex;
 
-            imageAndOperationsData.PaintNewColorOnGeneralPosition(realImagePosition, colorIndexToPaint);
+            switch (drawingToolsControl.currentDrawingTool)
+            {
+                case DrawingToolInUse.Pencil:
+                    imageAndOperationsData.PaintNewColorOnGeneralPosition(realImagePosition, colorIndexToPaint);
+                    break;
+                case DrawingToolInUse.Bucket:
+                    imageAndOperationsData.FillRegionWithColorByPosition(realImagePosition, colorIndexToPaint);
+                    isDrawing = false;
+                    break;
+                default:
+                    break;
+            }
 
             //reload picture box
             mainPictureBox.Image = imageAndOperationsData.resultingImage;
