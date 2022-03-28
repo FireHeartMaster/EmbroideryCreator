@@ -68,6 +68,7 @@ namespace EmbroideryCreator
             this.mainPictureBox.Click += new System.EventHandler(this.mainPictureBox_Click);
             this.mainPictureBox.DoubleClick += new System.EventHandler(this.mainPictureBox_DoubleClick);
             this.mainPictureBox.MouseDown += new System.Windows.Forms.MouseEventHandler(this.mainPictureBox_MouseDown);
+            this.mainPictureBox.MouseMove += new System.Windows.Forms.MouseEventHandler(this.mainPictureBox_MouseMove);
             this.mainPictureBox.MouseUp += new System.Windows.Forms.MouseEventHandler(this.mainPictureBox_MouseUp);
             // 
             // widthSizeTrackBar
@@ -270,6 +271,7 @@ namespace EmbroideryCreator
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.Name = "MainForm";
             this.Text = "EmbroideryCreator";
+            this.Deactivate += new System.EventHandler(this.MainForm_Deactivate);
             ((System.ComponentModel.ISupportInitialize)(this.mainPictureBox)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.widthSizeTrackBar)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numberOfColorsTrackBar)).EndInit();

@@ -18,6 +18,8 @@ namespace EmbroideryCreator
         private int defaultNumberOfColors = 10;
         private int defaultNumberOfIterations = 10;
 
+        private bool isDrawing = false;
+
         public List<ReducedColorControl> selectedColorsControlsList = new List<ReducedColorControl>();
 
         public MainForm()
@@ -43,6 +45,72 @@ namespace EmbroideryCreator
         private void mainPictureBox_DoubleClick(object sender, EventArgs e)
         {
             Console.WriteLine("Double Click");
+        }
+
+        private void mainPictureBox_MouseDown(object sender, MouseEventArgs e)
+        {
+            Console.WriteLine("Mouse Down");
+            isDrawing = true;
+
+            Point positionOnImage = e.Location;
+
+            DrawOnPictureBox(positionOnImage);
+        }
+
+        private void mainPictureBox_MouseUp(object sender, MouseEventArgs e)
+        {
+            Console.WriteLine("Mouse Up");
+            isDrawing = false;
+            //Console.WriteLine(mainPictureBox.Size.Width + " " + mainPictureBox.Size.Height);
+        }
+        int line = 0;
+        private void mainPictureBox_MouseMove(object sender, MouseEventArgs e)
+        {
+            if (isDrawing)
+            {
+                Console.WriteLine(line + ": Drawing"); line++;
+                DrawOnPictureBox(e.Location);
+            }
+        }
+
+        private void DrawOnPictureBox(Point positionOnImage)
+        {
+            //using(var graphics = Graphics.FromImage(mainPictureBox.Image))
+            //{
+            //    Tuple<int, int> pictureBoxPosition = new Tuple<int, int>(positionOnImage.X, positionOnImage.Y);
+            //    Tuple<int, int> realImagePosition = ConvertFromPictureBoxToRealImage(pictureBoxPosition);
+            //    graphics.FillRectangle(new SolidBrush(Color.Black), realImagePosition.Item1, realImagePosition.Item2, 10, 10);
+            //}
+            //mainPictureBox.Invalidate();
+
+            if (imageAndOperationsData == null || imageAndOperationsData.resultingImage == null) return;
+
+            Tuple<int, int> realImagePosition = ConvertFromPictureBoxToRealImage(new Tuple<int, int>(positionOnImage.X, positionOnImage.Y));
+
+            int colorIndexToPaint = selectedColorsControlsList.Count > 0 ? selectedColorsControlsList[0].colorIndex : ((ReducedColorControl)flowLayoutPanelListOfColors.Controls[0]).colorIndex;
+
+            imageAndOperationsData.PaintNewColorOnGeneralPosition(realImagePosition, colorIndexToPaint);
+
+            //reload picture box
+            mainPictureBox.Image = imageAndOperationsData.resultingImage;
+        }
+
+        private Tuple<int, int> ConvertFromPictureBoxToRealImage(Tuple<int, int> pictureBoxPosition)
+        {
+            bool biggerIsWidth = mainPictureBox.Image.Width > mainPictureBox.Image.Height;
+
+            float ratio;
+            if (biggerIsWidth)
+            {
+                ratio = ((float)mainPictureBox.Image.Width) / mainPictureBox.Size.Width;
+            }
+            else
+            {
+                ratio = ((float)mainPictureBox.Image.Height) / mainPictureBox.Size.Height;
+            }
+            int horizontalPosition = (int)(ratio * (pictureBoxPosition.Item1 - (mainPictureBox.Size.Width * 0.5f)) + mainPictureBox.Image.Width * 0.5f);
+            int verticalPosition = (int)(ratio * (pictureBoxPosition.Item2 - (mainPictureBox.Size.Height * 0.5f)) + mainPictureBox.Image.Height * 0.5f);
+            return new Tuple<int, int>(horizontalPosition, verticalPosition);
         }
 
         private void SelectNewImageFile()
@@ -197,14 +265,9 @@ namespace EmbroideryCreator
             }
         }
 
-        private void mainPictureBox_MouseDown(object sender, MouseEventArgs e)
+        private void MainForm_Deactivate(object sender, EventArgs e)
         {
-            Console.WriteLine("Mouse Down");
-        }
-
-        private void mainPictureBox_MouseUp(object sender, MouseEventArgs e)
-        {
-            Console.WriteLine("Mouse Up");
+            isDrawing = false;
         }
     }
 }
