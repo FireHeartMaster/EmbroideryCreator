@@ -44,15 +44,12 @@ namespace EmbroideryCreator
 
         private void PaintNewColorOnImage(int indexToUpdate, Color newColor, Bitmap image)
         {            
-            foreach (Tuple<int, int> position in positionsOfEachColor[indexToUpdate])
+            
+            using (var graphics = Graphics.FromImage(image))
             {
-                using (var graphics = Graphics.FromImage(image))
+                foreach (Tuple<int, int> position in positionsOfEachColor[indexToUpdate])
                 {
-                    graphics.FillRectangle(new SolidBrush(newColor), 
-                                                borderThicknessInNumberOfPixels + (position.Item1/* - 1*/) * (newPixelSize),
-                                                borderThicknessInNumberOfPixels + (position.Item2/* - 1*/) * (newPixelSize),
-                                                newPixelSize - gridThicknessInNumberOfPixels,
-                                                newPixelSize - gridThicknessInNumberOfPixels);
+                    FillPixelAtCoordinate(newColor, graphics, position);
                 }
             }
         }
@@ -61,12 +58,28 @@ namespace EmbroideryCreator
         {
             using (var graphics = Graphics.FromImage(image))
             {
-                graphics.FillRectangle(new SolidBrush(newColor),
-                                            borderThicknessInNumberOfPixels + (position.Item1) * (newPixelSize),
-                                            borderThicknessInNumberOfPixels + (position.Item2) * (newPixelSize),
-                                            newPixelSize - gridThicknessInNumberOfPixels,
-                                            newPixelSize - gridThicknessInNumberOfPixels);
+                FillPixelAtCoordinate(newColor, graphics, position);
             }
+        }
+
+        private void PaintNewColorOnSeveralPixelPositions(List<Tuple<int, int>> positions, Color newColor, Bitmap image)
+        {
+            using (var graphics = Graphics.FromImage(image))
+            {
+                foreach (var position in positions)
+                {
+                    FillPixelAtCoordinate(newColor, graphics, position);
+                }
+            }
+        }
+
+        private void FillPixelAtCoordinate(Color newColor, Graphics graphics, Tuple<int, int> position)
+        {
+            graphics.FillRectangle(new SolidBrush(newColor),
+                                                        borderThicknessInNumberOfPixels + (position.Item1) * (newPixelSize),
+                                                        borderThicknessInNumberOfPixels + (position.Item2) * (newPixelSize),
+                                                        newPixelSize - gridThicknessInNumberOfPixels,
+                                                        newPixelSize - gridThicknessInNumberOfPixels);
         }
 
         public ImageAndOperationsData(Bitmap importedImage)
@@ -270,6 +283,55 @@ namespace EmbroideryCreator
         {
             positionsOfEachColor.Add(colorMeans.Count, new List<Tuple<int, int>>());
             colorMeans.Add(newColor);
+        }
+
+        public void FillRegionWithColorByPosition(Tuple<int, int> generalPosition, int colorIndexToPaint)
+        {
+            Tuple<int, int> coordinates = ConvertFromGeneralPositionOnImageToCoordinates(generalPosition);
+            if (coordinates.Item1 < 0 || coordinates.Item1 >= matrixOfNewColors.GetLength(0) || coordinates.Item2 < 0 || coordinates.Item2 >= matrixOfNewColors.GetLength(1))
+            {
+                return;
+            }
+
+            int indexOfTheOriginalColor = matrixOfNewColors[coordinates.Item1, coordinates.Item2];
+
+            Queue<Tuple<int, int>> queue = new Queue<Tuple<int, int>>();
+            List<Tuple<int, int>> listOfPositionsToChange = new List<Tuple<int, int>>();
+
+            queue.Enqueue(coordinates);
+
+            while(queue.Count > 0)
+            {
+                Tuple<int, int> firstElementOfTheQueue = queue.Dequeue();
+
+                if(firstElementOfTheQueue.Item1 >= 0 && firstElementOfTheQueue.Item1 < matrixOfNewColors.GetLength(0) &&
+                    firstElementOfTheQueue.Item2 >= 0 && firstElementOfTheQueue.Item2 < matrixOfNewColors.GetLength(1))
+                {
+                    if(matrixOfNewColors[firstElementOfTheQueue.Item1, firstElementOfTheQueue.Item2] == indexOfTheOriginalColor)
+                    {
+                        listOfPositionsToChange.Add(firstElementOfTheQueue);
+
+                        matrixOfNewColors[firstElementOfTheQueue.Item1, firstElementOfTheQueue.Item2] = colorIndexToPaint;
+
+                        //enqueueing new positions, be they valid or not, we are already checking their validity when dequeueing them
+                        queue.Enqueue(new Tuple<int, int>(firstElementOfTheQueue.Item1 - 1, firstElementOfTheQueue.Item2));
+                        queue.Enqueue(new Tuple<int, int>(firstElementOfTheQueue.Item1, firstElementOfTheQueue.Item2 - 1));
+                        queue.Enqueue(new Tuple<int, int>(firstElementOfTheQueue.Item1 + 1, firstElementOfTheQueue.Item2));
+                        queue.Enqueue(new Tuple<int, int>(firstElementOfTheQueue.Item1, firstElementOfTheQueue.Item2 + 1));
+                    }
+                }
+            }
+
+
+            //remove all positions that are changing their colors from one list of positions and add it to the other one (the one of the new color)
+            foreach (Tuple<int, int> position in listOfPositionsToChange)
+            {
+                positionsOfEachColor[indexOfTheOriginalColor].Remove(position);
+                positionsOfEachColor[colorIndexToPaint].Add(position);
+            }
+
+            //repaint
+            PaintNewColorOnSeveralPixelPositions(listOfPositionsToChange, colorMeans[colorIndexToPaint], resultingImage);
         }
     }
 }
