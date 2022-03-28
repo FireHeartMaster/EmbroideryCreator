@@ -245,7 +245,7 @@ namespace EmbroideryCreator
             PaintNewColorOnPixelPosition(position, colorMeans[colorIndexToPaint], resultingImage);
         }
 
-        public void PaintNewColorOnGeneralPosition(Tuple<int, int> generalPosition, int colorIndex)
+        public void PaintNewColorOnGeneralPosition(Tuple<int, int> generalPosition, int colorIndexToPaint)
         {
             Tuple<int, int> coordinates = ConvertFromGeneralPositionOnImageToCoordinates(generalPosition);
             if(coordinates.Item1 < 0 || coordinates.Item1 >= matrixOfNewColors.GetLength(0) || coordinates.Item2 < 0 || coordinates.Item2 >= matrixOfNewColors.GetLength(1))
@@ -253,9 +253,9 @@ namespace EmbroideryCreator
                 return;
             }
 
-            if (matrixOfNewColors[coordinates.Item1, coordinates.Item2] == colorIndex) return;
+            if (matrixOfNewColors[coordinates.Item1, coordinates.Item2] == colorIndexToPaint) return;
 
-            PaintPixelInPositionWithColorOfIndex(coordinates, colorIndex);
+            PaintPixelInPositionWithColorOfIndex(coordinates, colorIndexToPaint);
         }
 
         private Tuple<int, int> ConvertFromGeneralPositionOnImageToCoordinates(Tuple<int, int> generalPosition)
@@ -264,6 +264,12 @@ namespace EmbroideryCreator
             int y = (int)(((float)(generalPosition.Item2 - borderThicknessInNumberOfPixels)) / newPixelSize);
 
             return new Tuple<int, int>(x, y);
+        }
+
+        public void AddNewColor(Color newColor)
+        {
+            positionsOfEachColor.Add(colorMeans.Count, new List<Tuple<int, int>>());
+            colorMeans.Add(newColor);
         }
     }
 }

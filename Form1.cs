@@ -39,17 +39,17 @@ namespace EmbroideryCreator
         private void mainPictureBox_Click(object sender, EventArgs e)
         {
             //SelectNewImageFile();
-            Console.WriteLine("Simple Click");
+            //Console.WriteLine("Simple Click");
         }
 
         private void mainPictureBox_DoubleClick(object sender, EventArgs e)
         {
-            Console.WriteLine("Double Click");
+            //Console.WriteLine("Double Click");
         }
 
         private void mainPictureBox_MouseDown(object sender, MouseEventArgs e)
         {
-            Console.WriteLine("Mouse Down");
+            //Console.WriteLine("Mouse Down");
             isDrawing = true;
 
             Point positionOnImage = e.Location;
@@ -59,7 +59,7 @@ namespace EmbroideryCreator
 
         private void mainPictureBox_MouseUp(object sender, MouseEventArgs e)
         {
-            Console.WriteLine("Mouse Up");
+            //Console.WriteLine("Mouse Up");
             isDrawing = false;
             //Console.WriteLine(mainPictureBox.Size.Width + " " + mainPictureBox.Size.Height);
         }
@@ -68,9 +68,14 @@ namespace EmbroideryCreator
         {
             if (isDrawing)
             {
-                Console.WriteLine(line + ": Drawing"); line++;
+                //Console.WriteLine(line + ": Drawing"); line++;
                 DrawOnPictureBox(e.Location);
             }
+        }
+
+        private void MainForm_Deactivate(object sender, EventArgs e)
+        {
+            isDrawing = false;
         }
 
         private void DrawOnPictureBox(Point positionOnImage)
@@ -195,7 +200,9 @@ namespace EmbroideryCreator
         {
             if(imageAndOperationsData.resultingImage != null)
             {
-                saveImageFileDialog.Filter = "Image files|*.bmp;*.jpg;*.jpeg;*.gif;*.png;*.tif|All files|*.*";
+                //saveImageFileDialog.Filter = "Image files|*.bmp;*.jpg;*.jpeg;*.gif;*.png;*.tif|All files|*.*";
+                saveImageFileDialog.Filter = "Image files|*.png;*.jpg;*.jpeg;";
+
 
                 if (saveImageFileDialog.ShowDialog() == DialogResult.OK)
                 {
@@ -265,9 +272,22 @@ namespace EmbroideryCreator
             }
         }
 
-        private void MainForm_Deactivate(object sender, EventArgs e)
+        private void AddNewColor(Color newColor)
         {
-            isDrawing = false;
+            ReducedColorControl colorControl = new ReducedColorControl();
+            colorControl.InitializeReducedColorControl(newColor, flowLayoutPanelListOfColors.Controls.Count, colorControl, this);
+            flowLayoutPanelListOfColors.Controls.Add(colorControl);
+            imageAndOperationsData.AddNewColor(newColor);
+        }
+
+        private void addColorButton_Click(object sender, EventArgs e)
+        {
+            if (imageAndOperationsData == null || imageAndOperationsData.resultingImage == null) return;
+
+            if (addColorDialog.ShowDialog() == DialogResult.OK)
+            {
+                AddNewColor(addColorDialog.Color);
+            }
         }
     }
 }

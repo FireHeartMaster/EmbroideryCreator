@@ -49,6 +49,7 @@ namespace EmbroideryCreator
             this.ListOfColorsLabel = new System.Windows.Forms.Label();
             this.mergeColorsButton = new System.Windows.Forms.Button();
             this.addColorButton = new System.Windows.Forms.Button();
+            this.addColorDialog = new System.Windows.Forms.ColorDialog();
             ((System.ComponentModel.ISupportInitialize)(this.mainPictureBox)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.widthSizeTrackBar)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numberOfColorsTrackBar)).BeginInit();
@@ -244,6 +245,7 @@ namespace EmbroideryCreator
             this.addColorButton.TabIndex = 17;
             this.addColorButton.Text = "Add color";
             this.addColorButton.UseVisualStyleBackColor = true;
+            this.addColorButton.Click += new System.EventHandler(this.addColorButton_Click);
             // 
             // MainForm
             // 
@@ -303,6 +305,7 @@ namespace EmbroideryCreator
         private System.Windows.Forms.Label ListOfColorsLabel;
         private System.Windows.Forms.Button mergeColorsButton;
         private System.Windows.Forms.Button addColorButton;
+        private System.Windows.Forms.ColorDialog addColorDialog;
     }
 }
 
