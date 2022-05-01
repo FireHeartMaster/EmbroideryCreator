@@ -60,6 +60,7 @@
     </Compile>
     <Compile Include="ImageAndOperationsData.cs" />
     <Compile Include="ImageTransformations.cs" />
+    <Compile Include="MachineEmbroidery.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ReducedColorControl.cs">
