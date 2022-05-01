@@ -99,8 +99,86 @@ namespace EmbroideryCreator
             {
                 edgesAndNumberOfTimesItAppears.Add(edge, 1);
             }
+            DuplicateEdgesRelativeToOddDegreeVertices(oddDegreeVertices, edgesAndNumberOfTimesItAppears);
+
+            //Find Eulerian cycle now that the graph is guaranteed to be Eulerian
 
             throw new NotImplementedException();
+        }
+
+        private void DuplicateEdgesRelativeToOddDegreeVertices(HashSet<Tuple<int, int>> oddDegreeVertices, Dictionary<Edge, int> edgesAndNumberOfTimesItAppears)
+        {
+            //Breadth first search while both keeping track of already visited vertices and "parent" of each vertex, i.e., the vertex that came before the current vertex in that path
+            
+            while(oddDegreeVertices.Count > 0)
+            {
+                HashSet<Tuple<int, int>> alreadyVisitedVertices = new HashSet<Tuple<int, int>>();
+
+                Tuple<int, int> startingPosition = oddDegreeVertices.First<Tuple<int, int>>();
+                VertexAndParent startingVertex = new VertexAndParent(startingPosition, null);
+
+                Queue<VertexAndParent> queue = new Queue<VertexAndParent>();
+                queue.Enqueue(startingVertex);
+
+                VertexAndParent endingVertex = startingVertex;
+                //Breadth First Search from the top position among the odd degree vertices until I find another vertex that also is an odd degree vertex
+                while (queue.Count > 0)
+                {
+                    VertexAndParent currentVertex = queue.Dequeue();
+                    alreadyVisitedVertices.Add(currentVertex.vertex);
+
+                    if (oddDegreeVertices.Contains(currentVertex.vertex))
+                    {
+                        endingVertex = currentVertex;
+                        break;
+                    }
+
+                    //Add connecting vertices
+                    //Upper left
+                    Tuple<int, int> upperLeftPosition = new Tuple<int, int>(currentVertex.vertex.Item1 - 1, currentVertex.vertex.Item2 - 1);
+                    TryToEnqueueNewVertex(edgesAndNumberOfTimesItAppears, alreadyVisitedVertices, queue, currentVertex, upperLeftPosition, false);
+                    //Upper right
+                    Tuple<int, int> upperRightPosition = new Tuple<int, int>(currentVertex.vertex.Item1 + 1, currentVertex.vertex.Item2 - 1);
+                    TryToEnqueueNewVertex(edgesAndNumberOfTimesItAppears, alreadyVisitedVertices, queue, currentVertex, upperRightPosition, false);
+                    //Bottom left
+                    Tuple<int, int> bottomLeftPosition = new Tuple<int, int>(currentVertex.vertex.Item1 - 1, currentVertex.vertex.Item2 + 1);
+                    TryToEnqueueNewVertex(edgesAndNumberOfTimesItAppears, alreadyVisitedVertices, queue, currentVertex, bottomLeftPosition, false);
+                    //Bottom right
+                    Tuple<int, int> bottomRightPosition = new Tuple<int, int>(currentVertex.vertex.Item1 + 1, currentVertex.vertex.Item2 + 1);
+                    TryToEnqueueNewVertex(edgesAndNumberOfTimesItAppears, alreadyVisitedVertices, queue, currentVertex, bottomRightPosition, false);
+                }
+
+                //Double all edges going from the ending vertex to the starting vertex
+                //Back tracing from ending vertex until the parent vertex is null
+                while(endingVertex.parent != null)
+                {
+                    Edge edgeToDouble;
+                    if (endingVertex.parent.vertex.Item2 < endingVertex.vertex.Item2)
+                    {
+                        //Parent vertex is above the current vertex, the parent vertex then needs to come first in the edge as per the convention used in this code
+                        edgeToDouble = new Edge(endingVertex.parent.vertex, endingVertex.vertex);
+                    }
+                    else
+                    {
+                        //Parent vertex is below the current vertex, the parent vertex then needs to come after the current one in the edge as per the convention used in this code
+                        edgeToDouble = new Edge(endingVertex.vertex, endingVertex.parent.vertex);
+                    }
+                    //"Double" this edge
+                    edgesAndNumberOfTimesItAppears[edgeToDouble]++;
+                }
+            }
+        }
+
+        private static void TryToEnqueueNewVertex(Dictionary<Edge, int> edgesAndNumberOfTimesItAppears, HashSet<Tuple<int, int>> alreadyVisitedVertices, Queue<VertexAndParent> queue, VertexAndParent currentVertex, Tuple<int, int> potentialNewPosition, bool currentVertexIsUpper)
+        {
+            if (!alreadyVisitedVertices.Contains(potentialNewPosition))
+            {
+                Edge potentialEdge = currentVertexIsUpper ? new Edge(currentVertex.vertex, potentialNewPosition) : new Edge(potentialNewPosition, currentVertex.vertex);
+                if (edgesAndNumberOfTimesItAppears.ContainsKey(potentialEdge))
+                {
+                    queue.Enqueue(new VertexAndParent(potentialNewPosition, currentVertex));
+                }
+            }
         }
 
         private static void UpdateDegreeOfVertex(Dictionary<Tuple<int, int>, int> degreeOfEachVertex, Tuple<int, int> vertexToUpdate)
@@ -201,6 +279,18 @@ namespace EmbroideryCreator
         {
             this.upperVertex = upperVertex;
             this.bottomVertex = bottomVertex;
+        }
+    }
+
+    public class VertexAndParent
+    {
+        public Tuple<int, int> vertex;
+        public VertexAndParent parent;
+
+        public VertexAndParent(Tuple<int, int> vertex, VertexAndParent parent)
+        {
+            this.vertex = vertex;
+            this.parent = parent;
         }
     }
 }
