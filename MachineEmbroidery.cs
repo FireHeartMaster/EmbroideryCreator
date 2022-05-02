@@ -34,7 +34,6 @@ namespace EmbroideryCreator
                     LinkedList<Tuple<int, int>> pathToFollow = CreateShortestPath(currentConnectedRegion, true);
                 }
 
-                //
                 //TODO: Do the same as above but for left diagonals
 
             }
@@ -127,9 +126,10 @@ namespace EmbroideryCreator
                     localTour = MakeEulerianCycle(vertices, edgesAndNumberOfTimesItAppears, /*currentPosition*/currentNode.Value);
                     //Incorporate this local tour to the global tour
                     LinkedListNode<Tuple<int, int>> lastAddedNode = currentNode;
+                    LinkedListNode<Tuple<int, int>> nextNodeAfterLocalTour = currentNode.Next;
                     foreach (Tuple<int, int> newNode in localTour)
                     {
-                        lastAddedNode =  tour.AddAfter(currentNode, newNode);
+                        lastAddedNode =  tour.AddBefore(nextNodeAfterLocalTour, newNode);
                     }
 
                     //Take that new tour and connect properly to the tour the vertex belonged to
