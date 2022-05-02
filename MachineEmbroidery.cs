@@ -26,21 +26,21 @@ namespace EmbroideryCreator
                 //TODO: while the dictionary created on the previous step is not empty, perform loop containing the next two steps
                 while(allPositionsForCurrentColor.Count > 0)
                 {
-                    //TODO: Find next connected region for this color starting with right diagonal (Flood Fill algorithm.
+                    //TODO: Find next connected region for this color starting with right diagonal (Flood Fill algorithm)
                     //Don't forget to remove each position from the dictionary throughout the flood fill algorithm
                     HashSet<Tuple<int, int>> currentConnectedRegion = FloodFill(allPositionsForCurrentColor, true);
 
                     //TODO: Create path for the connected region starting with right diagonal found in previous step (Chinese Postman Problem)
-                    List<Tuple<int, int>> pathToFollow = CreateShortestPath(currentConnectedRegion, true);
+                    LinkedList<Tuple<int, int>> pathToFollow = CreateShortestPath(currentConnectedRegion, true);
                 }
 
-
+                //
                 //TODO: Do the same as above but for left diagonals
 
             }
         }
 
-        private List<Tuple<int, int>> CreateShortestPath(HashSet<Tuple<int, int>> currentConnectedRegion, bool startsAtRightDiagonal)
+        private LinkedList<Tuple<int, int>> CreateShortestPath(HashSet<Tuple<int, int>> currentConnectedRegion, bool startsAtRightDiagonal)
         {
             //Prepare for the implementation by first creating both vertices and edges
             //For vertices I will use the coordinates of the top left corner of each square as the way of identifying each vertex / associating coordinates to them
@@ -102,8 +102,130 @@ namespace EmbroideryCreator
             DuplicateEdgesRelativeToOddDegreeVertices(oddDegreeVertices, edgesAndNumberOfTimesItAppears);
 
             //Find Eulerian cycle now that the graph is guaranteed to be Eulerian
+            Tuple<int, int> startingPositionForEulerianCycle = vertices.First<Tuple<int, int>>();
+            LinkedList<Tuple<int, int>> eulerianCycle = MakeEulerianCycle(vertices, edgesAndNumberOfTimesItAppears, startingPositionForEulerianCycle);
 
-            throw new NotImplementedException();
+            return eulerianCycle;
+        }
+
+        private LinkedList<Tuple<int, int>> MakeEulerianCycle(HashSet<Tuple<int, int>> vertices, Dictionary<Edge, int> edgesAndNumberOfTimesItAppears, Tuple<int, int> startingPosition)
+        {
+            LinkedList<Tuple<int, int>> tour = MakeTour(vertices, edgesAndNumberOfTimesItAppears, startingPosition);
+
+            //while there are vertices in this tour that have unused edges, call this very function recursively in order to make new tours starting on each of those vertices and returning to it
+            //var startingPositionIn = MakeEulerianCycle(vertices, edgesAndNumberOfTimesItAppears)
+            //Tuple<int, int> currentPosition = startingPosition;
+            LinkedListNode<Tuple<int, int>> currentNode = tour.First;
+            
+            if (tour.Count <= 1) return tour;
+
+            do
+            {
+                LinkedList<Tuple<int, int>> localTour;
+                do
+                {
+                    localTour = MakeEulerianCycle(vertices, edgesAndNumberOfTimesItAppears, /*currentPosition*/currentNode.Value);
+                    //Incorporate this local tour to the global tour
+                    LinkedListNode<Tuple<int, int>> lastAddedNode = currentNode;
+                    foreach (Tuple<int, int> newNode in localTour)
+                    {
+                        lastAddedNode =  tour.AddAfter(currentNode, newNode);
+                    }
+
+                    //Take that new tour and connect properly to the tour the vertex belonged to
+                    tour.Remove(currentNode);
+                    currentNode = lastAddedNode;
+                    //currentPosition = currentNode.Value;
+
+                        
+
+                } while (localTour.Count > 1);
+                //move current node to next node in the sequence
+                currentNode = currentNode.Next;
+                //currentPosition = currentNode.Value;
+
+            } while (/*currentPosition*/currentNode.Value != startingPosition);
+
+
+
+            //Return the path resulting after the while loop
+
+            return tour;
+        }
+
+        private LinkedList<Tuple<int, int>> MakeTour(HashSet<Tuple<int, int>> vertices, Dictionary<Edge, int> edgesAndNumberOfTimesItAppears, Tuple<int, int> startingPosition)
+        {
+            Tuple<int, int> currentPosition = startingPosition;
+
+            LinkedList<Tuple<int, int>> tour = new LinkedList<Tuple<int, int>>();
+
+            do
+            {
+                //Adding the current position to our tour
+                tour.AddLast(currentPosition);
+                List<Edge> unusedEdgesConnectedToThisVertex;
+                List<Tuple<int, int>> verticesConnectedToThisVertex;
+                GetVerticesAndEdgesConnectedToThisVertex(edgesAndNumberOfTimesItAppears, currentPosition, out unusedEdgesConnectedToThisVertex, out verticesConnectedToThisVertex);
+
+                //Randomly choosing one of the vertices connected to the current vertex and moving to there
+                if(verticesConnectedToThisVertex.Count > 0)
+                {
+                    Random rnd = new Random();
+                    int nextPositionIndex = rnd.Next(0, verticesConnectedToThisVertex.Count);
+                    Tuple<int, int> nextPosition = verticesConnectedToThisVertex[nextPositionIndex];
+                    edgesAndNumberOfTimesItAppears[unusedEdgesConnectedToThisVertex[nextPositionIndex]]--;
+
+                    currentPosition = nextPosition;
+                }
+
+            } while (currentPosition != startingPosition);
+
+            if(tour.Count > 1)
+            {
+                tour.AddLast(startingPosition); //Adding the starting position again to complete a closed tour, but only if the tour has more elements besides the starting one
+            }
+
+            return tour;
+        }
+
+        private static void GetVerticesAndEdgesConnectedToThisVertex(Dictionary<Edge, int> edgesAndNumberOfTimesItAppears, Tuple<int, int> currentPosition, out List<Edge> unusedEdgesConnectedToThisVertex, out List<Tuple<int, int>> verticesConnectedToThisVertex)
+        {
+            //Add connecting vertices
+            //Upper left
+            Tuple<int, int> upperLeftPosition = new Tuple<int, int>(currentPosition.Item1 - 1, currentPosition.Item2 - 1);
+            Edge upperLeftEdge = new Edge(upperLeftPosition, currentPosition);
+            //Upper right
+            Tuple<int, int> upperRightPosition = new Tuple<int, int>(currentPosition.Item1 + 1, currentPosition.Item2 - 1);
+            Edge upperRightEdge = new Edge(upperRightPosition, currentPosition);
+            //Bottom left
+            Tuple<int, int> bottomLeftPosition = new Tuple<int, int>(currentPosition.Item1 - 1, currentPosition.Item2 + 1);
+            Edge bottomLeftEdge = new Edge(currentPosition, bottomLeftPosition);
+            //Bottom right
+            Tuple<int, int> bottomRightPosition = new Tuple<int, int>(currentPosition.Item1 + 1, currentPosition.Item2 + 1);
+            Edge bottomRightEdge = new Edge(currentPosition, bottomRightPosition);
+
+            unusedEdgesConnectedToThisVertex = new List<Edge>();
+            verticesConnectedToThisVertex = new List<Tuple<int, int>>();
+            if (edgesAndNumberOfTimesItAppears.ContainsKey(upperLeftEdge) && edgesAndNumberOfTimesItAppears[upperLeftEdge] > 0)
+            {
+                unusedEdgesConnectedToThisVertex.Add(upperLeftEdge);
+                verticesConnectedToThisVertex.Add(upperLeftPosition);
+            }
+            if (edgesAndNumberOfTimesItAppears.ContainsKey(upperRightEdge) && edgesAndNumberOfTimesItAppears[upperRightEdge] > 0)
+            {
+                unusedEdgesConnectedToThisVertex.Add(upperRightEdge);
+                verticesConnectedToThisVertex.Add(upperRightPosition);
+            }
+            if (edgesAndNumberOfTimesItAppears.ContainsKey(bottomLeftEdge) && edgesAndNumberOfTimesItAppears[bottomLeftEdge] > 0)
+            {
+                unusedEdgesConnectedToThisVertex.Add(bottomLeftEdge);
+                verticesConnectedToThisVertex.Add(bottomLeftPosition);
+            }
+            if (edgesAndNumberOfTimesItAppears.ContainsKey(bottomRightEdge) && edgesAndNumberOfTimesItAppears[bottomRightEdge] > 0)
+            {
+                unusedEdgesConnectedToThisVertex.Add(bottomRightEdge);
+                verticesConnectedToThisVertex.Add(bottomRightPosition);
+            }
         }
 
         private void DuplicateEdgesRelativeToOddDegreeVertices(HashSet<Tuple<int, int>> oddDegreeVertices, Dictionary<Edge, int> edgesAndNumberOfTimesItAppears)
