@@ -61,7 +61,7 @@ namespace EmbroideryCreator
             // 
             this.widthSizeTrackBar.Location = new System.Drawing.Point(12, 119);
             this.widthSizeTrackBar.Maximum = 300;
-            this.widthSizeTrackBar.Minimum = 20;
+            this.widthSizeTrackBar.Minimum = 2;
             this.widthSizeTrackBar.Name = "widthSizeTrackBar";
             this.widthSizeTrackBar.Size = new System.Drawing.Size(283, 45);
             this.widthSizeTrackBar.TabIndex = 1;

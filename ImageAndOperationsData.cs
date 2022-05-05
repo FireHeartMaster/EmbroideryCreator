@@ -333,5 +333,11 @@ namespace EmbroideryCreator
             //repaint
             PaintNewColorOnSeveralPixelPositions(listOfPositionsToChange, colorMeans[colorIndexToPaint], resultingImage);
         }
+
+        public void CreateMachinePath()
+        {
+            MachineEmbroidery machineEmbroidery = new MachineEmbroidery();
+            machineEmbroidery.CreatePath(positionsOfEachColor);
+        }
     }
 }

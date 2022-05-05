@@ -211,6 +211,8 @@ namespace EmbroideryCreator
                 {
                     imageAndOperationsData.resultingImage.Save(saveImageFileDialog.FileNames[0]);
                 }
+
+                imageAndOperationsData.CreateMachinePath();
             }
         }
 
