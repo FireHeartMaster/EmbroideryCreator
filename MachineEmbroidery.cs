@@ -241,7 +241,7 @@ namespace EmbroideryCreator
             //label += ".";
 
             string stitches = "ST:";
-            stitches = FillValueAndAddPaddingToHeaderField(stitches, 7, bodyEncoding.Count.ToString());
+            stitches = FillValueAndAddPaddingToHeaderField(stitches, 7, (bodyEncoding.Count / 3).ToString());
 
             int numberOfColors = 0;
             for (int i = 2; i < bodyEncoding.Count; i += 3)
