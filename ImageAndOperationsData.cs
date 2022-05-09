@@ -337,7 +337,8 @@ namespace EmbroideryCreator
         public void CreateMachinePath()
         {
             MachineEmbroidery machineEmbroidery = new MachineEmbroidery();
-            machineEmbroidery.CreatePath(positionsOfEachColor);
+            //machineEmbroidery.CreatePath(positionsOfEachColor);
+            machineEmbroidery.CreatePathAndDstFile(positionsOfEachColor, 1);
         }
     }
 }

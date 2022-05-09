@@ -14,104 +14,332 @@ namespace EmbroideryCreator
          * left diagonal: diagonal with upper part on the left side
          */
 
-        public void ConvertEmbroideryPathToDstFile(LinkedList<Tuple<StitchType, Tuple<int, int>>> listOfStitches, float sizeOfEachPixel)
+        public void CreatePathAndDstFile(Dictionary<int, List<Tuple<int, int>>> positionsOfEachColor, int sizeOfEachPixel)
+        {
+            LinkedList<Tuple<StitchType, Tuple<int, int>>> path = CreatePath(positionsOfEachColor);
+            ConvertEmbroideryPathToDstFile(path, sizeOfEachPixel);
+        }
+
+
+        private void ConvertEmbroideryPathToDstFile(LinkedList<Tuple<StitchType, Tuple<int, int>>> listOfStitches, int sizeOfEachPixel)
         {
             string filePath = "D:/Downloads/newFile.dst";
             using (FileStream fs = new FileStream(filePath, FileMode.Create, FileAccess.Write))
             {
                 using(BinaryWriter bw = new BinaryWriter(fs, new ASCIIEncoding()))
                 {
-                    EncodeDstFileHeader(bw, listOfStitches);
-                    EncodeDstFileBody(bw, listOfStitches, sizeOfEachPixel);
+                    List<byte> bodyEncoding = GetEncodingDstFileBody(listOfStitches, sizeOfEachPixel, out int minX, out int maxX, out int minY, out int maxY);
+                    List<byte> headerEncoding = GetEncodingDstFileHeader(bodyEncoding, minX, maxX, minY, maxY);
+
+                    List<byte> allBytesOnThisFile = new List<byte>();
+                    allBytesOnThisFile.AddRange(headerEncoding);
+                    allBytesOnThisFile.AddRange(bodyEncoding);
+
+                    bw.Write(allBytesOnThisFile.ToArray());
+                    bw.Close();
                 }
             }
         }
 
-        private void EncodeDstFileBody(BinaryWriter bw, LinkedList<Tuple<StitchType, Tuple<int, int>>> listOfStitches, float sizeOfEachPixel)
+        private List<byte> GetEncodingDstFileBody(LinkedList<Tuple<StitchType, Tuple<int, int>>> listOfStitches, int sizeOfEachPixel, out int minX, out int maxX, out int minY, out int maxY)
         {
+            //TODO: Should sizeOfEachPixel be an integer?
+
             List<byte> bytesList = new List<byte>();
 
+            //X and Y position in number of pixels, not real distances
             int currentPositionX = 0;
             int currentPositionY = 0;
+
+            minX = int.MaxValue;
+            maxX = int.MinValue;
+            minY = int.MaxValue;
+            maxY = int.MinValue;
 
             while (listOfStitches.Count > 0)
             {
                 Tuple<StitchType, Tuple<int, int>> currentStitch = listOfStitches.First();
                 listOfStitches.RemoveFirst();
 
-                byte[] bytesFromStitch = GetByteFromStitchCommand(currentStitch, sizeOfEachPixel, currentPositionX, currentPositionY, listOfStitches.Count == 0);
+                List<byte> bytesFromStitch = GetBytesFromStitchCommand(currentStitch, sizeOfEachPixel, currentPositionX, currentPositionY, listOfStitches.Count == 0);
+                currentPositionX = currentStitch.Item2.Item1;
+                currentPositionY = currentStitch.Item2.Item2;
 
+                if (currentPositionX < minX) minX = currentPositionX * sizeOfEachPixel;
+                if (currentPositionX > maxX) maxX = currentPositionX * sizeOfEachPixel;
+                if (currentPositionY < minY) minY = currentPositionY * sizeOfEachPixel;
+                if (currentPositionY > maxY) maxY = currentPositionY * sizeOfEachPixel;
 
                 foreach (byte byteFromStitch in bytesFromStitch)
                 {
                     bytesList.Add(byteFromStitch);
                 }
             }
-            
-            byte[] bytesArray = bytesList.ToArray();
+
+            return bytesList;
         }
 
-        private byte[] GetByteFromStitchCommand(Tuple<StitchType, Tuple<int, int>> currentStitch, float sizeOfEachPixel, int currentPositionX, int currentPositionY, bool isLastStitch)
+        private List<byte> GetBytesFromStitchCommand(Tuple<StitchType, Tuple<int, int>> currentStitch, int sizeOfEachPixel, int currentPositionX, int currentPositionY, bool isLastStitch)
         {
             int maxJumpSize = 121;
-            byte[] bytesFromStitch;
-
+            List<byte> bytesFromStitch = new List<byte>();
+            int positionToJumpToX, positionToJumpToY;
             switch (currentStitch.Item1)
             {
                 case StitchType.ColorChange:
                     if (isLastStitch)
                     {
-                        //Jump back to the origin and then do the command 00 00 F3, 
+                        //Jump back to the origin and then do the command 00 00 F3 (Stop command), 
 
-                        int jumpSizeSquared = (int)((currentPositionX * currentPositionX + currentPositionY * currentPositionY) * sizeOfEachPixel * sizeOfEachPixel);
-                        if(jumpSizeSquared <= maxJumpSize)
-                        {
-                            bytesFromStitch = new byte[6];  
-                        }
-                        else
-                        {
+                        //First let's jump back to the origin (0,0)
+                        positionToJumpToX = 0;
+                        positionToJumpToY = 0;
+                        JumpToPositionAndGetBytes(currentStitch, sizeOfEachPixel, ref currentPositionX, ref currentPositionY, maxJumpSize, bytesFromStitch, positionToJumpToX, positionToJumpToY);
 
-                        }
+                        //The STOP command consists of 00 00 F3
+                        bytesFromStitch.Add(0);
+                        bytesFromStitch.Add(0);
+                        bytesFromStitch.Add((15 << 4) & 3); //this last byte is hexadecimal F3
                     }
                     else
                     {
-                        bytesFromStitch = new byte[3];
-                        bytesFromStitch[0] = 0;
-                        bytesFromStitch[1] = 0;
-
-                        bytesFromStitch[2] = 195;
+                        //This is the usual color change command
+                        bytesFromStitch.Add(0);
+                        bytesFromStitch.Add(0);
+                        bytesFromStitch.Add(195);
                     }
 
                     break;
                 case StitchType.JumpStitch:
-                    if (isLastStitch)
-                    {
-
-                    }
-                    else
-                    {
-                        int xRelativeMovement = currentStitch.Item2.Item1;
-                        int yRelativeMovement = currentStitch.Item2.Item2;
-                    }
-
-
-
-
+                    positionToJumpToX = currentStitch.Item2.Item1;
+                    positionToJumpToY = currentStitch.Item2.Item2;
+                    JumpToPositionAndGetBytes(currentStitch, sizeOfEachPixel, ref currentPositionX, ref currentPositionY, maxJumpSize, bytesFromStitch, positionToJumpToX, positionToJumpToY);
                     break;
                 case StitchType.SequinMode:
+                    StitchAtPosition(currentStitch, sizeOfEachPixel, ref currentPositionX, ref currentPositionY, bytesFromStitch);
                     break;
                 case StitchType.NormalStitch:
+                    StitchAtPosition(currentStitch, sizeOfEachPixel, ref currentPositionX, ref currentPositionY, bytesFromStitch);
                     break;
             }
-            throw new NotImplementedException();
+
+            return bytesFromStitch;
         }
 
-        private void EncodeDstFileHeader(BinaryWriter bw, LinkedList<Tuple<StitchType, Tuple<int, int>>> listOfStitches)
+        private void StitchAtPosition(Tuple<StitchType, Tuple<int, int>> currentStitch, int sizeOfEachPixel, ref int currentPositionX, ref int currentPositionY, List<byte> bytesFromStitch)
         {
-            throw new NotImplementedException();
+            int stitchDeltaX = currentStitch.Item2.Item1 - currentPositionX;
+            int stitchDeltaY = currentStitch.Item2.Item2 - currentPositionY;
+            ConvertCommandToByte(currentStitch.Item1, bytesFromStitch, stitchDeltaX * sizeOfEachPixel, stitchDeltaY * sizeOfEachPixel);
+            currentPositionX += stitchDeltaX;
+            currentPositionY += stitchDeltaY;
         }
 
-        private List<int> ConvertNumberToPowersOfNumber(int number, int basis = 3, int maxSize = 5)
+        private void JumpToPositionAndGetBytes(Tuple<StitchType, Tuple<int, int>> currentStitch, int sizeOfEachPixel, ref int currentPositionX, ref int currentPositionY, int maxJumpSize, List<byte> bytesFromStitch, int positionToJumpToX, int positionToJumpToY)
+        {
+            int jumpSizeSquared = ((positionToJumpToX - currentPositionX) * (positionToJumpToX - currentPositionX) + (positionToJumpToY - currentPositionY) * (positionToJumpToY - currentPositionY)) * sizeOfEachPixel * sizeOfEachPixel;
+
+            int jumpDeltaX, jumpDeltaY;
+            if (jumpSizeSquared <= maxJumpSize * maxJumpSize)
+            {
+                jumpDeltaX = (positionToJumpToX - currentPositionX);
+                jumpDeltaY = (positionToJumpToY - currentPositionY);
+                ConvertCommandToByte(StitchType.JumpStitch, bytesFromStitch, jumpDeltaX * sizeOfEachPixel, jumpDeltaY * sizeOfEachPixel);
+                currentPositionX += jumpDeltaX;
+                currentPositionY += jumpDeltaY;
+            }
+            else
+            {
+                int numberOfTimesToJumpBackToOrigin = (int)Math.Sqrt(jumpSizeSquared) / maxJumpSize;
+
+                jumpDeltaX = (positionToJumpToX - currentPositionX) / numberOfTimesToJumpBackToOrigin;
+                jumpDeltaY = (positionToJumpToY - currentPositionY) / numberOfTimesToJumpBackToOrigin;
+
+                for (int i = 0; i < numberOfTimesToJumpBackToOrigin; i++)
+                {
+                    if (i == numberOfTimesToJumpBackToOrigin - 1)
+                    {
+                        jumpDeltaX = -currentPositionX;
+                        jumpDeltaY = -currentPositionY;
+                    }
+                    ConvertCommandToByte(StitchType.JumpStitch, bytesFromStitch, jumpDeltaX * sizeOfEachPixel, jumpDeltaY * sizeOfEachPixel);
+                    currentPositionX += jumpDeltaX;
+                    currentPositionY += jumpDeltaY;
+                }
+            }
+        }
+
+        private void ConvertCommandToByte(StitchType stitchType, List<byte> bytesFromStitch, int amountToMoveX, int amountToMoveY)
+        {
+            List<int> movePowersX = ConvertNumberToPowersOfNumber(amountToMoveX, 3);
+            List<int> movePowersY = ConvertNumberToPowersOfNumber(amountToMoveY, 3);
+
+            //completing the powers with zeros up to 81=3^5
+            while (movePowersX.Count < 5)
+            {
+                movePowersX.Add(0);
+            }
+            while (movePowersY.Count < 5)
+            {
+                movePowersY.Add(0);
+            }
+            byte[] bytesFromPowersAndCommand = GetBytesFromPowersAndCommand(movePowersX, movePowersY, stitchType);
+            for (int i = 0; i < 3; i++)
+            {
+                bytesFromStitch.Add(bytesFromPowersAndCommand[i]);
+            }
+        }
+
+        private byte[] GetBytesFromPowersAndCommand(List<int> jumpPowersX, List<int> jumpPowersY, StitchType stitchType)
+        {
+            //The structure of this bytes follows a very particular pattern specific to the .dst format
+
+            byte[] commandBytes = new byte[3];
+
+            commandBytes[0] = (byte)(jumpPowersY[0] >= 0 ? jumpPowersY[0] << 7 : 1 << 6);
+            commandBytes[0] &= (byte)(jumpPowersY[2] >= 0 ? jumpPowersY[2] << 5 : 1 << 4);
+            commandBytes[0] &= (byte)(jumpPowersX[2] >= 0 ? jumpPowersX[2] << 2 : 1 << 3);
+            commandBytes[0] &= (byte)(jumpPowersX[0] >= 0 ? jumpPowersX[0] << 0 : 1 << 1);  // "<< 0" does nothing but I wrote it this way to keep the standard of the other parts so I can easily know what the code is doing when reading
+
+            commandBytes[1] = (byte)(jumpPowersY[1] >= 0 ? jumpPowersY[1] << 7 : 1 << 6);
+            commandBytes[1] &= (byte)(jumpPowersY[3] >= 0 ? jumpPowersY[3] << 5 : 1 << 4);
+            commandBytes[1] &= (byte)(jumpPowersX[3] >= 0 ? jumpPowersX[3] << 2 : 1 << 3);
+            commandBytes[1] &= (byte)(jumpPowersX[1] >= 0 ? jumpPowersX[1] << 0 : 1 << 1);
+
+            //The two first bits of the third byte are control bits, which tell the type of stitch that the machine needs to perform
+            switch (stitchType)
+            {
+                case StitchType.NormalStitch:
+                    commandBytes[2] = 0;
+                    break;
+                case StitchType.JumpStitch:
+                    commandBytes[2] = (byte)1 << 7;
+                    break;
+                case StitchType.ColorChange:
+                    commandBytes[2] = (byte)3 << 6;
+                    break;
+                case StitchType.SequinMode:
+                    commandBytes[2] = (byte)1 << 6;
+                    break;
+            }
+            commandBytes[2] &= (byte)(jumpPowersY[4] >= 0 ? jumpPowersY[4] << 5 : 1 << 4);
+            commandBytes[2] &= (byte)(jumpPowersX[4] >= 0 ? jumpPowersX[4] << 2 : 1 << 3);
+            commandBytes[2] &= (byte)3; //two last bits are always set in the .dst format
+
+            return commandBytes;
+        }
+
+        private List<byte> GetEncodingDstFileHeader(List<byte> bodyEncoding, int minX, int maxX, int minY, int maxY)
+        {
+            //DstHeaderInformation dstHeaderInformation = new DstHeaderInformation();
+
+            string label = "LA:" + "fileName";
+            while (label.Length < 3 + 16)
+            {
+                label += " ";
+            }
+            //label += ".";
+
+            string stitches = "ST:";
+            stitches = FillValueAndAddPaddingToHeaderField(stitches, 7, bodyEncoding.Count.ToString());
+
+            int numberOfColors = 0;
+            for (int i = 2; i < bodyEncoding.Count; i += 3)
+            {
+                if ((bodyEncoding[i] & (195)) != 0)
+                {
+                    numberOfColors++;
+                }
+            }
+            string numberOfColorsString = "CO:";
+            numberOfColorsString = FillValueAndAddPaddingToHeaderField(numberOfColorsString, 3, numberOfColors.ToString());
+
+            string xPlusExtends = "+X:";
+            xPlusExtends = FillValueAndAddPaddingToHeaderField(xPlusExtends, 5, maxX.ToString());
+
+            string xMinusExtends = "-X:";
+            xMinusExtends = FillValueAndAddPaddingToHeaderField(xMinusExtends, 5, minX.ToString());
+
+            string yPlusExtends = "+Y:";
+            yPlusExtends = FillValueAndAddPaddingToHeaderField(yPlusExtends, 5, maxY.ToString());
+
+            string yMinusExtends = "-Y:";
+            yMinusExtends = FillValueAndAddPaddingToHeaderField(yMinusExtends, 5, minY.ToString());
+
+            string aX = "AX:";
+            aX = FillValueAndAddPaddingToHeaderField(aX, 6, "0");
+
+            string aY = "AY:";
+            aY = FillValueAndAddPaddingToHeaderField(aY, 6, "0");
+
+            string mX = "MX:";
+            mX = FillValueAndAddPaddingToHeaderField(mX, 6, "0");
+
+            string mY = "MY:";
+            mY = FillValueAndAddPaddingToHeaderField(mY, 6, "0");
+
+            string pD = "PD:******";
+            //pD += ".";
+
+            byte[] labelBytes = Encoding.ASCII.GetBytes(label);
+            byte[] stitchesBytes = Encoding.ASCII.GetBytes(stitches);
+            byte[] numberOfColorsBytes = Encoding.ASCII.GetBytes(numberOfColorsString);
+            byte[] xPlusExtendsBytes = Encoding.ASCII.GetBytes(xPlusExtends);
+            byte[] xMinusExtendsBytes = Encoding.ASCII.GetBytes(xMinusExtends);
+            byte[] yPlusExtendsBytes = Encoding.ASCII.GetBytes(yPlusExtends);
+            byte[] yMinusExtendsBytes = Encoding.ASCII.GetBytes(yMinusExtends);
+            byte[] aXBytes = Encoding.ASCII.GetBytes(aX);
+            byte[] aYBytes = Encoding.ASCII.GetBytes(aY);
+            byte[] mXBytes = Encoding.ASCII.GetBytes(mX);
+            byte[] mYBytes = Encoding.ASCII.GetBytes(mY);
+            byte[] pDBytes = Encoding.ASCII.GetBytes(pD);
+
+            List<Byte> allHeaderBytes = new List<byte>();
+            FillBytesAndCarriageReturn(labelBytes, allHeaderBytes);
+            FillBytesAndCarriageReturn(stitchesBytes, allHeaderBytes);
+            FillBytesAndCarriageReturn(numberOfColorsBytes, allHeaderBytes);
+            FillBytesAndCarriageReturn(xPlusExtendsBytes, allHeaderBytes);
+            FillBytesAndCarriageReturn(xMinusExtendsBytes, allHeaderBytes);
+            FillBytesAndCarriageReturn(yPlusExtendsBytes, allHeaderBytes);
+            FillBytesAndCarriageReturn(yMinusExtendsBytes, allHeaderBytes);
+            FillBytesAndCarriageReturn(aXBytes, allHeaderBytes);
+            FillBytesAndCarriageReturn(aYBytes, allHeaderBytes);
+            FillBytesAndCarriageReturn(mXBytes, allHeaderBytes);
+            FillBytesAndCarriageReturn(mYBytes, allHeaderBytes);
+            FillBytesAndCarriageReturn(pDBytes, allHeaderBytes);
+
+            //Now complete by adding the padding in order to have a total of 512 bytes in the header
+            while(allHeaderBytes.Count < 512)
+            {
+                allHeaderBytes.Add(Encoding.ASCII.GetBytes(" ")[0]);
+            }
+
+            return allHeaderBytes;
+        }
+
+        private static void FillBytesAndCarriageReturn(byte[] labelBytes, List<byte> allHeaderBytes)
+        {
+            foreach (byte labelByte in labelBytes)
+            {
+                allHeaderBytes.Add(labelByte);
+            }
+            allHeaderBytes.Add(13); //0D (hexadecimal) at the end of each field
+        }
+
+        private static string FillValueAndAddPaddingToHeaderField(string headerField, int sizeOfThisField, string headerFieldValue)
+        {
+            int initialSize = headerField.Length;
+            while (headerField.Length + headerFieldValue.Length < initialSize + sizeOfThisField)
+            {
+                headerField += " "; //padding of 20 (hexadecimal)
+            }
+            headerField += headerFieldValue;
+            //headerField += ".";
+
+            return headerField;
+        }
+
+        private List<int> ConvertNumberToPowersOfNumber(int number, int basis = 3)
         {
             int absoluteValue = Math.Abs(number);
 
@@ -130,7 +358,7 @@ namespace EmbroideryCreator
             if(absoluteValue >= Math.Pow(basis, upperExponent) / (basis - 1))
             {
                 //then upper exponent does appear in the original number's representation by exponents
-                powers = ConvertNumberToPowersOfNumber((int)Math.Pow(basis, upperExponent) - absoluteValue, basis, maxSize);
+                powers = ConvertNumberToPowersOfNumber((int)Math.Pow(basis, upperExponent) - absoluteValue, basis);
                 for (int i = 0; i < powers.Count; i++)
                 {
                     powers[i] *= -1;
@@ -145,7 +373,7 @@ namespace EmbroideryCreator
             else
             {
                 //In this case, it's rather the lesser exponent that appears in the original number's representation by exponents and not upper exponent
-                powers = ConvertNumberToPowersOfNumber(absoluteValue - (int)Math.Pow(basis, lesserExponent), basis, maxSize);
+                powers = ConvertNumberToPowersOfNumber(absoluteValue - (int)Math.Pow(basis, lesserExponent), basis);
 
                 while (powers.Count < lesserExponent)
                 {
@@ -622,6 +850,22 @@ namespace EmbroideryCreator
             this.vertex = vertex;
             this.parent = parent;
         }
+    }
+
+    public class DstHeaderInformation
+    {
+        public char[] label = new char[16];
+        public char[] stitches = new char[7];
+        public char[] colors = new char[3];
+        public char[] xPlusExtends = new char[5];
+        public char[] xMinusExtends = new char[5];
+        public char[] yPlusExtends = new char[5];
+        public char[] yMinusExtends = new char[5];
+        public char[] aX = new char[6];
+        public char[] aY = new char[6];
+        public char[] mX = new char[6];
+        public char[] mY = new char[6];
+        public char[] pD = new char[9];
     }
 }
 
