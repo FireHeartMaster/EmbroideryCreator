@@ -99,7 +99,7 @@ namespace EmbroideryCreator
                         //The STOP command consists of 00 00 F3
                         bytesFromStitch.Add(0);
                         bytesFromStitch.Add(0);
-                        bytesFromStitch.Add((15 << 4) & 3); //this last byte is hexadecimal F3
+                        bytesFromStitch.Add((15 << 4) | 3); //this last byte is hexadecimal F3
                     }
                     else
                     {
@@ -197,14 +197,14 @@ namespace EmbroideryCreator
             byte[] commandBytes = new byte[3];
 
             commandBytes[0] = (byte)(jumpPowersY[0] >= 0 ? jumpPowersY[0] << 7 : 1 << 6);
-            commandBytes[0] &= (byte)(jumpPowersY[2] >= 0 ? jumpPowersY[2] << 5 : 1 << 4);
-            commandBytes[0] &= (byte)(jumpPowersX[2] >= 0 ? jumpPowersX[2] << 2 : 1 << 3);
-            commandBytes[0] &= (byte)(jumpPowersX[0] >= 0 ? jumpPowersX[0] << 0 : 1 << 1);  // "<< 0" does nothing but I wrote it this way to keep the standard of the other parts so I can easily know what the code is doing when reading
+            commandBytes[0] |= (byte)(jumpPowersY[2] >= 0 ? jumpPowersY[2] << 5 : 1 << 4);
+            commandBytes[0] |= (byte)(jumpPowersX[2] >= 0 ? jumpPowersX[2] << 2 : 1 << 3);
+            commandBytes[0] |= (byte)(jumpPowersX[0] >= 0 ? jumpPowersX[0] << 0 : 1 << 1);  // "<< 0" does nothing but I wrote it this way to keep the standard of the other parts so I can easily know what the code is doing when reading
 
             commandBytes[1] = (byte)(jumpPowersY[1] >= 0 ? jumpPowersY[1] << 7 : 1 << 6);
-            commandBytes[1] &= (byte)(jumpPowersY[3] >= 0 ? jumpPowersY[3] << 5 : 1 << 4);
-            commandBytes[1] &= (byte)(jumpPowersX[3] >= 0 ? jumpPowersX[3] << 2 : 1 << 3);
-            commandBytes[1] &= (byte)(jumpPowersX[1] >= 0 ? jumpPowersX[1] << 0 : 1 << 1);
+            commandBytes[1] |= (byte)(jumpPowersY[3] >= 0 ? jumpPowersY[3] << 5 : 1 << 4);
+            commandBytes[1] |= (byte)(jumpPowersX[3] >= 0 ? jumpPowersX[3] << 2 : 1 << 3);
+            commandBytes[1] |= (byte)(jumpPowersX[1] >= 0 ? jumpPowersX[1] << 0 : 1 << 1);
 
             //The two first bits of the third byte are control bits, which tell the type of stitch that the machine needs to perform
             switch (stitchType)
@@ -222,9 +222,9 @@ namespace EmbroideryCreator
                     commandBytes[2] = (byte)1 << 6;
                     break;
             }
-            commandBytes[2] &= (byte)(jumpPowersY[4] >= 0 ? jumpPowersY[4] << 5 : 1 << 4);
-            commandBytes[2] &= (byte)(jumpPowersX[4] >= 0 ? jumpPowersX[4] << 2 : 1 << 3);
-            commandBytes[2] &= (byte)3; //two last bits are always set in the .dst format
+            commandBytes[2] |= (byte)(jumpPowersY[4] >= 0 ? jumpPowersY[4] << 5 : 1 << 4);
+            commandBytes[2] |= (byte)(jumpPowersX[4] >= 0 ? jumpPowersX[4] << 2 : 1 << 3);
+            commandBytes[2] |= (byte)3; //two last bits are always set in the .dst format
 
             return commandBytes;
         }
@@ -246,7 +246,7 @@ namespace EmbroideryCreator
             int numberOfColors = 0;
             for (int i = 2; i < bodyEncoding.Count; i += 3)
             {
-                if ((bodyEncoding[i] & (195)) != 0)
+                if ((bodyEncoding[i] | (195)) != 0)
                 {
                     numberOfColors++;
                 }
@@ -308,8 +308,10 @@ namespace EmbroideryCreator
             FillBytesAndCarriageReturn(mYBytes, allHeaderBytes);
             FillBytesAndCarriageReturn(pDBytes, allHeaderBytes);
 
+            allHeaderBytes.Add(26); //This byte 1A (hexadecimal) indicates the end of the header
+
             //Now complete by adding the padding in order to have a total of 512 bytes in the header
-            while(allHeaderBytes.Count < 512)
+            while (allHeaderBytes.Count < 512)
             {
                 allHeaderBytes.Add(Encoding.ASCII.GetBytes(" ")[0]);
             }
