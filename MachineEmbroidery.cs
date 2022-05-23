@@ -59,11 +59,13 @@ namespace EmbroideryCreator
             while (listOfStitches.Count > 0)
             {
                 Tuple<StitchType, Tuple<int, int>> currentStitch = listOfStitches.First();
+                Tuple<StitchType, Tuple<int, int>> currentStitchCorrectedAxis = new Tuple<StitchType, Tuple<int, int>>(currentStitch.Item1, new Tuple<int, int>(currentStitch.Item2.Item1, -currentStitch.Item2.Item2));
                 listOfStitches.RemoveFirst();
-
-                List<byte> bytesFromStitch = GetBytesFromStitchCommand(currentStitch, sizeOfEachPixel, currentPositionX, currentPositionY, listOfStitches.Count == 0);
-                currentPositionX = currentStitch.Item2.Item1;
-                currentPositionY = currentStitch.Item2.Item2;
+                
+                List<byte> bytesFromStitch = GetBytesFromStitchCommand(currentStitchCorrectedAxis, sizeOfEachPixel, ref currentPositionX, ref currentPositionY, listOfStitches.Count == 0);
+                
+                //currentPositionX = currentStitchCorrectedAxis.Item2.Item1;
+                //currentPositionY = currentStitchCorrectedAxis.Item2.Item2;
 
                 if (currentPositionX < minX) minX = currentPositionX * sizeOfEachPixel;
                 if (currentPositionX > maxX) maxX = currentPositionX * sizeOfEachPixel;
@@ -79,7 +81,7 @@ namespace EmbroideryCreator
             return bytesList;
         }
 
-        private List<byte> GetBytesFromStitchCommand(Tuple<StitchType, Tuple<int, int>> currentStitch, int sizeOfEachPixel, int currentPositionX, int currentPositionY, bool isLastStitch)
+        private List<byte> GetBytesFromStitchCommand(Tuple<StitchType, Tuple<int, int>> currentStitch, int sizeOfEachPixel, ref int currentPositionX, ref int currentPositionY, bool isLastStitch)
         {
             int maxJumpSize = 121;
             List<byte> bytesFromStitch = new List<byte>();
@@ -150,7 +152,7 @@ namespace EmbroideryCreator
             }
             else
             {
-                int numberOfTimesToJumpBackToOrigin = (int)Math.Sqrt(jumpSizeSquared) / maxJumpSize;
+                int numberOfTimesToJumpBackToOrigin = (int)Math.Ceiling(Math.Sqrt(jumpSizeSquared) / maxJumpSize);
 
                 jumpDeltaX = (positionToJumpToX - currentPositionX) / numberOfTimesToJumpBackToOrigin;
                 jumpDeltaY = (positionToJumpToY - currentPositionY) / numberOfTimesToJumpBackToOrigin;
@@ -159,8 +161,8 @@ namespace EmbroideryCreator
                 {
                     if (i == numberOfTimesToJumpBackToOrigin - 1)
                     {
-                        jumpDeltaX = -currentPositionX;
-                        jumpDeltaY = -currentPositionY;
+                        jumpDeltaX = (positionToJumpToX - currentPositionX);
+                        jumpDeltaY = (positionToJumpToY - currentPositionY);
                     }
                     ConvertCommandToByte(StitchType.JumpStitch, bytesFromStitch, jumpDeltaX * sizeOfEachPixel, jumpDeltaY * sizeOfEachPixel);
                     currentPositionX += jumpDeltaX;
@@ -426,7 +428,7 @@ namespace EmbroideryCreator
                 CreateStitchForColorPathStartingByCertainTypeOfDiagonal(positionsOfEachColor[positionsOfEachColor.Keys.ElementAt(i)], listOfStitches, true);
 
                 //Create path starting by left diagonal
-                CreateStitchForColorPathStartingByCertainTypeOfDiagonal(positionsOfEachColor[positionsOfEachColor.Keys.ElementAt(i)], listOfStitches, false);
+                //CreateStitchForColorPathStartingByCertainTypeOfDiagonal(positionsOfEachColor[positionsOfEachColor.Keys.ElementAt(i)], listOfStitches, false);
 
                 listOfStitches.AddLast(new Tuple<StitchType, Tuple<int, int>>(StitchType.ColorChange, new Tuple<int, int>(0, 0)));
                 //At the moment of converting the embroidery path to machine file, when placing the last color change, it needs to be specifically the command 00 00 F3
@@ -668,7 +670,10 @@ namespace EmbroideryCreator
                 VertexAndParent startingVertex = new VertexAndParent(startingPosition, null);
 
                 Queue<VertexAndParent> queue = new Queue<VertexAndParent>();
+                HashSet<Tuple<int, int>> alreadyEnqueued = new HashSet<Tuple<int, int>>();
+
                 queue.Enqueue(startingVertex);
+                alreadyEnqueued.Add(startingVertex.vertex);
 
                 VertexAndParent endingVertex = startingVertex;
                 //Breadth First Search from the top position among the odd degree vertices until I find another vertex that also is an odd degree vertex
@@ -676,7 +681,7 @@ namespace EmbroideryCreator
                 {
                     VertexAndParent currentVertex = queue.Dequeue();
                     alreadyVisitedVertices.Add(currentVertex.vertex);
-
+                    
                     if (oddDegreeVertices.Contains(currentVertex.vertex) && !currentVertex.vertex.Equals(startingPosition))
                     {
                         endingVertex = currentVertex;
@@ -686,16 +691,16 @@ namespace EmbroideryCreator
                     //Add connecting vertices
                     //Upper left
                     Tuple<int, int> upperLeftPosition = new Tuple<int, int>(currentVertex.vertex.Item1 - 1, currentVertex.vertex.Item2 - 1);
-                    TryToEnqueueNewVertex(edgesAndNumberOfTimesItAppears, alreadyVisitedVertices, queue, currentVertex, upperLeftPosition, false);
+                    TryToEnqueueNewVertex(edgesAndNumberOfTimesItAppears, alreadyVisitedVertices, queue, currentVertex, upperLeftPosition, false, alreadyEnqueued);
                     //Upper right
                     Tuple<int, int> upperRightPosition = new Tuple<int, int>(currentVertex.vertex.Item1 + 1, currentVertex.vertex.Item2 - 1);
-                    TryToEnqueueNewVertex(edgesAndNumberOfTimesItAppears, alreadyVisitedVertices, queue, currentVertex, upperRightPosition, false);
+                    TryToEnqueueNewVertex(edgesAndNumberOfTimesItAppears, alreadyVisitedVertices, queue, currentVertex, upperRightPosition, false, alreadyEnqueued);
                     //Bottom left
                     Tuple<int, int> bottomLeftPosition = new Tuple<int, int>(currentVertex.vertex.Item1 - 1, currentVertex.vertex.Item2 + 1);
-                    TryToEnqueueNewVertex(edgesAndNumberOfTimesItAppears, alreadyVisitedVertices, queue, currentVertex, bottomLeftPosition, true);
+                    TryToEnqueueNewVertex(edgesAndNumberOfTimesItAppears, alreadyVisitedVertices, queue, currentVertex, bottomLeftPosition, true, alreadyEnqueued);
                     //Bottom right
                     Tuple<int, int> bottomRightPosition = new Tuple<int, int>(currentVertex.vertex.Item1 + 1, currentVertex.vertex.Item2 + 1);
-                    TryToEnqueueNewVertex(edgesAndNumberOfTimesItAppears, alreadyVisitedVertices, queue, currentVertex, bottomRightPosition, true);
+                    TryToEnqueueNewVertex(edgesAndNumberOfTimesItAppears, alreadyVisitedVertices, queue, currentVertex, bottomRightPosition, true, alreadyEnqueued);
                 }
 
                 //Double all edges going from the ending vertex to the starting vertex
@@ -722,14 +727,16 @@ namespace EmbroideryCreator
             }
         }
 
-        private static void TryToEnqueueNewVertex(Dictionary<Edge, int> edgesAndNumberOfTimesItAppears, HashSet<Tuple<int, int>> alreadyVisitedVertices, Queue<VertexAndParent> queue, VertexAndParent currentVertex, Tuple<int, int> potentialNewPosition, bool currentVertexIsUpper)
+        private static void TryToEnqueueNewVertex(Dictionary<Edge, int> edgesAndNumberOfTimesItAppears, HashSet<Tuple<int, int>> alreadyVisitedVertices, Queue<VertexAndParent> queue, VertexAndParent currentVertex, Tuple<int, int> potentialNewPosition, bool currentVertexIsUpper, HashSet<Tuple<int, int>> alreadyEnqueued)
         {
             if (!alreadyVisitedVertices.Contains(potentialNewPosition))
             {
                 Edge potentialEdge = currentVertexIsUpper ? new Edge(currentVertex.vertex, potentialNewPosition) : new Edge(potentialNewPosition, currentVertex.vertex);
-                if (edgesAndNumberOfTimesItAppears.ContainsKey(potentialEdge))
+                VertexAndParent newVertex = new VertexAndParent(potentialNewPosition, currentVertex);
+                if (edgesAndNumberOfTimesItAppears.ContainsKey(potentialEdge) && !alreadyEnqueued.Contains(newVertex.vertex))
                 {
-                    queue.Enqueue(new VertexAndParent(potentialNewPosition, currentVertex));
+                    queue.Enqueue(newVertex);
+                    alreadyEnqueued.Add(newVertex.vertex);
                 }
             }
         }
