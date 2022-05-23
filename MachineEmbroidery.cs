@@ -435,7 +435,7 @@ namespace EmbroideryCreator
             return listOfStitches;
         }
 
-        private void CreateStitchForColorPathStartingByCertainTypeOfDiagonal(List<Tuple<int, int>> positionsForTheSpecifiedColor, LinkedList<Tuple<StitchType, Tuple<int, int>>> listOfStitches, bool startsAtRightDiagonal)
+        private void CreateStitchForColorPathStartingByCertainTypeOfDiagonal(List<Tuple<int, int>> positionsForTheSpecifiedColor, LinkedList<Tuple<StitchType, Tuple<int, int>>> listOfStitches, bool startsAtEvenDiagonalParity)
         {
             //Create dictionary/hashset of positions of each color
             HashSet<Tuple<int, int>> allPositionsForCurrentColor = positionsForTheSpecifiedColor.ToHashSet<Tuple<int, int>>();
@@ -445,6 +445,9 @@ namespace EmbroideryCreator
             {
                 //Find next connected region for this color starting with the correspondent type diagonal, be it right or left diagonal (Flood Fill algorithm)
                 //Don't forget to remove each position from the dictionary throughout the flood fill algorithm
+                Tuple<int, int> startingPosition = allPositionsForCurrentColor.First<Tuple<int, int>>();
+                int startingPositionParity = startingPosition.Item1 + startingPosition.Item2;
+                bool startsAtRightDiagonal = (startingPositionParity % 2 == 0) ^ !startsAtEvenDiagonalParity;
                 HashSet<Tuple<int, int>> currentConnectedRegion = FloodFill(allPositionsForCurrentColor, startsAtRightDiagonal);
 
                 //Create path for the connected region starting with the correspondent type diagonal, be it right or left diagonal, found in previous step (Chinese Postman Problem)
@@ -814,7 +817,7 @@ namespace EmbroideryCreator
 
         private static void CheckPositionAndTryToEnqueue(HashSet<Tuple<int, int>> allPositionsForCurrentColor, HashSet<Tuple<int, int>> connectedRegion, Queue<Tuple<int, int>> queue, Tuple<int, int> positionToEnqueue)
         {
-            if (allPositionsForCurrentColor.Contains(positionToEnqueue) && !connectedRegion.Contains(positionToEnqueue))
+            if (allPositionsForCurrentColor.Contains(positionToEnqueue) && !connectedRegion.Contains(positionToEnqueue) && !queue.Contains(positionToEnqueue))
             {
                 queue.Enqueue(positionToEnqueue);
             }
