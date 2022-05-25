@@ -152,18 +152,46 @@ namespace EmbroideryCreator
             }
             else
             {
-                int numberOfTimesToJumpBackToOrigin = (int)Math.Ceiling(Math.Sqrt(jumpSizeSquared) / maxJumpSize);
+                //TODO: In a sequence of jumps, the current code is wrongfully allowing the last jump to go a distance over 121
+                /*int numberOfTimesToJumpBackToOrigin = (int)Math.Ceiling(Math.Sqrt(jumpSizeSquared) / maxJumpSize);
 
                 jumpDeltaX = (positionToJumpToX - currentPositionX) / numberOfTimesToJumpBackToOrigin;
                 jumpDeltaY = (positionToJumpToY - currentPositionY) / numberOfTimesToJumpBackToOrigin;
 
                 for (int i = 0; i < numberOfTimesToJumpBackToOrigin; i++)
                 {
-                    if (i == numberOfTimesToJumpBackToOrigin - 1)
+                    //if (i == numberOfTimesToJumpBackToOrigin - 1)
+                    //{
+                    //    jumpDeltaX = (positionToJumpToX - currentPositionX);
+                    //    jumpDeltaY = (positionToJumpToY - currentPositionY);
+                    //}
+                    ConvertCommandToByte(StitchType.JumpStitch, bytesFromStitch, jumpDeltaX * sizeOfEachPixel, jumpDeltaY * sizeOfEachPixel);
+                    currentPositionX += jumpDeltaX;
+                    currentPositionY += jumpDeltaY;
+                }
+
+                if(currentPositionX != positionToJumpToX || currentPositionY != positionToJumpToY)
+                {
+                    jumpDeltaX = (positionToJumpToX - currentPositionX);
+                    jumpDeltaY = (positionToJumpToY - currentPositionY);
+                    ConvertCommandToByte(StitchType.JumpStitch, bytesFromStitch, jumpDeltaX * sizeOfEachPixel, jumpDeltaY * sizeOfEachPixel);
+                    currentPositionX += jumpDeltaX;
+                    currentPositionY += jumpDeltaY;
+                }*/
+
+                while (currentPositionX != positionToJumpToX || currentPositionY != positionToJumpToY)
+                {
+                    jumpDeltaX = (positionToJumpToX - currentPositionX);
+                    jumpDeltaY = (positionToJumpToY - currentPositionY);
+
+                    jumpSizeSquared = (jumpDeltaX * jumpDeltaX + jumpDeltaY * jumpDeltaY);
+
+                    if (jumpSizeSquared * sizeOfEachPixel * sizeOfEachPixel > maxJumpSize * maxJumpSize)
                     {
-                        jumpDeltaX = (positionToJumpToX - currentPositionX);
-                        jumpDeltaY = (positionToJumpToY - currentPositionY);
+                        jumpDeltaX = (int)((((float)jumpDeltaX) / Math.Sqrt(jumpSizeSquared)) * (((float)maxJumpSize) / sizeOfEachPixel));
+                        jumpDeltaY = (int)((((float)jumpDeltaY) / Math.Sqrt(jumpSizeSquared)) * (((float)maxJumpSize) / sizeOfEachPixel));
                     }
+
                     ConvertCommandToByte(StitchType.JumpStitch, bytesFromStitch, jumpDeltaX * sizeOfEachPixel, jumpDeltaY * sizeOfEachPixel);
                     currentPositionX += jumpDeltaX;
                     currentPositionY += jumpDeltaY;
@@ -173,6 +201,10 @@ namespace EmbroideryCreator
 
         private void ConvertCommandToByte(StitchType stitchType, List<byte> bytesFromStitch, int amountToMoveX, int amountToMoveY)
         {
+            if(amountToMoveX % 30 != 0 || amountToMoveY % 30 != 0)
+            {
+                int a = 0;
+            }
             List<int> movePowersX = ConvertNumberToPowersOfNumber(amountToMoveX, 3);
             List<int> movePowersY = ConvertNumberToPowersOfNumber(amountToMoveY, 3);
 
@@ -228,7 +260,67 @@ namespace EmbroideryCreator
             commandBytes[2] |= (byte)(jumpPowersX[4] >= 0 ? jumpPowersX[4] << 2 : 1 << 3);
             commandBytes[2] |= (byte)3; //two last bits are always set in the .dst format
 
-            return commandBytes;
+            int deltaY = (int)Math.Pow(3, 0) * ((commandBytes[0] & 128) >> 7);
+            deltaY += -(int)Math.Pow(3, 0) * ((commandBytes[0] & 64) >> 6);
+            deltaY += (int)Math.Pow(3, 2) * ((commandBytes[0] & 32) >> 5);
+            deltaY += -(int)Math.Pow(3, 2) * ((commandBytes[0] & 16) >> 4);
+
+            deltaY += (int)Math.Pow(3, 1) * ((commandBytes[1] & 128) >> 7);
+            deltaY += -(int)Math.Pow(3, 1) * ((commandBytes[1] & 64) >> 6);
+            deltaY += (int)Math.Pow(3, 3) * ((commandBytes[1] & 32) >> 5);
+            deltaY += -(int)Math.Pow(3, 3) * ((commandBytes[1] & 16) >> 4);
+
+            deltaY += (int)Math.Pow(3, 4) * ((commandBytes[2] & 32) >> 5);
+            deltaY += -(int)Math.Pow(3, 4) * ((commandBytes[2] & 16) >> 4);
+
+            int deltaX = -(int)Math.Pow(3, 2) * ((commandBytes[0] & 8) >> 3);
+            deltaX += (int)Math.Pow(3, 2) * ((commandBytes[0] & 4) >> 2);
+            deltaX += -(int)Math.Pow(3, 0) * ((commandBytes[0] & 2) >> 1);
+            deltaX += (int)Math.Pow(3, 0) * ((commandBytes[0] & 1) >> 0);
+
+            deltaX += -(int)Math.Pow(3, 3) * ((commandBytes[1] & 8) >> 3);
+            deltaX += (int)Math.Pow(3, 3) * ((commandBytes[1] & 4) >> 2);
+            deltaX += -(int)Math.Pow(3, 1) * ((commandBytes[1] & 2) >> 1);
+            deltaX += (int)Math.Pow(3, 1) * ((commandBytes[1] & 1) >> 0);
+
+            deltaX += -(int)Math.Pow(3, 4) * ((commandBytes[2] & 8) >> 3);
+            deltaX += (int)Math.Pow(3, 4) * ((commandBytes[2] & 4) >> 2);
+
+            if (deltaX % 30 != 0)
+            {
+                int b = 0;
+                deltaX = -(int)Math.Pow(3, 2) * ((commandBytes[0] & 8) >> 3);
+                deltaX += (int)Math.Pow(3, 2) * ((commandBytes[0] & 4) >> 2);
+                deltaX += -(int)Math.Pow(3, 0) * ((commandBytes[0] & 2) >> 1);
+                deltaX += (int)Math.Pow(3, 0) * ((commandBytes[0] & 1) >> 0);
+
+                deltaX += -(int)Math.Pow(3, 3) * ((commandBytes[1] & 8) >> 3);
+                deltaX += (int)Math.Pow(3, 3) * ((commandBytes[1] & 4) >> 2);
+                deltaX += -(int)Math.Pow(3, 1) * ((commandBytes[1] & 2) >> 1);
+                deltaX += (int)Math.Pow(3, 1) * ((commandBytes[1] & 1) >> 0);
+
+                deltaX += -(int)Math.Pow(3, 4) * ((commandBytes[2] & 8) >> 3);
+                deltaX += (int)Math.Pow(3, 4) * ((commandBytes[2] & 4) >> 2);
+            }
+
+            if (deltaY % 30 != 0)
+            {
+                int c = 0;
+                deltaY = (int)Math.Pow(3, 0) * ((commandBytes[0] & 128) >> 7);
+                deltaY += -(int)Math.Pow(3, 0) * ((commandBytes[0] & 64) >> 6);
+                deltaY += (int)Math.Pow(3, 2) * ((commandBytes[0] & 32) >> 5);
+                deltaY += -(int)Math.Pow(3, 2) * ((commandBytes[0] & 16) >> 4);
+
+                deltaY += (int)Math.Pow(3, 1) * ((commandBytes[1] & 128) >> 7);
+                deltaY += -(int)Math.Pow(3, 1) * ((commandBytes[1] & 64) >> 6);
+                deltaY += (int)Math.Pow(3, 3) * ((commandBytes[1] & 32) >> 5);
+                deltaY += -(int)Math.Pow(3, 3) * ((commandBytes[1] & 16) >> 4);
+
+                deltaY += (int)Math.Pow(3, 4) * ((commandBytes[2] & 32) >> 5);
+                deltaY += -(int)Math.Pow(3, 4) * ((commandBytes[2] & 16) >> 4);
+            }
+
+                return commandBytes;
         }
 
         private List<byte> GetEncodingDstFileHeader(List<byte> bodyEncoding, int minX, int maxX, int minY, int maxY)
@@ -428,7 +520,7 @@ namespace EmbroideryCreator
                 CreateStitchForColorPathStartingByCertainTypeOfDiagonal(positionsOfEachColor[positionsOfEachColor.Keys.ElementAt(i)], listOfStitches, true);
 
                 //Create path starting by left diagonal
-                //CreateStitchForColorPathStartingByCertainTypeOfDiagonal(positionsOfEachColor[positionsOfEachColor.Keys.ElementAt(i)], listOfStitches, false);
+                CreateStitchForColorPathStartingByCertainTypeOfDiagonal(positionsOfEachColor[positionsOfEachColor.Keys.ElementAt(i)], listOfStitches, false);
 
                 listOfStitches.AddLast(new Tuple<StitchType, Tuple<int, int>>(StitchType.ColorChange, new Tuple<int, int>(0, 0)));
                 //At the moment of converting the embroidery path to machine file, when placing the last color change, it needs to be specifically the command 00 00 F3
