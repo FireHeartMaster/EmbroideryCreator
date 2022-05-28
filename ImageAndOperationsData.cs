@@ -338,7 +338,7 @@ namespace EmbroideryCreator
         {
             MachineEmbroidery machineEmbroidery = new MachineEmbroidery();
             //machineEmbroidery.CreatePath(positionsOfEachColor);
-            machineEmbroidery.CreatePathAndDstFile(positionsOfEachColor, 30);
+            machineEmbroidery.CreatePathAndDstFile(positionsOfEachColor, 30, matrixOfNewColors.GetLength(0), matrixOfNewColors.GetLength(1));
         }
     }
 }

@@ -14,9 +14,9 @@ namespace EmbroideryCreator
          * left diagonal: diagonal with upper part on the left side
          */
 
-        public void CreatePathAndDstFile(Dictionary<int, List<Tuple<int, int>>> positionsOfEachColor, int sizeOfEachPixel)
+        public void CreatePathAndDstFile(Dictionary<int, List<Tuple<int, int>>> positionsOfEachColor, int sizeOfEachPixel, int horizontalSize, int verticalSize)
         {
-            LinkedList<Tuple<StitchType, Tuple<int, int>>> path = CreatePath(positionsOfEachColor);
+            LinkedList<Tuple<StitchType, Tuple<int, int>>> path = CreatePath(positionsOfEachColor, horizontalSize, verticalSize);
             ConvertEmbroideryPathToDstFile(path, sizeOfEachPixel);
         }
 
@@ -490,7 +490,7 @@ namespace EmbroideryCreator
             return powers;
         }
 
-        public LinkedList<Tuple<StitchType, Tuple<int, int>>> CreatePath(Dictionary<int, List<Tuple<int, int>>> positionsOfEachColor)
+        public LinkedList<Tuple<StitchType, Tuple<int, int>>> CreatePath(Dictionary<int, List<Tuple<int, int>>> positionsOfEachColor, int horizontalSize, int verticalSize)
         {
             LinkedList<Tuple<StitchType, Tuple<int, int>>> listOfStitches = new LinkedList<Tuple<StitchType, Tuple<int, int>>>();
 
@@ -517,10 +517,10 @@ namespace EmbroideryCreator
             for (int i = 0; i < positionsOfEachColor.Keys.Count; i++)
             {
                 //Create path starting by right diagonal
-                CreateStitchForColorPathStartingByCertainTypeOfDiagonal(positionsOfEachColor[positionsOfEachColor.Keys.ElementAt(i)], listOfStitches, true);
+                CreateStitchForColorPathStartingByCertainTypeOfDiagonal(positionsOfEachColor[positionsOfEachColor.Keys.ElementAt(i)], listOfStitches, true, horizontalSize, verticalSize);
 
                 //Create path starting by left diagonal
-                CreateStitchForColorPathStartingByCertainTypeOfDiagonal(positionsOfEachColor[positionsOfEachColor.Keys.ElementAt(i)], listOfStitches, false);
+                CreateStitchForColorPathStartingByCertainTypeOfDiagonal(positionsOfEachColor[positionsOfEachColor.Keys.ElementAt(i)], listOfStitches, false, horizontalSize, verticalSize);
 
                 listOfStitches.AddLast(new Tuple<StitchType, Tuple<int, int>>(StitchType.ColorChange, new Tuple<int, int>(0, 0)));
                 //At the moment of converting the embroidery path to machine file, when placing the last color change, it needs to be specifically the command 00 00 F3
@@ -529,10 +529,16 @@ namespace EmbroideryCreator
             return listOfStitches;
         }
 
-        private void CreateStitchForColorPathStartingByCertainTypeOfDiagonal(List<Tuple<int, int>> positionsForTheSpecifiedColor, LinkedList<Tuple<StitchType, Tuple<int, int>>> listOfStitches, bool startsAtEvenDiagonalParity)
+        private void CreateStitchForColorPathStartingByCertainTypeOfDiagonal(List<Tuple<int, int>> positionsForTheSpecifiedColor, LinkedList<Tuple<StitchType, Tuple<int, int>>> listOfStitches, bool startsAtEvenDiagonalParity, int horizontalSize, int verticalSize)
         {
             //Create dictionary/hashset of positions of each color
-            HashSet<Tuple<int, int>> allPositionsForCurrentColor = positionsForTheSpecifiedColor.ToHashSet<Tuple<int, int>>();
+            HashSet<Tuple<int, int>> allPositionsForCurrentColor = new HashSet<Tuple<int, int>>();//positionsForTheSpecifiedColor.ToHashSet<Tuple<int, int>>();
+            int halfHorizontalSize = (int)(horizontalSize * 0.5);
+            int halfVerticalSize = (int)(verticalSize * 0.5);
+            foreach (Tuple<int, int> position in positionsForTheSpecifiedColor)
+            {
+                allPositionsForCurrentColor.Add(new Tuple<int, int>(position.Item1 - halfHorizontalSize, position.Item2 - halfVerticalSize));
+            }
 
             //While the dictionary created on the previous step is not empty, perform loop containing the next two steps
             while (allPositionsForCurrentColor.Count > 0)
