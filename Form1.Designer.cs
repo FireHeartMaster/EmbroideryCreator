@@ -44,12 +44,18 @@ namespace EmbroideryCreator
             this.numberOfIterationsLabel = new System.Windows.Forms.Label();
             this.numberOfIterationsTrackBarLabel = new System.Windows.Forms.Label();
             this.ProcessAtAllChangesCheckBox = new System.Windows.Forms.CheckBox();
-            this.flowLayoutPanelListOfColors = new System.Windows.Forms.FlowLayoutPanel();
-            this.ListOfColorsLabel = new System.Windows.Forms.Label();
-            this.mergeColorsButton = new System.Windows.Forms.Button();
-            this.addColorButton = new System.Windows.Forms.Button();
+            this.flowLayoutPanelListOfCrossStitchColors = new System.Windows.Forms.FlowLayoutPanel();
+            this.ListOfCrossStitchColorsLabel = new System.Windows.Forms.Label();
+            this.mergeCrossStitchColorsButton = new System.Windows.Forms.Button();
+            this.addCrossStitchColorButton = new System.Windows.Forms.Button();
             this.addColorDialog = new System.Windows.Forms.ColorDialog();
             this.mainPictureBox = new System.Windows.Forms.PictureBox();
+            this.ColorsListsLabel = new System.Windows.Forms.Label();
+            this.ListOfBackstitchColorsLabel = new System.Windows.Forms.Label();
+            this.flowLayoutPanelListOfBackstitchColors = new System.Windows.Forms.FlowLayoutPanel();
+            this.mergeBackStitchColorsButton = new System.Windows.Forms.Button();
+            this.addBackstitchColorButton = new System.Windows.Forms.Button();
+            this.deleteBackstitchColorButton = new System.Windows.Forms.Button();
             this.drawingToolsControl = new EmbroideryCreator.DrawingToolsControl();
             ((System.ComponentModel.ISupportInitialize)(this.widthSizeTrackBar)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numberOfColorsTrackBar)).BeginInit();
@@ -194,43 +200,43 @@ namespace EmbroideryCreator
             this.ProcessAtAllChangesCheckBox.Text = "Process image at all changes";
             this.ProcessAtAllChangesCheckBox.UseVisualStyleBackColor = true;
             // 
-            // flowLayoutPanelListOfColors
+            // flowLayoutPanelListOfCrossStitchColors
             // 
-            this.flowLayoutPanelListOfColors.BackColor = System.Drawing.SystemColors.GradientInactiveCaption;
-            this.flowLayoutPanelListOfColors.Location = new System.Drawing.Point(847, 85);
-            this.flowLayoutPanelListOfColors.Name = "flowLayoutPanelListOfColors";
-            this.flowLayoutPanelListOfColors.Size = new System.Drawing.Size(98, 398);
-            this.flowLayoutPanelListOfColors.TabIndex = 14;
+            this.flowLayoutPanelListOfCrossStitchColors.BackColor = System.Drawing.SystemColors.GradientInactiveCaption;
+            this.flowLayoutPanelListOfCrossStitchColors.Location = new System.Drawing.Point(847, 119);
+            this.flowLayoutPanelListOfCrossStitchColors.Name = "flowLayoutPanelListOfCrossStitchColors";
+            this.flowLayoutPanelListOfCrossStitchColors.Size = new System.Drawing.Size(98, 364);
+            this.flowLayoutPanelListOfCrossStitchColors.TabIndex = 14;
             // 
-            // ListOfColorsLabel
+            // ListOfCrossStitchColorsLabel
             // 
-            this.ListOfColorsLabel.AutoSize = true;
-            this.ListOfColorsLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 15F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.ListOfColorsLabel.Location = new System.Drawing.Point(842, 59);
-            this.ListOfColorsLabel.Name = "ListOfColorsLabel";
-            this.ListOfColorsLabel.Size = new System.Drawing.Size(75, 25);
-            this.ListOfColorsLabel.TabIndex = 15;
-            this.ListOfColorsLabel.Text = "Colors:";
+            this.ListOfCrossStitchColorsLabel.AutoSize = true;
+            this.ListOfCrossStitchColorsLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 15F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.ListOfCrossStitchColorsLabel.Location = new System.Drawing.Point(836, 85);
+            this.ListOfCrossStitchColorsLabel.Name = "ListOfCrossStitchColorsLabel";
+            this.ListOfCrossStitchColorsLabel.Size = new System.Drawing.Size(124, 25);
+            this.ListOfCrossStitchColorsLabel.TabIndex = 15;
+            this.ListOfCrossStitchColorsLabel.Text = "Cross Stitch:";
             // 
-            // mergeColorsButton
+            // mergeCrossStitchColorsButton
             // 
-            this.mergeColorsButton.Location = new System.Drawing.Point(848, 489);
-            this.mergeColorsButton.Name = "mergeColorsButton";
-            this.mergeColorsButton.Size = new System.Drawing.Size(98, 23);
-            this.mergeColorsButton.TabIndex = 16;
-            this.mergeColorsButton.Text = "Merge colors";
-            this.mergeColorsButton.UseVisualStyleBackColor = true;
-            this.mergeColorsButton.Click += new System.EventHandler(this.mergeColorsButton_Click);
+            this.mergeCrossStitchColorsButton.Location = new System.Drawing.Point(848, 489);
+            this.mergeCrossStitchColorsButton.Name = "mergeCrossStitchColorsButton";
+            this.mergeCrossStitchColorsButton.Size = new System.Drawing.Size(98, 23);
+            this.mergeCrossStitchColorsButton.TabIndex = 16;
+            this.mergeCrossStitchColorsButton.Text = "Merge colors";
+            this.mergeCrossStitchColorsButton.UseVisualStyleBackColor = true;
+            this.mergeCrossStitchColorsButton.Click += new System.EventHandler(this.mergeColorsButton_Click);
             // 
-            // addColorButton
+            // addCrossStitchColorButton
             // 
-            this.addColorButton.Location = new System.Drawing.Point(848, 518);
-            this.addColorButton.Name = "addColorButton";
-            this.addColorButton.Size = new System.Drawing.Size(98, 23);
-            this.addColorButton.TabIndex = 17;
-            this.addColorButton.Text = "Add color";
-            this.addColorButton.UseVisualStyleBackColor = true;
-            this.addColorButton.Click += new System.EventHandler(this.addColorButton_Click);
+            this.addCrossStitchColorButton.Location = new System.Drawing.Point(848, 518);
+            this.addCrossStitchColorButton.Name = "addCrossStitchColorButton";
+            this.addCrossStitchColorButton.Size = new System.Drawing.Size(98, 23);
+            this.addCrossStitchColorButton.TabIndex = 17;
+            this.addCrossStitchColorButton.Text = "Add color";
+            this.addCrossStitchColorButton.UseVisualStyleBackColor = true;
+            this.addCrossStitchColorButton.Click += new System.EventHandler(this.addColorButton_Click);
             // 
             // mainPictureBox
             // 
@@ -248,6 +254,64 @@ namespace EmbroideryCreator
             this.mainPictureBox.MouseMove += new System.Windows.Forms.MouseEventHandler(this.mainPictureBox_MouseMove);
             this.mainPictureBox.MouseUp += new System.Windows.Forms.MouseEventHandler(this.mainPictureBox_MouseUp);
             // 
+            // ColorsListsLabel
+            // 
+            this.ColorsListsLabel.AutoSize = true;
+            this.ColorsListsLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 15F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.ColorsListsLabel.Location = new System.Drawing.Point(836, 61);
+            this.ColorsListsLabel.Name = "ColorsListsLabel";
+            this.ColorsListsLabel.Size = new System.Drawing.Size(69, 25);
+            this.ColorsListsLabel.TabIndex = 19;
+            this.ColorsListsLabel.Text = "Colors";
+            // 
+            // ListOfBackstitchColorsLabel
+            // 
+            this.ListOfBackstitchColorsLabel.AutoSize = true;
+            this.ListOfBackstitchColorsLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 15F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.ListOfBackstitchColorsLabel.Location = new System.Drawing.Point(966, 85);
+            this.ListOfBackstitchColorsLabel.Name = "ListOfBackstitchColorsLabel";
+            this.ListOfBackstitchColorsLabel.Size = new System.Drawing.Size(107, 25);
+            this.ListOfBackstitchColorsLabel.TabIndex = 20;
+            this.ListOfBackstitchColorsLabel.Text = "Backstitch:";
+            // 
+            // flowLayoutPanelListOfBackstitchColors
+            // 
+            this.flowLayoutPanelListOfBackstitchColors.BackColor = System.Drawing.SystemColors.GradientInactiveCaption;
+            this.flowLayoutPanelListOfBackstitchColors.Location = new System.Drawing.Point(975, 119);
+            this.flowLayoutPanelListOfBackstitchColors.Name = "flowLayoutPanelListOfBackstitchColors";
+            this.flowLayoutPanelListOfBackstitchColors.Size = new System.Drawing.Size(98, 364);
+            this.flowLayoutPanelListOfBackstitchColors.TabIndex = 15;
+            // 
+            // mergeBackStitchColorsButton
+            // 
+            this.mergeBackStitchColorsButton.Location = new System.Drawing.Point(975, 489);
+            this.mergeBackStitchColorsButton.Name = "mergeBackStitchColorsButton";
+            this.mergeBackStitchColorsButton.Size = new System.Drawing.Size(98, 23);
+            this.mergeBackStitchColorsButton.TabIndex = 21;
+            this.mergeBackStitchColorsButton.Text = "Merge colors";
+            this.mergeBackStitchColorsButton.UseVisualStyleBackColor = true;
+            this.mergeBackStitchColorsButton.Click += new System.EventHandler(this.mergeBackStitchColorsButton_Click);
+            // 
+            // addBackstitchColorButton
+            // 
+            this.addBackstitchColorButton.Location = new System.Drawing.Point(975, 518);
+            this.addBackstitchColorButton.Name = "addBackstitchColorButton";
+            this.addBackstitchColorButton.Size = new System.Drawing.Size(98, 23);
+            this.addBackstitchColorButton.TabIndex = 22;
+            this.addBackstitchColorButton.Text = "Add color";
+            this.addBackstitchColorButton.UseVisualStyleBackColor = true;
+            this.addBackstitchColorButton.Click += new System.EventHandler(this.addBackstitchColorButton_Click);
+            // 
+            // deleteBackstitchColorButton
+            // 
+            this.deleteBackstitchColorButton.Location = new System.Drawing.Point(975, 547);
+            this.deleteBackstitchColorButton.Name = "deleteBackstitchColorButton";
+            this.deleteBackstitchColorButton.Size = new System.Drawing.Size(98, 23);
+            this.deleteBackstitchColorButton.TabIndex = 23;
+            this.deleteBackstitchColorButton.Text = "Delete color";
+            this.deleteBackstitchColorButton.UseVisualStyleBackColor = true;
+            this.deleteBackstitchColorButton.Click += new System.EventHandler(this.deleteBackstitchColorButton_Click);
+            // 
             // drawingToolsControl
             // 
             this.drawingToolsControl.BackColor = System.Drawing.SystemColors.ActiveBorder;
@@ -261,12 +325,18 @@ namespace EmbroideryCreator
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(958, 553);
+            this.ClientSize = new System.Drawing.Size(1192, 579);
+            this.Controls.Add(this.deleteBackstitchColorButton);
+            this.Controls.Add(this.addBackstitchColorButton);
+            this.Controls.Add(this.mergeBackStitchColorsButton);
+            this.Controls.Add(this.flowLayoutPanelListOfBackstitchColors);
+            this.Controls.Add(this.ListOfBackstitchColorsLabel);
+            this.Controls.Add(this.ColorsListsLabel);
             this.Controls.Add(this.drawingToolsControl);
-            this.Controls.Add(this.addColorButton);
-            this.Controls.Add(this.mergeColorsButton);
-            this.Controls.Add(this.ListOfColorsLabel);
-            this.Controls.Add(this.flowLayoutPanelListOfColors);
+            this.Controls.Add(this.addCrossStitchColorButton);
+            this.Controls.Add(this.mergeCrossStitchColorsButton);
+            this.Controls.Add(this.ListOfCrossStitchColorsLabel);
+            this.Controls.Add(this.flowLayoutPanelListOfCrossStitchColors);
             this.Controls.Add(this.ProcessAtAllChangesCheckBox);
             this.Controls.Add(this.numberOfIterationsTrackBarLabel);
             this.Controls.Add(this.numberOfIterationsLabel);
@@ -312,12 +382,18 @@ namespace EmbroideryCreator
         private System.Windows.Forms.Label numberOfIterationsLabel;
         private System.Windows.Forms.Label numberOfIterationsTrackBarLabel;
         private System.Windows.Forms.CheckBox ProcessAtAllChangesCheckBox;
-        private System.Windows.Forms.FlowLayoutPanel flowLayoutPanelListOfColors;
-        private System.Windows.Forms.Label ListOfColorsLabel;
-        private System.Windows.Forms.Button mergeColorsButton;
-        private System.Windows.Forms.Button addColorButton;
+        private System.Windows.Forms.FlowLayoutPanel flowLayoutPanelListOfCrossStitchColors;
+        private System.Windows.Forms.Label ListOfCrossStitchColorsLabel;
+        private System.Windows.Forms.Button mergeCrossStitchColorsButton;
+        private System.Windows.Forms.Button addCrossStitchColorButton;
         private System.Windows.Forms.ColorDialog addColorDialog;
         private DrawingToolsControl drawingToolsControl;
+        private System.Windows.Forms.Label ColorsListsLabel;
+        private System.Windows.Forms.Label ListOfBackstitchColorsLabel;
+        private System.Windows.Forms.FlowLayoutPanel flowLayoutPanelListOfBackstitchColors;
+        private System.Windows.Forms.Button mergeBackStitchColorsButton;
+        private System.Windows.Forms.Button addBackstitchColorButton;
+        private System.Windows.Forms.Button deleteBackstitchColorButton;
     }
 }
 

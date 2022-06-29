@@ -46,6 +46,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BackstitchColorControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="BackstitchColorControl.Designer.cs">
+      <DependentUpon>BackstitchColorControl.cs</DependentUpon>
+    </Compile>
     <Compile Include="DrawingToolsControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -69,6 +75,9 @@
     <Compile Include="ReducedColorControl.Designer.cs">
       <DependentUpon>ReducedColorControl.cs</DependentUpon>
     </Compile>
+    <EmbeddedResource Include="BackstitchColorControl.resx">
+      <DependentUpon>BackstitchColorControl.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="DrawingToolsControl.resx">
       <DependentUpon>DrawingToolsControl.cs</DependentUpon>
     </EmbeddedResource>

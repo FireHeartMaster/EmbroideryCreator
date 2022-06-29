@@ -20,7 +20,7 @@ namespace EmbroideryCreator
         }
 
         public PictureBox reducedColorPictureBox { get; private set; }
-        public int colorIndex;
+        public int reducedColorIndex;
         public MainForm myReferenceToMainForm;
         public Color color;        
 
@@ -35,12 +35,12 @@ namespace EmbroideryCreator
             }
         }
 
-        private void PaintNewColor() => myReferenceToMainForm.UpdateColorByIndex(colorIndex, color);
+        private void PaintNewColor() => myReferenceToMainForm.UpdateReducedColorByIndex(reducedColorIndex, color);
 
         public void InitializeReducedColorControl(Color newColor, int i, ReducedColorControl colorControl, MainForm referenceToMainForm)
         {
             reducedColorPictureBox.Image = ImageTransformations.CreateSolidColorBitmap(newColor, 30, 30);
-            colorIndex = i;
+            reducedColorIndex = i;
             color = newColor;
             myReferenceToMainForm = referenceToMainForm;
         }
