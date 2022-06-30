@@ -30,8 +30,8 @@ namespace EmbroideryCreator
         public List<Color> GetColors() => colorMeans;
         public Dictionary<int, List<Tuple<int, int>>> GetPositionsOfEachColor() => positionsOfEachColor;
 
-        private int borderThicknessInNumberOfPixels = 1;
-        private int gridThicknessInNumberOfPixels = 1;
+        public int BorderThicknessInNumberOfPixels { get; private set; } = 1;
+        public int GridThicknessInNumberOfPixels { get; private set; } = 1;
 
         public void ChangeColorByIndex(int indexToUpdate, Color newColor)
         {
@@ -76,10 +76,10 @@ namespace EmbroideryCreator
         private void FillPixelAtCoordinate(Color newColor, Graphics graphics, Tuple<int, int> position)
         {
             graphics.FillRectangle(new SolidBrush(newColor),
-                                                        borderThicknessInNumberOfPixels + (position.Item1) * (newPixelSize),
-                                                        borderThicknessInNumberOfPixels + (position.Item2) * (newPixelSize),
-                                                        newPixelSize - gridThicknessInNumberOfPixels,
-                                                        newPixelSize - gridThicknessInNumberOfPixels);
+                                                        BorderThicknessInNumberOfPixels + (position.Item1) * (newPixelSize),
+                                                        BorderThicknessInNumberOfPixels + (position.Item2) * (newPixelSize),
+                                                        newPixelSize - GridThicknessInNumberOfPixels,
+                                                        newPixelSize - GridThicknessInNumberOfPixels);
         }
 
         public ImageAndOperationsData(Bitmap importedImage)
@@ -120,7 +120,7 @@ namespace EmbroideryCreator
                 {
                     Color penColor = x % intervalForDarkerLines == 0 ? Color.Black : Color.Gray;
                     Pen pen = new Pen(penColor, 1.0f);
-                    gridThicknessInNumberOfPixels = 1;
+                    GridThicknessInNumberOfPixels = 1;
                     graphics.DrawLine(pen, x * newPixelSize/* - newPixelSize*0.5f*/, 0, x * newPixelSize/* - newPixelSize*0.5f*/, withGridImage.Height - 1);
                 }
 
@@ -129,7 +129,7 @@ namespace EmbroideryCreator
                 {
                     Color penColor = y % intervalForDarkerLines == 0 ? Color.Black : Color.Gray;
                     Pen pen = new Pen(penColor, 1.0f);
-                    gridThicknessInNumberOfPixels = 1;
+                    GridThicknessInNumberOfPixels = 1;
                     graphics.DrawLine(pen, 0, y * newPixelSize/* - newPixelSize*0.5f*/, withGridImage.Width - 1, y * newPixelSize/* - newPixelSize*0.5f*/);
                 }
             }
@@ -145,7 +145,7 @@ namespace EmbroideryCreator
                 int penSize = (int)(newPixelSize * 0.5f) + 1;
                 Pen pen = new Pen(penColor, penSize);
                 int offset = (int)(penSize % 2 == 0 ? penSize * 0.5f : (penSize + 1) * 0.5f);
-                borderThicknessInNumberOfPixels = penSize;
+                BorderThicknessInNumberOfPixels = penSize;
 
                 graphics.DrawLine(pen, 0, offset, withGridImage.Width, offset); //upper border
                 graphics.DrawLine(pen, offset, 0, offset, withGridImage.Height); //left border
@@ -160,9 +160,9 @@ namespace EmbroideryCreator
             Color penColor = Color.Black;
             int penSize = (int)(newPixelSize * 0.5f)/* + 1*/;
             Pen pen = new Pen(penColor, penSize);
-            borderThicknessInNumberOfPixels = penSize;
+            BorderThicknessInNumberOfPixels = penSize;
 
-            Bitmap withBorderImage = new Bitmap(withGridImage.Width + 2 * borderThicknessInNumberOfPixels - gridThicknessInNumberOfPixels, withGridImage.Height + 2 * borderThicknessInNumberOfPixels - gridThicknessInNumberOfPixels);
+            Bitmap withBorderImage = new Bitmap(withGridImage.Width + 2 * BorderThicknessInNumberOfPixels - GridThicknessInNumberOfPixels, withGridImage.Height + 2 * BorderThicknessInNumberOfPixels - GridThicknessInNumberOfPixels);
             //I'm subtracting the grid thickness here to add a small offset to hide the first top horizontal and the first left vertical lines of the grid,
             //otherwise we end up with an asymmetric grid starting with black lines at the top and at the left but with no lines on the right and at the bottom
 
@@ -175,8 +175,8 @@ namespace EmbroideryCreator
 
                 //Let's add this offset to hide the first top horizontal and the first left vertical lines of the grid, otherwise we end up with an asymmetric grid
                 //starting with black lines at the top and at the left but with no lines on the right and at the bottom
-                int offset = gridThicknessInNumberOfPixels;
-                graphics.DrawImage(withGridImage, borderThicknessInNumberOfPixels - offset, borderThicknessInNumberOfPixels - offset, withGridImage.Width, withGridImage.Height);
+                int offset = GridThicknessInNumberOfPixels;
+                graphics.DrawImage(withGridImage, BorderThicknessInNumberOfPixels - offset, BorderThicknessInNumberOfPixels - offset, withGridImage.Width, withGridImage.Height);
 
                 int offsetForBorder = (int)(penSize % 2 == 0 ? penSize * 0.5f : (penSize + 1) * 0.5f);
                 graphics.DrawLine(pen, 0, offsetForBorder, withBorderImage.Width, offsetForBorder); //upper border
@@ -273,10 +273,31 @@ namespace EmbroideryCreator
 
         private Tuple<int, int> ConvertFromGeneralPositionOnImageToCoordinates(Tuple<int, int> generalPosition)
         {
-            int x = (int)(((float)(generalPosition.Item1 - borderThicknessInNumberOfPixels)) / newPixelSize);
-            int y = (int)(((float)(generalPosition.Item2 - borderThicknessInNumberOfPixels)) / newPixelSize);
+            int x = (int)(((float)(generalPosition.Item1 - BorderThicknessInNumberOfPixels)) / newPixelSize);
+            int y = (int)(((float)(generalPosition.Item2 - BorderThicknessInNumberOfPixels)) / newPixelSize);
 
             return new Tuple<int, int>(x, y);
+        }
+
+        private Tuple<double, double> ConvertFromGeneralPositionOnImageToCoordinatesIncludingHalfValues(Tuple<int, int> generalPosition)
+        {
+            double x = Math.Round(((generalPosition.Item1 - BorderThicknessInNumberOfPixels) * 2.0) / newPixelSize) / 2;
+            double y = Math.Round(((generalPosition.Item2 - BorderThicknessInNumberOfPixels) * 2.0) / newPixelSize) / 2;
+
+            return new Tuple<double, double>(x, y);
+        }
+
+        private Tuple<int, int> ConvertFromCoordinatesIncludingHalfValuesToGeneralPositionOnImage(Tuple<double, double> coordinates)
+        {
+            int x = (int)(coordinates.Item1 * newPixelSize + BorderThicknessInNumberOfPixels);
+            int y = (int)(coordinates.Item2 * newPixelSize + BorderThicknessInNumberOfPixels);
+
+            return new Tuple<int, int>(x, y);
+        }
+
+        public Tuple<int, int> ConvertFromGeneralPositionOnImagesToRoundedGeneralPositionOnImageIncludingHalfValues(Tuple<int, int> generalPosition)
+        {
+            return ConvertFromCoordinatesIncludingHalfValuesToGeneralPositionOnImage(ConvertFromGeneralPositionOnImageToCoordinatesIncludingHalfValues(generalPosition));
         }
 
         public void AddNewColor(Color newColor)
@@ -300,11 +321,15 @@ namespace EmbroideryCreator
 
             queue.Enqueue(coordinates);
 
-            while(queue.Count > 0)
+            HashSet<Tuple<int, int>> positionsAlreadyAdded = new HashSet<Tuple<int, int>>();
+            positionsAlreadyAdded.Add(coordinates);
+
+            while (queue.Count > 0)
             {
                 Tuple<int, int> firstElementOfTheQueue = queue.Dequeue();
+                //positionsAlreadyAddedVisited.Add(firstElementOfTheQueue);
 
-                if(firstElementOfTheQueue.Item1 >= 0 && firstElementOfTheQueue.Item1 < matrixOfNewColors.GetLength(0) &&
+                if (firstElementOfTheQueue.Item1 >= 0 && firstElementOfTheQueue.Item1 < matrixOfNewColors.GetLength(0) &&
                     firstElementOfTheQueue.Item2 >= 0 && firstElementOfTheQueue.Item2 < matrixOfNewColors.GetLength(1))
                 {
                     if(matrixOfNewColors[firstElementOfTheQueue.Item1, firstElementOfTheQueue.Item2] == indexOfTheOriginalColor)
@@ -313,11 +338,34 @@ namespace EmbroideryCreator
 
                         matrixOfNewColors[firstElementOfTheQueue.Item1, firstElementOfTheQueue.Item2] = colorIndexToPaint;
 
-                        //enqueueing new positions, be they valid or not, we are already checking their validity when dequeueing them
-                        queue.Enqueue(new Tuple<int, int>(firstElementOfTheQueue.Item1 - 1, firstElementOfTheQueue.Item2));
-                        queue.Enqueue(new Tuple<int, int>(firstElementOfTheQueue.Item1, firstElementOfTheQueue.Item2 - 1));
-                        queue.Enqueue(new Tuple<int, int>(firstElementOfTheQueue.Item1 + 1, firstElementOfTheQueue.Item2));
-                        queue.Enqueue(new Tuple<int, int>(firstElementOfTheQueue.Item1, firstElementOfTheQueue.Item2 + 1));
+                        //enqueueing new not enqueued positions
+                        Tuple<int, int> leftPosition = new Tuple<int, int>(firstElementOfTheQueue.Item1 - 1, firstElementOfTheQueue.Item2);
+                        if (!positionsAlreadyAdded.Contains(leftPosition))
+                        {
+                            queue.Enqueue(leftPosition);
+                            positionsAlreadyAdded.Add(leftPosition);
+                        }
+
+                        Tuple<int, int> upperPosition = new Tuple<int, int>(firstElementOfTheQueue.Item1, firstElementOfTheQueue.Item2 - 1);
+                        if (!positionsAlreadyAdded.Contains(upperPosition))
+                        {
+                            queue.Enqueue(upperPosition);
+                            positionsAlreadyAdded.Add(upperPosition);
+                        }
+
+                        Tuple<int, int> rightPosition = new Tuple<int, int>(firstElementOfTheQueue.Item1 + 1, firstElementOfTheQueue.Item2);
+                        if (!positionsAlreadyAdded.Contains(rightPosition))
+                        {
+                            queue.Enqueue(rightPosition);
+                            positionsAlreadyAdded.Add(rightPosition);
+                        }
+
+                        Tuple<int, int> bottomPosition = new Tuple<int, int>(firstElementOfTheQueue.Item1, firstElementOfTheQueue.Item2 + 1);
+                        if (!positionsAlreadyAdded.Contains(bottomPosition))
+                        {
+                            queue.Enqueue(bottomPosition);
+                            positionsAlreadyAdded.Add(bottomPosition);
+                        }
                     }
                 }
             }

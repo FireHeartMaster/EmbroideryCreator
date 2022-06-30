@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace EmbroideryCreator
 {
@@ -283,6 +284,24 @@ namespace EmbroideryCreator
                 graphics.FillRectangle(brush, 0, 0, width, height);
             }
             return bitmap;
+        }
+
+        public static Tuple<int, int> ConvertFromPictureBoxToRealImage(PictureBox pictureBox, Tuple<int, int> pictureBoxPosition)
+        {
+            bool biggerIsWidth = pictureBox.Image.Width > pictureBox.Image.Height;
+
+            float ratio;
+            if (biggerIsWidth)
+            {
+                ratio = ((float)pictureBox.Image.Width) / pictureBox.Size.Width;
+            }
+            else
+            {
+                ratio = ((float)pictureBox.Image.Height) / pictureBox.Size.Height;
+            }
+            int horizontalPosition = (int)(ratio * (pictureBoxPosition.Item1 - (pictureBox.Size.Width * 0.5f)) + pictureBox.Image.Width * 0.5f);
+            int verticalPosition = (int)(ratio * (pictureBoxPosition.Item2 - (pictureBox.Size.Height * 0.5f)) + pictureBox.Image.Height * 0.5f);
+            return new Tuple<int, int>(horizontalPosition, verticalPosition);
         }
     }
 }

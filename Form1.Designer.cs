@@ -57,6 +57,10 @@ namespace EmbroideryCreator
             this.addBackstitchColorButton = new System.Windows.Forms.Button();
             this.deleteBackstitchColorButton = new System.Windows.Forms.Button();
             this.drawingToolsControl = new EmbroideryCreator.DrawingToolsControl();
+            this.crossStitchColorsRadioButton = new System.Windows.Forms.RadioButton();
+            this.backStitchColorsRadioButton = new System.Windows.Forms.RadioButton();
+            this.currentStitchModeTextLabel = new System.Windows.Forms.Label();
+            this.currentStitchModeLabel = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.widthSizeTrackBar)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numberOfColorsTrackBar)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numberOfIterationsTrackBar)).BeginInit();
@@ -249,6 +253,7 @@ namespace EmbroideryCreator
             this.mainPictureBox.TabIndex = 0;
             this.mainPictureBox.TabStop = false;
             this.mainPictureBox.Click += new System.EventHandler(this.mainPictureBox_Click);
+            this.mainPictureBox.Paint += new System.Windows.Forms.PaintEventHandler(this.mainPictureBox_Paint);
             this.mainPictureBox.DoubleClick += new System.EventHandler(this.mainPictureBox_DoubleClick);
             this.mainPictureBox.MouseDown += new System.Windows.Forms.MouseEventHandler(this.mainPictureBox_MouseDown);
             this.mainPictureBox.MouseMove += new System.Windows.Forms.MouseEventHandler(this.mainPictureBox_MouseMove);
@@ -321,11 +326,57 @@ namespace EmbroideryCreator
             this.drawingToolsControl.Size = new System.Drawing.Size(89, 45);
             this.drawingToolsControl.TabIndex = 18;
             // 
+            // crossStitchColorsRadioButton
+            // 
+            this.crossStitchColorsRadioButton.AutoSize = true;
+            this.crossStitchColorsRadioButton.Location = new System.Drawing.Point(834, 119);
+            this.crossStitchColorsRadioButton.Name = "crossStitchColorsRadioButton";
+            this.crossStitchColorsRadioButton.Size = new System.Drawing.Size(14, 13);
+            this.crossStitchColorsRadioButton.TabIndex = 24;
+            this.crossStitchColorsRadioButton.TabStop = true;
+            this.crossStitchColorsRadioButton.UseVisualStyleBackColor = true;
+            this.crossStitchColorsRadioButton.Click += new System.EventHandler(this.crossStitchColorsRadioButton_Clicked);
+            // 
+            // backStitchColorsRadioButton
+            // 
+            this.backStitchColorsRadioButton.AutoSize = true;
+            this.backStitchColorsRadioButton.Location = new System.Drawing.Point(962, 119);
+            this.backStitchColorsRadioButton.Name = "backStitchColorsRadioButton";
+            this.backStitchColorsRadioButton.Size = new System.Drawing.Size(14, 13);
+            this.backStitchColorsRadioButton.TabIndex = 25;
+            this.backStitchColorsRadioButton.TabStop = true;
+            this.backStitchColorsRadioButton.UseVisualStyleBackColor = true;
+            this.backStitchColorsRadioButton.Click += new System.EventHandler(this.backStitchColorsRadioButton_Clicked);
+            // 
+            // currentStitchModeTextLabel
+            // 
+            this.currentStitchModeTextLabel.AutoSize = true;
+            this.currentStitchModeTextLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 15F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.currentStitchModeTextLabel.Location = new System.Drawing.Point(296, 547);
+            this.currentStitchModeTextLabel.Name = "currentStitchModeTextLabel";
+            this.currentStitchModeTextLabel.Size = new System.Drawing.Size(197, 25);
+            this.currentStitchModeTextLabel.TabIndex = 15;
+            this.currentStitchModeTextLabel.Text = "Current Stitch Mode: ";
+            // 
+            // currentStitchModeLabel
+            // 
+            this.currentStitchModeLabel.AutoSize = true;
+            this.currentStitchModeLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 15F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.currentStitchModeLabel.Location = new System.Drawing.Point(486, 547);
+            this.currentStitchModeLabel.Name = "currentStitchModeLabel";
+            this.currentStitchModeLabel.Size = new System.Drawing.Size(118, 25);
+            this.currentStitchModeLabel.TabIndex = 15;
+            this.currentStitchModeLabel.Text = "Cross Stitch";
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1192, 579);
+            this.Controls.Add(this.currentStitchModeLabel);
+            this.Controls.Add(this.currentStitchModeTextLabel);
+            this.Controls.Add(this.backStitchColorsRadioButton);
+            this.Controls.Add(this.crossStitchColorsRadioButton);
             this.Controls.Add(this.deleteBackstitchColorButton);
             this.Controls.Add(this.addBackstitchColorButton);
             this.Controls.Add(this.mergeBackStitchColorsButton);
@@ -394,6 +445,10 @@ namespace EmbroideryCreator
         private System.Windows.Forms.Button mergeBackStitchColorsButton;
         private System.Windows.Forms.Button addBackstitchColorButton;
         private System.Windows.Forms.Button deleteBackstitchColorButton;
+        private System.Windows.Forms.RadioButton crossStitchColorsRadioButton;
+        private System.Windows.Forms.RadioButton backStitchColorsRadioButton;
+        private System.Windows.Forms.Label currentStitchModeTextLabel;
+        private System.Windows.Forms.Label currentStitchModeLabel;
     }
 }
 

@@ -26,6 +26,21 @@ namespace EmbroideryCreator
 
         public List<BackstitchColorControl> selectedBackstitchColorsControlsList = new List<BackstitchColorControl>();
 
+        private Point pointMouseDown = new Point(0, 0);
+        private Point pointMouseUp = new Point(0, 0);
+        private Image imageBeforeDrawing = null;
+        //private PaintEventHandler backstitchPaintEventHandler = null;
+        //private bool backstitchEventHandlerAlreadySubscribed = false;
+        private Point lastBackstitchPointMouseUp = new Point(0, 0);
+
+        private Tuple<int, int> realImagePositionMouseDown = new Tuple<int, int>(0, 0);
+        private Tuple<int, int> realImagePositionMouseUp = new Tuple<int, int>(0, 0);
+        private Tuple<int, int> lastBackstitchRealImagePositionMouseUp = new Tuple<int, int>(0, 0);
+
+        private Tuple<int, int> roundedRealImagePositionMouseDown = new Tuple<int, int>(0, 0);
+        private Tuple<int, int> roundedRealImagePositionMouseUp = new Tuple<int, int>(0, 0);
+        private Tuple<int, int> lastBackstitchRoundedRealImagePositionMouseUp = new Tuple<int, int>(0, 0);
+
         public MainForm()
         {
             InitializeComponent();
@@ -33,6 +48,9 @@ namespace EmbroideryCreator
             widthSizeTrackBar.Value = defaultWidth;
             numberOfColorsTrackBar.Value = defaultNumberOfColors;
             numberOfIterationsTrackBar.Value = defaultNumberOfIterations;
+
+            crossStitchColorsRadioButton.Checked = true;
+            backStitchColorsRadioButton.Checked = false;
         }
 
         private void chooseNewImageButton_Click(object sender, EventArgs args)
@@ -56,15 +74,16 @@ namespace EmbroideryCreator
             //Console.WriteLine("Mouse Down");
             isDrawing = true;
 
-            Point positionOnImage = e.Location;
+            Point pointOnImage = e.Location;
 
-            DrawOnPictureBox(positionOnImage);
+            DrawOnPictureBox(pointOnImage);
         }
 
         private void mainPictureBox_MouseUp(object sender, MouseEventArgs e)
         {
             //Console.WriteLine("Mouse Up");
             isDrawing = false;
+            SetBackstitchDrawMouseUp();
             //Console.WriteLine(mainPictureBox.Size.Width + " " + mainPictureBox.Size.Height);
         }
         
@@ -72,21 +91,119 @@ namespace EmbroideryCreator
         {
             if (isDrawing)
             {
-                //Console.WriteLine(line + ": Drawing"); line++;
-                DrawOnPictureBox(e.Location);
+                switch (currentDrawingMode)
+                {
+                    case DrawingMode.CrossStitch:
+                        //Console.WriteLine(line + ": Drawing"); line++;
+                        DrawOnPictureBox(e.Location);
+                        break;
+
+                    case DrawingMode.Backstitch:
+                        //if (backstitchEventHandlerAlreadySubscribed)
+                        //{
+                        //    pointMouseUp = e.Location;
+                        //}
+                        pointMouseUp = e.Location;
+                        PaintBackstitch();
+                        break;
+                }
             }
         }
 
         private void MainForm_Deactivate(object sender, EventArgs e)
         {
             isDrawing = false;
+            SetBackstitchDrawMouseUp();
         }
 
-        private void DrawOnPictureBox(Point positionOnImage)
+        private void DrawOnPictureBox(Point pointOnImage)
         {
             if (imageAndOperationsData == null || imageAndOperationsData.resultingImage == null) return;
 
-            Tuple<int, int> realImagePosition = ConvertFromPictureBoxToRealImage(new Tuple<int, int>(positionOnImage.X, positionOnImage.Y));
+            switch (currentDrawingMode)
+            {
+                case DrawingMode.CrossStitch:
+                    CrossStitchDraw(pointOnImage);
+                    break;
+                case DrawingMode.Backstitch:
+                    SetBackstitchDrawMouseDown(pointOnImage);
+                    break;
+            }
+        }
+
+        private void SetBackstitchDrawMouseDown(Point pointOnImage)
+        {
+            //imageBeforeDrawing = mainPictureBox.Image.Clone() as Image;
+            imageBeforeDrawing = new Bitmap(mainPictureBox.Image);
+            pointMouseDown = new Point(pointOnImage.X, pointOnImage.Y);
+            realImagePositionMouseDown = ImageTransformations.ConvertFromPictureBoxToRealImage(mainPictureBox, new Tuple<int, int>(pointMouseDown.X, pointMouseDown.Y));
+            roundedRealImagePositionMouseDown = imageAndOperationsData.ConvertFromGeneralPositionOnImagesToRoundedGeneralPositionOnImageIncludingHalfValues(realImagePositionMouseDown);
+            //pointMouseUp = new Point(pointOnImage.X, pointOnImage.Y);
+
+            //Subscribe to Paint event
+            //if(backstitchPaintEventHandler == null)
+            //{
+            //    backstitchPaintEventHandler = new PaintEventHandler(PaintBackstitch);
+            //}
+
+            //if (!backstitchEventHandlerAlreadySubscribed)
+            //{
+            //    mainPictureBox.Paint += backstitchPaintEventHandler;
+            //    backstitchEventHandlerAlreadySubscribed = true;
+            //}
+        }
+
+        private void SetBackstitchDrawMouseUp()
+        {
+            //mainPictureBox.Image = imageBeforeDrawing.Clone() as Image;
+
+            //TODO: set backstitch points in the backend
+
+            //Unsubscribe to Paint event
+            //if (backstitchEventHandlerAlreadySubscribed)
+            //{
+            //    mainPictureBox.Paint -= backstitchPaintEventHandler;
+            //    backstitchEventHandlerAlreadySubscribed = false;
+            //}
+        }
+
+        private void PaintBackstitch()
+        {
+            if (selectedBackstitchColorsControlsList.Count == 0) return;
+            if (lastBackstitchPointMouseUp.X == pointMouseUp.X && lastBackstitchPointMouseUp.Y == pointMouseUp.Y) return;
+            realImagePositionMouseUp = ImageTransformations.ConvertFromPictureBoxToRealImage(mainPictureBox, new Tuple<int, int>(pointMouseUp.X, pointMouseUp.Y));
+            if (realImagePositionMouseUp.Item1 == lastBackstitchRealImagePositionMouseUp.Item1 && realImagePositionMouseUp.Item2 == lastBackstitchRealImagePositionMouseUp.Item2) return;
+
+            roundedRealImagePositionMouseUp = imageAndOperationsData.ConvertFromGeneralPositionOnImagesToRoundedGeneralPositionOnImageIncludingHalfValues(realImagePositionMouseUp);
+
+            if (roundedRealImagePositionMouseUp.Item1 == lastBackstitchRoundedRealImagePositionMouseUp.Item1 && roundedRealImagePositionMouseUp.Item2 == lastBackstitchRoundedRealImagePositionMouseUp.Item2) return;
+
+            mainPictureBox.Image = imageBeforeDrawing.Clone() as Image;
+
+            Graphics graphics = Graphics.FromImage(mainPictureBox.Image);
+
+            Color penColor = selectedBackstitchColorsControlsList[0].color;
+            float backstitchLineThickness = imageAndOperationsData.GridThicknessInNumberOfPixels * 3;
+            Pen pen = new Pen(penColor, backstitchLineThickness);
+            pen.StartCap = System.Drawing.Drawing2D.LineCap.Round;
+            pen.EndCap = System.Drawing.Drawing2D.LineCap.Round;
+
+            graphics.DrawLine(pen,  roundedRealImagePositionMouseDown.Item1 - imageAndOperationsData.GridThicknessInNumberOfPixels * 0.5f, 
+                                    roundedRealImagePositionMouseDown.Item2 - imageAndOperationsData.GridThicknessInNumberOfPixels * 0.5f, 
+                                    roundedRealImagePositionMouseUp.Item1 - imageAndOperationsData.GridThicknessInNumberOfPixels * 0.5f, 
+                                    roundedRealImagePositionMouseUp.Item2 - imageAndOperationsData.GridThicknessInNumberOfPixels * 0.5f);
+
+            lastBackstitchPointMouseUp.X = pointMouseUp.X;
+            lastBackstitchPointMouseUp.Y = pointMouseUp.Y;
+
+            lastBackstitchRealImagePositionMouseUp = new Tuple<int, int>(realImagePositionMouseUp.Item1, realImagePositionMouseUp.Item2);
+
+            lastBackstitchRoundedRealImagePositionMouseUp = new Tuple<int, int>(roundedRealImagePositionMouseUp.Item1, roundedRealImagePositionMouseUp.Item2);
+        }
+
+        private void CrossStitchDraw(Point positionOnImage)
+        {
+            Tuple<int, int> realImagePosition = ImageTransformations.ConvertFromPictureBoxToRealImage(mainPictureBox, new Tuple<int, int>(positionOnImage.X, positionOnImage.Y));
 
             int colorIndexToPaint = selectedColorsControlsList.Count > 0 ? selectedColorsControlsList[0].reducedColorIndex : ((ReducedColorControl)flowLayoutPanelListOfCrossStitchColors.Controls[0]).reducedColorIndex;
 
@@ -98,6 +215,7 @@ namespace EmbroideryCreator
                 case DrawingToolInUse.Bucket:
                     imageAndOperationsData.FillRegionWithColorByPosition(realImagePosition, colorIndexToPaint);
                     isDrawing = false;
+                    //SetBackstitchDrawMouseUp();
                     break;
                 default:
                     break;
@@ -105,24 +223,6 @@ namespace EmbroideryCreator
 
             //reload picture box
             mainPictureBox.Image = imageAndOperationsData.resultingImage;
-        }
-
-        private Tuple<int, int> ConvertFromPictureBoxToRealImage(Tuple<int, int> pictureBoxPosition)
-        {
-            bool biggerIsWidth = mainPictureBox.Image.Width > mainPictureBox.Image.Height;
-
-            float ratio;
-            if (biggerIsWidth)
-            {
-                ratio = ((float)mainPictureBox.Image.Width) / mainPictureBox.Size.Width;
-            }
-            else
-            {
-                ratio = ((float)mainPictureBox.Image.Height) / mainPictureBox.Size.Height;
-            }
-            int horizontalPosition = (int)(ratio * (pictureBoxPosition.Item1 - (mainPictureBox.Size.Width * 0.5f)) + mainPictureBox.Image.Width * 0.5f);
-            int verticalPosition = (int)(ratio * (pictureBoxPosition.Item2 - (mainPictureBox.Size.Height * 0.5f)) + mainPictureBox.Image.Height * 0.5f);
-            return new Tuple<int, int>(horizontalPosition, verticalPosition);
         }
 
         private void SelectNewImageFile()
@@ -408,6 +508,36 @@ namespace EmbroideryCreator
                 controlToRemove.Dispose();
                 selectedBackstitchColorsControlsList.RemoveAt(0);
             }
+        }
+
+        private void crossStitchColorsRadioButton_Clicked(object sender, EventArgs e)
+        {
+            crossStitchColorsRadioButton.Checked = true;
+            backStitchColorsRadioButton.Checked = false;
+
+            currentDrawingMode = DrawingMode.CrossStitch;
+
+            currentStitchModeLabel.Text = "Cross Stitch";
+        }
+
+        private void backStitchColorsRadioButton_Clicked(object sender, EventArgs e)
+        {
+            crossStitchColorsRadioButton.Checked = false;
+            backStitchColorsRadioButton.Checked = true;
+
+            currentDrawingMode = DrawingMode.Backstitch;
+
+            currentStitchModeLabel.Text = "Back Stitch";
+        }
+
+        private void mainPictureBox_MouseHover(object sender, EventArgs e)
+        {
+            
+        }
+
+        private void mainPictureBox_Paint(object sender, PaintEventArgs e)
+        {
+
         }
     }
 
