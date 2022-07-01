@@ -165,6 +165,12 @@ namespace EmbroideryCreator
             //    mainPictureBox.Paint -= backstitchPaintEventHandler;
             //    backstitchEventHandlerAlreadySubscribed = false;
             //}
+            if(selectedBackstitchColorsControlsList.Count > 0)
+            {
+                Tuple<float, float> startingPosition = imageAndOperationsData.ConvertFromGeneralPositionOnImageToCoordinatesIncludingHalfValues(realImagePositionMouseDown);
+                Tuple<float, float> endingPosition = imageAndOperationsData.ConvertFromGeneralPositionOnImageToCoordinatesIncludingHalfValues(realImagePositionMouseUp);
+                imageAndOperationsData.AddNewBackstitchLine(selectedBackstitchColorsControlsList[0].crossStitchColorIndex, startingPosition, endingPosition);
+            }
         }
 
         private void PaintBackstitch()
@@ -354,7 +360,8 @@ namespace EmbroideryCreator
 
         public void UpdateBackstitchColorByIndex(int index, Color newColor)
         {
-            throw new NotImplementedException();
+            imageAndOperationsData.UpdateBackstitchColorByIndex(index, newColor);
+            //TODO: Update the image in the main picture box with the new one after the update of color
         }
 
         private void mergeColorsButton_Click(object sender, EventArgs e)
@@ -408,7 +415,8 @@ namespace EmbroideryCreator
             colorControl.InitializeBackstitchColorControl(newColor, flowLayoutPanelListOfBackstitchColors.Controls.Count, this);
             flowLayoutPanelListOfBackstitchColors.Controls.Add(colorControl);
             //imageAndOperationsData.AddNewColor(newColor);
-            //TODO: Add new backstitch color to backend
+
+            imageAndOperationsData.AddNewBackstitchColor(newColor);
         }
 
         private void addColorButton_Click(object sender, EventArgs e)
