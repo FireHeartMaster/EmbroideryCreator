@@ -16,12 +16,6 @@ namespace EmbroideryCreator
 
         PictureBox currentActiveToolPictureBox;
 
-        private readonly int selectedToolBorderSize = 30;
-        private readonly Color selectedToolBorderColor = Color.Blue;
-
-        private readonly int unSelectedToolBorderSize = 0;
-        private readonly Color unSelectedToolBorderColor = Color.White;
-
         public DrawingToolsControl()
         {
             InitializeComponent();

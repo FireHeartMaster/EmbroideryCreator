@@ -200,11 +200,7 @@ namespace EmbroideryCreator
         }
 
         private void ConvertCommandToByte(StitchType stitchType, List<byte> bytesFromStitch, int amountToMoveX, int amountToMoveY)
-        {
-            if(amountToMoveX % 30 != 0 || amountToMoveY % 30 != 0)
-            {
-                int a = 0;
-            }
+        {           
             List<int> movePowersX = ConvertNumberToPowersOfNumber(amountToMoveX, 3);
             List<int> movePowersY = ConvertNumberToPowersOfNumber(amountToMoveY, 3);
 
@@ -258,69 +254,9 @@ namespace EmbroideryCreator
             }
             commandBytes[2] |= (byte)(jumpPowersY[4] >= 0 ? jumpPowersY[4] << 5 : 1 << 4);
             commandBytes[2] |= (byte)(jumpPowersX[4] >= 0 ? jumpPowersX[4] << 2 : 1 << 3);
-            commandBytes[2] |= (byte)3; //two last bits are always set in the .dst format
+            commandBytes[2] |= (byte)3; //two last bits are always set in the .dst format            
 
-            int deltaY = (int)Math.Pow(3, 0) * ((commandBytes[0] & 128) >> 7);
-            deltaY += -(int)Math.Pow(3, 0) * ((commandBytes[0] & 64) >> 6);
-            deltaY += (int)Math.Pow(3, 2) * ((commandBytes[0] & 32) >> 5);
-            deltaY += -(int)Math.Pow(3, 2) * ((commandBytes[0] & 16) >> 4);
-
-            deltaY += (int)Math.Pow(3, 1) * ((commandBytes[1] & 128) >> 7);
-            deltaY += -(int)Math.Pow(3, 1) * ((commandBytes[1] & 64) >> 6);
-            deltaY += (int)Math.Pow(3, 3) * ((commandBytes[1] & 32) >> 5);
-            deltaY += -(int)Math.Pow(3, 3) * ((commandBytes[1] & 16) >> 4);
-
-            deltaY += (int)Math.Pow(3, 4) * ((commandBytes[2] & 32) >> 5);
-            deltaY += -(int)Math.Pow(3, 4) * ((commandBytes[2] & 16) >> 4);
-
-            int deltaX = -(int)Math.Pow(3, 2) * ((commandBytes[0] & 8) >> 3);
-            deltaX += (int)Math.Pow(3, 2) * ((commandBytes[0] & 4) >> 2);
-            deltaX += -(int)Math.Pow(3, 0) * ((commandBytes[0] & 2) >> 1);
-            deltaX += (int)Math.Pow(3, 0) * ((commandBytes[0] & 1) >> 0);
-
-            deltaX += -(int)Math.Pow(3, 3) * ((commandBytes[1] & 8) >> 3);
-            deltaX += (int)Math.Pow(3, 3) * ((commandBytes[1] & 4) >> 2);
-            deltaX += -(int)Math.Pow(3, 1) * ((commandBytes[1] & 2) >> 1);
-            deltaX += (int)Math.Pow(3, 1) * ((commandBytes[1] & 1) >> 0);
-
-            deltaX += -(int)Math.Pow(3, 4) * ((commandBytes[2] & 8) >> 3);
-            deltaX += (int)Math.Pow(3, 4) * ((commandBytes[2] & 4) >> 2);
-
-            if (deltaX % 30 != 0)
-            {
-                int b = 0;
-                deltaX = -(int)Math.Pow(3, 2) * ((commandBytes[0] & 8) >> 3);
-                deltaX += (int)Math.Pow(3, 2) * ((commandBytes[0] & 4) >> 2);
-                deltaX += -(int)Math.Pow(3, 0) * ((commandBytes[0] & 2) >> 1);
-                deltaX += (int)Math.Pow(3, 0) * ((commandBytes[0] & 1) >> 0);
-
-                deltaX += -(int)Math.Pow(3, 3) * ((commandBytes[1] & 8) >> 3);
-                deltaX += (int)Math.Pow(3, 3) * ((commandBytes[1] & 4) >> 2);
-                deltaX += -(int)Math.Pow(3, 1) * ((commandBytes[1] & 2) >> 1);
-                deltaX += (int)Math.Pow(3, 1) * ((commandBytes[1] & 1) >> 0);
-
-                deltaX += -(int)Math.Pow(3, 4) * ((commandBytes[2] & 8) >> 3);
-                deltaX += (int)Math.Pow(3, 4) * ((commandBytes[2] & 4) >> 2);
-            }
-
-            if (deltaY % 30 != 0)
-            {
-                int c = 0;
-                deltaY = (int)Math.Pow(3, 0) * ((commandBytes[0] & 128) >> 7);
-                deltaY += -(int)Math.Pow(3, 0) * ((commandBytes[0] & 64) >> 6);
-                deltaY += (int)Math.Pow(3, 2) * ((commandBytes[0] & 32) >> 5);
-                deltaY += -(int)Math.Pow(3, 2) * ((commandBytes[0] & 16) >> 4);
-
-                deltaY += (int)Math.Pow(3, 1) * ((commandBytes[1] & 128) >> 7);
-                deltaY += -(int)Math.Pow(3, 1) * ((commandBytes[1] & 64) >> 6);
-                deltaY += (int)Math.Pow(3, 3) * ((commandBytes[1] & 32) >> 5);
-                deltaY += -(int)Math.Pow(3, 3) * ((commandBytes[1] & 16) >> 4);
-
-                deltaY += (int)Math.Pow(3, 4) * ((commandBytes[2] & 32) >> 5);
-                deltaY += -(int)Math.Pow(3, 4) * ((commandBytes[2] & 16) >> 4);
-            }
-
-                return commandBytes;
+            return commandBytes;
         }
 
         private List<byte> GetEncodingDstFileHeader(List<byte> bodyEncoding, int minX, int maxX, int minY, int maxY)
