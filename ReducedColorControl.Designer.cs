@@ -32,6 +32,7 @@ namespace EmbroideryCreator
             this.newColorDialog = new System.Windows.Forms.ColorDialog();
             this.pictureBoxColor = new System.Windows.Forms.PictureBox();
             this.selectionCheckBox = new System.Windows.Forms.CheckBox();
+            this.IsBackgroundCheckBox = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxColor)).BeginInit();
             this.SuspendLayout();
             // 
@@ -57,15 +58,28 @@ namespace EmbroideryCreator
             this.selectionCheckBox.UseVisualStyleBackColor = true;
             this.selectionCheckBox.CheckedChanged += new System.EventHandler(this.selectionCheckBox_CheckedChanged);
             // 
+            // IsBackgroundCheckBox
+            // 
+            this.IsBackgroundCheckBox.AutoSize = true;
+            this.IsBackgroundCheckBox.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.IsBackgroundCheckBox.Location = new System.Drawing.Point(43, 41);
+            this.IsBackgroundCheckBox.Name = "IsBackgroundCheckBox";
+            this.IsBackgroundCheckBox.Size = new System.Drawing.Size(96, 17);
+            this.IsBackgroundCheckBox.TabIndex = 2;
+            this.IsBackgroundCheckBox.Text = "is background:";
+            this.IsBackgroundCheckBox.UseVisualStyleBackColor = true;
+            this.IsBackgroundCheckBox.CheckedChanged += new System.EventHandler(this.IsBackgroundCheckBox_CheckedChanged);
+            // 
             // ReducedColorControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.ControlLight;
+            this.Controls.Add(this.IsBackgroundCheckBox);
             this.Controls.Add(this.selectionCheckBox);
             this.Controls.Add(this.pictureBoxColor);
             this.Name = "ReducedColorControl";
-            this.Size = new System.Drawing.Size(73, 50);
+            this.Size = new System.Drawing.Size(142, 58);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxColor)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -77,5 +91,6 @@ namespace EmbroideryCreator
         private System.Windows.Forms.ColorDialog newColorDialog;
         private System.Windows.Forms.PictureBox pictureBoxColor;
         private System.Windows.Forms.CheckBox selectionCheckBox;
+        private System.Windows.Forms.CheckBox IsBackgroundCheckBox;
     }
 }

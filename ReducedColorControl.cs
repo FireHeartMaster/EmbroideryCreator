@@ -22,7 +22,8 @@ namespace EmbroideryCreator
         public PictureBox reducedColorPictureBox { get; private set; }
         public int reducedColorIndex;
         public MainForm myReferenceToMainForm;
-        public Color color;        
+        public Color color;
+        public bool isBackground = false;
 
         private void pictureBoxColor_Click(object sender, EventArgs e)
         {
@@ -70,6 +71,12 @@ namespace EmbroideryCreator
         public void ModifySelectionCheckBox(bool state)
         {
             selectionCheckBox.Checked = state;
+        }
+
+        private void IsBackgroundCheckBox_CheckedChanged(object sender, EventArgs e)
+        {
+            isBackground = IsBackgroundCheckBox.Checked;
+            myReferenceToMainForm.UpdateIfShouldPaintReducedColorBackground(reducedColorIndex, isBackground);
         }
     }
 }

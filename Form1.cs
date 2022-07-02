@@ -69,6 +69,14 @@ namespace EmbroideryCreator
             //Console.WriteLine("Double Click");
         }
 
+        internal void UpdateIfShouldPaintReducedColorBackground(int reducedColorIndex, bool isBackground)
+        {
+            if(reducedColorIndex >= 0 && reducedColorIndex < imageAndOperationsData.colorIsBackgroundList.Count)
+            {
+                imageAndOperationsData.colorIsBackgroundList[reducedColorIndex] = isBackground;
+            }                        
+        }
+
         private void mainPictureBox_MouseDown(object sender, MouseEventArgs e)
         {
             //Console.WriteLine("Mouse Down");
@@ -294,6 +302,7 @@ namespace EmbroideryCreator
 
             flowLayoutPanelListOfCrossStitchColors.Controls.Clear();
             selectedColorsControlsList.Clear();
+            imageAndOperationsData.colorIsBackgroundList.Clear();
 
             flowLayoutPanelListOfBackstitchColors.Controls.Clear();
             selectedBackstitchColorsControlsList.Clear();
@@ -305,6 +314,7 @@ namespace EmbroideryCreator
                 //colorImage.SetPixel(0, 0, Color.Red);
                 colorControl.InitializeReducedColorControl(colorMeans[i], i, colorControl, this);
                 flowLayoutPanelListOfCrossStitchColors.Controls.Add(colorControl);
+                imageAndOperationsData.colorIsBackgroundList.Add(false);
             }
         }
 
@@ -394,6 +404,7 @@ namespace EmbroideryCreator
 
                 ////Now I can remove the desired control from both the selection list and from the collection of controls of the panel
                 flowLayoutPanelListOfCrossStitchColors.Controls.Remove(selectedColorsControlsList[1]);
+                imageAndOperationsData.colorIsBackgroundList.RemoveAt(selectedColorsControlsList[1].reducedColorIndex);
                 //selectedColorsControlsList[1].ModifySelectionCheckBox(false);
                 ReducedColorControl controlToRemove = selectedColorsControlsList[1];
                 controlToRemove.Dispose();
@@ -407,6 +418,7 @@ namespace EmbroideryCreator
             colorControl.InitializeReducedColorControl(newColor, flowLayoutPanelListOfCrossStitchColors.Controls.Count, colorControl, this);
             flowLayoutPanelListOfCrossStitchColors.Controls.Add(colorControl);
             imageAndOperationsData.AddNewColor(newColor);
+            imageAndOperationsData.colorIsBackgroundList.Add(false);
         }
 
         private void AddNewBackstitchColor(Color newColor)

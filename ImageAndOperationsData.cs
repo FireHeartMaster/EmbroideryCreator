@@ -26,6 +26,7 @@ namespace EmbroideryCreator
         private List<Color> colorMeans;
         private Dictionary<int, List<Tuple<int, int>>> positionsOfEachColor = new Dictionary<int, List<Tuple<int, int>>>();
         private int[,] matrixOfNewColors;
+        public List<bool> colorIsBackgroundList = new List<bool>();
 
         private Dictionary<int, HashSet<BackstitchLine>> backstitchLines = new Dictionary<int, HashSet<BackstitchLine>>();
         private Dictionary<int, Color> backstitchColors = new Dictionary<int, Color>();
@@ -453,7 +454,27 @@ namespace EmbroideryCreator
         {
             MachineEmbroidery machineEmbroidery = new MachineEmbroidery();
             //machineEmbroidery.CreatePath(positionsOfEachColor);
-            machineEmbroidery.CreatePathAndDstFile(positionsOfEachColor, 30, matrixOfNewColors.GetLength(0), matrixOfNewColors.GetLength(1));
+            Dictionary<int, List<Tuple<int, int>>> positionsOfEachColorToEmbroider = new Dictionary<int, List<Tuple<int, int>>>();
+            int threadIndex = 0;
+            foreach (KeyValuePair<int, List<Tuple<int, int>>> indexAndPositions in positionsOfEachColor)
+            {
+                if (!colorIsBackgroundList[indexAndPositions.Key])
+                {
+                    positionsOfEachColorToEmbroider.Add(threadIndex, indexAndPositions.Value);
+                    //foreach (Tuple<int, int> position in indexAndPositions.Value)
+                    //{
+                    //    positionsToEmbroider[threadIndex].Add(new Tuple<float, float>(position.Item1, position.Item2));
+                    //}
+                    threadIndex++;
+                }
+            }
+
+            //foreach (var indexAndLines in backstitchLines)
+            //{
+
+            //}
+
+            machineEmbroidery.CreatePathAndDstFile(positionsOfEachColorToEmbroider, 30, matrixOfNewColors.GetLength(0), matrixOfNewColors.GetLength(1));
         }
     }
 
