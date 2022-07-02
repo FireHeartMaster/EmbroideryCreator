@@ -65,6 +65,7 @@
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
     <Compile Include="ImageAndOperationsData.cs" />
+    <Compile Include="ImageAndOperationsDataSerialized.cs" />
     <Compile Include="ImageTransformations.cs" />
     <Compile Include="MachineEmbroidery.cs" />
     <Compile Include="Program.cs" />
@@ -75,6 +76,7 @@
     <Compile Include="ReducedColorControl.Designer.cs">
       <DependentUpon>ReducedColorControl.cs</DependentUpon>
     </Compile>
+    <Compile Include="SerializerHelper.cs" />
     <EmbeddedResource Include="BackstitchColorControl.resx">
       <DependentUpon>BackstitchColorControl.cs</DependentUpon>
     </EmbeddedResource>

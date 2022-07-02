@@ -50,6 +50,10 @@ namespace EmbroideryCreator
             if (backstitchColorCheckBox.Checked)
             {
                 AddThisControlToListOfSelectedBackstitchColorControls();
+                if (!myReferenceToMainForm.CheckIfMultipleSelectionIsActive())
+                {
+                    myReferenceToMainForm.UncheckAllOtherBackstitchColorControls(crossStitchColorIndex);
+                }
             }
             else
             {

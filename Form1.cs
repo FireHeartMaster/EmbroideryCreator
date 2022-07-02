@@ -41,6 +41,8 @@ namespace EmbroideryCreator
         private Tuple<int, int> roundedRealImagePositionMouseUp = new Tuple<int, int>(0, 0);
         private Tuple<int, int> lastBackstitchRoundedRealImagePositionMouseUp = new Tuple<int, int>(0, 0);
 
+        private Keys multipleSelectionKeyboardKey = Keys.Control;
+
         public MainForm()
         {
             InitializeComponent();
@@ -126,7 +128,7 @@ namespace EmbroideryCreator
 
         private void DrawOnPictureBox(Point pointOnImage)
         {
-            if (imageAndOperationsData == null || imageAndOperationsData.resultingImage == null) return;
+            if (imageAndOperationsData == null || imageAndOperationsData.ResultingImage == null) return;
 
             switch (currentDrawingMode)
             {
@@ -236,7 +238,7 @@ namespace EmbroideryCreator
             }
 
             //reload picture box
-            mainPictureBox.Image = imageAndOperationsData.resultingImage;
+            mainPictureBox.Image = imageAndOperationsData.ResultingImage;
         }
 
         private void SelectNewImageFile()
@@ -287,9 +289,15 @@ namespace EmbroideryCreator
             imageAndOperationsData.numberOfIterations = numberOfIterationsTrackBar.Value;
 
             imageAndOperationsData.ProcessImage();
-            int newImageWidth = imageAndOperationsData.resultingImage.Width;
-            int newImageHeight = imageAndOperationsData.resultingImage.Height;
-            mainPictureBox.Image = imageAndOperationsData.resultingImage;/*ImageTransformations.ResizeBitmap(imageAndOperationsData.resultingImage, mainPictureBox.Width * 10);*/
+            int newImageWidth = imageAndOperationsData.ResultingImage.Width;
+            int newImageHeight = imageAndOperationsData.ResultingImage.Height;
+            mainPictureBox.Image = imageAndOperationsData.ResultingImage;/*ImageTransformations.ResizeBitmap(imageAndOperationsData.resultingImage, mainPictureBox.Width * 10);*/
+
+            FillListsOfColors();
+        }
+
+        private void FillListsOfColors()
+        {
             List<Color> colorMeans = imageAndOperationsData.GetColors();
 
             flowLayoutPanelListOfCrossStitchColors.AutoScroll = true;
@@ -318,6 +326,29 @@ namespace EmbroideryCreator
             }
         }
 
+        public void UncheckAllOtherCrossStitchColorControls(int indexToRemainChecked)
+        {
+            foreach (object colorControl in flowLayoutPanelListOfCrossStitchColors.Controls)
+            {
+                ReducedColorControl reducedColorControl = (ReducedColorControl)colorControl;
+                if(reducedColorControl.reducedColorIndex != indexToRemainChecked)
+                {
+                    reducedColorControl.ModifySelectionCheckBox(false);
+                }
+            }
+        }
+
+        public void UncheckAllOtherBackstitchColorControls(int indexToRemainChecked)
+        {
+            foreach (object colorControl in flowLayoutPanelListOfBackstitchColors.Controls)
+            {
+                BackstitchColorControl backstitchColorControl = (BackstitchColorControl)colorControl;
+                if (backstitchColorControl.crossStitchColorIndex != indexToRemainChecked)
+                {
+                    backstitchColorControl.ModifyBackstitchSelectionCheckBox(false);
+                }
+            }
+        }
 
         private void TryToProcessImage()
         {
@@ -329,7 +360,7 @@ namespace EmbroideryCreator
 
         private void saveImageButton_Click(object sender, EventArgs e)
         {
-            if(imageAndOperationsData.resultingImage != null)
+            if(imageAndOperationsData != null && imageAndOperationsData.ResultingImage != null)
             {
                 //saveImageFileDialog.Filter = "Image files|*.bmp;*.jpg;*.jpeg;*.gif;*.png;*.tif|All files|*.*";
                 saveImageFileDialog.Filter = "Image files|*.png;*.jpg;*.jpeg;";
@@ -337,10 +368,29 @@ namespace EmbroideryCreator
 
                 if (saveImageFileDialog.ShowDialog() == DialogResult.OK)
                 {
-                    imageAndOperationsData.resultingImage.Save(saveImageFileDialog.FileNames[0]);
+                    imageAndOperationsData.ResultingImage.Save(saveImageFileDialog.FileNames[0]);
+                    if(saveImageFileDialog.FileNames[0].LastIndexOf(".") != -1)
+                    {
+                        int lengthOfSubstring = saveImageFileDialog.FileNames[0].LastIndexOf(".");
+                        string filePathWithoutExtension = saveImageFileDialog.FileNames[0].Substring(0, lengthOfSubstring);
+                        imageAndOperationsData.SerializeData(filePathWithoutExtension + ".edu");
+                    }
                 }
 
                 imageAndOperationsData.CreateMachinePath();
+            }
+        }
+
+        private void RetrieveSavedFileButton_Click(object sender, EventArgs e)
+        {
+            retrieveSavedFileDialog.Filter = "Temporary Embroidery format (*.edu)|*.edu";
+
+            if(retrieveSavedFileDialog.ShowDialog() == DialogResult.OK)
+            {
+                imageAndOperationsData = ImageAndOperationsDataSerialized.DeserializeData(retrieveSavedFileDialog.FileName);
+                mainPictureBox.Image = imageAndOperationsData.ResultingImage;
+
+                FillListsOfColors();
             }
         }
 
@@ -365,7 +415,7 @@ namespace EmbroideryCreator
         public void UpdateReducedColorByIndex(int index, Color newColor)
         {
             imageAndOperationsData.ChangeColorByIndex(index, newColor);
-            mainPictureBox.Image = imageAndOperationsData.resultingImage;
+            mainPictureBox.Image = imageAndOperationsData.ResultingImage;
         }
 
         public void UpdateBackstitchColorByIndex(int index, Color newColor)
@@ -433,7 +483,7 @@ namespace EmbroideryCreator
 
         private void addColorButton_Click(object sender, EventArgs e)
         {
-            if (imageAndOperationsData == null || imageAndOperationsData.resultingImage == null) return;
+            if (imageAndOperationsData == null || imageAndOperationsData.ResultingImage == null) return;
 
             if (addColorDialog.ShowDialog() == DialogResult.OK)
             {
@@ -483,7 +533,7 @@ namespace EmbroideryCreator
 
         private void addBackstitchColorButton_Click(object sender, EventArgs e)
         {
-            if (imageAndOperationsData == null || imageAndOperationsData.resultingImage == null) return;
+            if (imageAndOperationsData == null || imageAndOperationsData.ResultingImage == null) return;
 
             if (addColorDialog.ShowDialog() == DialogResult.OK)
             {
@@ -558,6 +608,11 @@ namespace EmbroideryCreator
         private void mainPictureBox_Paint(object sender, PaintEventArgs e)
         {
 
+        }
+
+        public bool CheckIfMultipleSelectionIsActive()
+        {            
+            return ModifierKeys.HasFlag(multipleSelectionKeyboardKey);
         }
     }
 

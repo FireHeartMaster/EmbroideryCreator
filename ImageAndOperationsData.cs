@@ -15,7 +15,7 @@ namespace EmbroideryCreator
         //private Bitmap augmentedImage;
         //private Bitmap withGridImage;
         //private Bitmap withBorderImage;
-        public Bitmap resultingImage { get; private set; }
+        public Bitmap ResultingImage { get; private set; }
 
         public int newWidth = 100;
         public int numberOfColors = 10;
@@ -42,7 +42,7 @@ namespace EmbroideryCreator
             if(indexToUpdate >= 0 && indexToUpdate < colorMeans.Count)
             {
                 colorMeans[indexToUpdate] = newColor;
-                PaintNewColorOnImage(indexToUpdate, newColor, resultingImage);
+                PaintNewColorOnImage(indexToUpdate, newColor, ResultingImage);
             }
         }
 
@@ -89,6 +89,30 @@ namespace EmbroideryCreator
         public ImageAndOperationsData(Bitmap importedImage)
         {
             originalImage = new Bitmap(importedImage);
+        }
+
+        public ImageAndOperationsData(Bitmap originalImage, Bitmap resultingImage, int newWidth, int numberOfColors, int numberOfIterations, int newPixelSize, List<Color> colorMeans, Dictionary<int, List<Tuple<int, int>>> positionsOfEachColor, int[,] matrixOfNewColors, List<bool> colorIsBackgroundList, Dictionary<int, HashSet<BackstitchLine>> backstitchLines, Dictionary<int, Color> backstitchColors, int borderThicknessInNumberOfPixels, int gridThicknessInNumberOfPixels) : this(originalImage)
+        {
+            ResultingImage = resultingImage;
+            this.newWidth = newWidth;
+            this.numberOfColors = numberOfColors;
+            this.numberOfIterations = numberOfIterations;
+            this.newPixelSize = newPixelSize;
+            this.colorMeans = colorMeans;
+            this.positionsOfEachColor = positionsOfEachColor;
+            this.matrixOfNewColors = matrixOfNewColors;
+            this.colorIsBackgroundList = colorIsBackgroundList;
+            this.backstitchLines = backstitchLines;
+            this.backstitchColors = backstitchColors;
+            BorderThicknessInNumberOfPixels = borderThicknessInNumberOfPixels;
+            GridThicknessInNumberOfPixels = gridThicknessInNumberOfPixels;
+        }
+
+        public void SerializeData(string filePath)
+        {
+            ImageAndOperationsDataSerialized serializableData = new ImageAndOperationsDataSerialized(originalImage, ResultingImage, newWidth, numberOfColors, numberOfIterations, newPixelSize, colorMeans, positionsOfEachColor, matrixOfNewColors, colorIsBackgroundList, backstitchLines, backstitchColors, BorderThicknessInNumberOfPixels, GridThicknessInNumberOfPixels);
+
+            SerializerHelper.WriteToFile<ImageAndOperationsDataSerialized>(filePath, serializableData);
         }
 
         private Bitmap PixelateImage(Bitmap originalImage)
@@ -199,7 +223,7 @@ namespace EmbroideryCreator
             processedImage = AddGrid(processedImage);
             processedImage = AddBorderIncresingSizeOfOriginalImage(processedImage);
             //resultingImage = withBorderImage;
-            resultingImage = processedImage;
+            ResultingImage = processedImage;
         }
 
         //extremmely long time to execute and resource consuming
@@ -210,7 +234,7 @@ namespace EmbroideryCreator
             processedImage = PixelateImageAlternateOrder(processedImage);
             processedImage = AddGrid(processedImage);
             processedImage = AddBorderIncresingSizeOfOriginalImage(processedImage);
-            resultingImage = processedImage;
+            ResultingImage = processedImage;
         }
 
         public void MergeTwoColors(int firstIndex, int otherIndex)
@@ -259,7 +283,7 @@ namespace EmbroideryCreator
             positionsOfEachColor[colorIndexToPaint].Add(position);
 
             //TODO:repaint that pixel position
-            PaintNewColorOnPixelPosition(position, colorMeans[colorIndexToPaint], resultingImage);
+            PaintNewColorOnPixelPosition(position, colorMeans[colorIndexToPaint], ResultingImage);
         }
 
         public void PaintNewColorOnGeneralPosition(Tuple<int, int> generalPosition, int colorIndexToPaint)
@@ -383,7 +407,7 @@ namespace EmbroideryCreator
             }
 
             //repaint
-            PaintNewColorOnSeveralPixelPositions(listOfPositionsToChange, colorMeans[colorIndexToPaint], resultingImage);
+            PaintNewColorOnSeveralPixelPositions(listOfPositionsToChange, colorMeans[colorIndexToPaint], ResultingImage);
         }
 
         public void AddNewBackstitchColor(Color newColor)

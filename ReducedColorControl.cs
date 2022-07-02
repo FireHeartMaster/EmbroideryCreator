@@ -51,6 +51,10 @@ namespace EmbroideryCreator
             if (selectionCheckBox.Checked)
             {
                 AddThisControlToListOfSelectedControls();
+                if (!myReferenceToMainForm.CheckIfMultipleSelectionIsActive())
+                {
+                    myReferenceToMainForm.UncheckAllOtherCrossStitchColorControls(reducedColorIndex);
+                }
             }
             else
             {

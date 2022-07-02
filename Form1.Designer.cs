@@ -61,6 +61,8 @@ namespace EmbroideryCreator
             this.currentStitchModeTextLabel = new System.Windows.Forms.Label();
             this.currentStitchModeLabel = new System.Windows.Forms.Label();
             this.drawingToolsControl = new EmbroideryCreator.DrawingToolsControl();
+            this.RetrieveSavedFileButton = new System.Windows.Forms.Button();
+            this.retrieveSavedFileDialog = new System.Windows.Forms.OpenFileDialog();
             ((System.ComponentModel.ISupportInitialize)(this.widthSizeTrackBar)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numberOfColorsTrackBar)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numberOfIterationsTrackBar)).BeginInit();
@@ -368,11 +370,26 @@ namespace EmbroideryCreator
             this.drawingToolsControl.Size = new System.Drawing.Size(89, 45);
             this.drawingToolsControl.TabIndex = 18;
             // 
+            // RetrieveSavedFileButton
+            // 
+            this.RetrieveSavedFileButton.Location = new System.Drawing.Point(13, 489);
+            this.RetrieveSavedFileButton.Name = "RetrieveSavedFileButton";
+            this.RetrieveSavedFileButton.Size = new System.Drawing.Size(139, 23);
+            this.RetrieveSavedFileButton.TabIndex = 26;
+            this.RetrieveSavedFileButton.Text = "RetrieveSavedFile ";
+            this.RetrieveSavedFileButton.UseVisualStyleBackColor = true;
+            this.RetrieveSavedFileButton.Click += new System.EventHandler(this.RetrieveSavedFileButton_Click);
+            // 
+            // retrieveSavedFileDialog
+            // 
+            this.retrieveSavedFileDialog.FileName = "openFileDialog1";
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1153, 579);
+            this.Controls.Add(this.RetrieveSavedFileButton);
             this.Controls.Add(this.currentStitchModeLabel);
             this.Controls.Add(this.currentStitchModeTextLabel);
             this.Controls.Add(this.backStitchColorsRadioButton);
@@ -449,6 +466,8 @@ namespace EmbroideryCreator
         private System.Windows.Forms.RadioButton backStitchColorsRadioButton;
         private System.Windows.Forms.Label currentStitchModeTextLabel;
         private System.Windows.Forms.Label currentStitchModeLabel;
+        private System.Windows.Forms.Button RetrieveSavedFileButton;
+        private System.Windows.Forms.OpenFileDialog retrieveSavedFileDialog;
     }
 }
 
