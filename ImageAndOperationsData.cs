@@ -16,6 +16,7 @@ namespace EmbroideryCreator
         //private Bitmap withGridImage;
         //private Bitmap withBorderImage;
         public Bitmap ResultingImage { get; private set; }
+        public Bitmap BackstitchImage { get; private set; }
 
         public int newWidth = 100;
         public int numberOfColors = 10;
@@ -87,14 +88,35 @@ namespace EmbroideryCreator
                                                         newPixelSize - GridThicknessInNumberOfPixels);
         }
 
+        private void PaintBackstitchLine(Color colorToPaint, BackstitchLine backstitchLine)
+        {
+            using(Graphics graphics = Graphics.FromImage(BackstitchImage))
+            {
+                Tuple<int, int> startingPositionOnImagePixels = ConvertFromCoordinatesIncludingHalfValuesToGeneralPositionOnImage(backstitchLine.startingPosition);
+                Tuple<int, int> endingPositionOnImagePixels = ConvertFromCoordinatesIncludingHalfValuesToGeneralPositionOnImage(backstitchLine.endingPosition);
+
+                Color penColor = colorToPaint;
+                float backstitchLineThickness = GridThicknessInNumberOfPixels * 3;
+                Pen pen = new Pen(penColor, backstitchLineThickness);
+                pen.StartCap = System.Drawing.Drawing2D.LineCap.Round;
+                pen.EndCap = System.Drawing.Drawing2D.LineCap.Round;
+
+                graphics.DrawLine(pen, startingPositionOnImagePixels.Item1 - GridThicknessInNumberOfPixels * 0.5f,
+                                        startingPositionOnImagePixels.Item2 - GridThicknessInNumberOfPixels * 0.5f,
+                                        endingPositionOnImagePixels.Item1 - GridThicknessInNumberOfPixels * 0.5f,
+                                        endingPositionOnImagePixels.Item2 - GridThicknessInNumberOfPixels * 0.5f);
+            }
+        }
+
         public ImageAndOperationsData(Bitmap importedImage)
         {
             originalImage = new Bitmap(importedImage);
         }
 
-        public ImageAndOperationsData(Bitmap originalImage, Bitmap resultingImage, int newWidth, int numberOfColors, int numberOfIterations, int newPixelSize, List<Color> colorMeans, Dictionary<int, List<Tuple<int, int>>> positionsOfEachColor, int[,] matrixOfNewColors, List<bool> colorIsBackgroundList, Dictionary<int, HashSet<BackstitchLine>> backstitchLines, Dictionary<int, Color> backstitchColors, int borderThicknessInNumberOfPixels, int gridThicknessInNumberOfPixels) : this(originalImage)
+        public ImageAndOperationsData(Bitmap originalImage, Bitmap resultingImage, Bitmap backstitchImage, int newWidth, int numberOfColors, int numberOfIterations, int newPixelSize, List<Color> colorMeans, Dictionary<int, List<Tuple<int, int>>> positionsOfEachColor, int[,] matrixOfNewColors, List<bool> colorIsBackgroundList, Dictionary<int, HashSet<BackstitchLine>> backstitchLines, Dictionary<int, Color> backstitchColors, int borderThicknessInNumberOfPixels, int gridThicknessInNumberOfPixels) : this(originalImage)
         {
             ResultingImage = resultingImage;
+            BackstitchImage = backstitchImage;
             this.newWidth = newWidth;
             this.numberOfColors = numberOfColors;
             this.numberOfIterations = numberOfIterations;
@@ -111,7 +133,7 @@ namespace EmbroideryCreator
 
         public void SerializeData(string filePath)
         {
-            ImageAndOperationsDataSerialized serializableData = new ImageAndOperationsDataSerialized(originalImage, ResultingImage, newWidth, numberOfColors, numberOfIterations, newPixelSize, colorMeans, positionsOfEachColor, matrixOfNewColors, colorIsBackgroundList, backstitchLines, backstitchColors, BorderThicknessInNumberOfPixels, GridThicknessInNumberOfPixels);
+            ImageAndOperationsDataSerialized serializableData = new ImageAndOperationsDataSerialized(originalImage, ResultingImage, BackstitchImage, newWidth, numberOfColors, numberOfIterations, newPixelSize, colorMeans, positionsOfEachColor, matrixOfNewColors, colorIsBackgroundList, backstitchLines, backstitchColors, BorderThicknessInNumberOfPixels, GridThicknessInNumberOfPixels);
 
             SerializerHelper.WriteToFile<ImageAndOperationsDataSerialized>(filePath, serializableData);
         }
@@ -225,6 +247,7 @@ namespace EmbroideryCreator
             processedImage = AddBorderIncresingSizeOfOriginalImage(processedImage);
             //resultingImage = withBorderImage;
             ResultingImage = processedImage;
+            BackstitchImage = new Bitmap(ResultingImage.Width, ResultingImage.Height);
         }
 
         //extremmely long time to execute and resource consuming
@@ -236,6 +259,7 @@ namespace EmbroideryCreator
             processedImage = AddGrid(processedImage);
             processedImage = AddBorderIncresingSizeOfOriginalImage(processedImage);
             ResultingImage = processedImage;
+            BackstitchImage = new Bitmap(ResultingImage.Width, ResultingImage.Height);
         }
 
         public void MergeTwoColors(int firstIndex, int otherIndex)
@@ -279,11 +303,9 @@ namespace EmbroideryCreator
             int originalColorIndex = matrixOfNewColors[position.Item1, position.Item2];
             matrixOfNewColors[position.Item1, position.Item2] = colorIndexToPaint;
 
-            //TODO:remove this position from its original group of positions and put it on the group of the new index
             positionsOfEachColor[originalColorIndex].Remove(position);
             positionsOfEachColor[colorIndexToPaint].Add(position);
-
-            //TODO:repaint that pixel position
+            
             PaintNewColorOnPixelPosition(position, colorMeans[colorIndexToPaint], ResultingImage);
         }
 
@@ -449,10 +471,11 @@ namespace EmbroideryCreator
                     endingPosition.Item2 >= 0 && endingPosition.Item2 < matrixOfNewColors.GetLength(1))
             {
                 HashSet<BackstitchLine> a = backstitchLines[indexToAddLine];
-                backstitchLines[indexToAddLine].Add(new BackstitchLine(startingPosition, endingPosition));
+                BackstitchLine newBackstitchLine = new BackstitchLine(startingPosition, endingPosition);
+                backstitchLines[indexToAddLine].Add(newBackstitchLine);
+                //TODO: Paint new line to the image
+                PaintBackstitchLine(backstitchColors[indexToAddLine], newBackstitchLine);
             }
-
-            //TODO: Paint new line to the image
         }
 
         public void RemoveBackstitchLine(int indexToAddLine, Tuple<float, float> startingPosition, Tuple<float, float> endingPosition)
