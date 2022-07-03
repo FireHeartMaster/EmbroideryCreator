@@ -60,13 +60,15 @@ namespace EmbroideryCreator
             this.backStitchColorsRadioButton = new System.Windows.Forms.RadioButton();
             this.currentStitchModeTextLabel = new System.Windows.Forms.Label();
             this.currentStitchModeLabel = new System.Windows.Forms.Label();
-            this.drawingToolsControl = new EmbroideryCreator.DrawingToolsControl();
             this.RetrieveSavedFileButton = new System.Windows.Forms.Button();
             this.retrieveSavedFileDialog = new System.Windows.Forms.OpenFileDialog();
+            this.backstitchPictureBox = new System.Windows.Forms.PictureBox();
+            this.drawingToolsControl = new EmbroideryCreator.DrawingToolsControl();
             ((System.ComponentModel.ISupportInitialize)(this.widthSizeTrackBar)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numberOfColorsTrackBar)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numberOfIterationsTrackBar)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mainPictureBox)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.backstitchPictureBox)).BeginInit();
             this.SuspendLayout();
             // 
             // widthSizeTrackBar
@@ -361,15 +363,6 @@ namespace EmbroideryCreator
             this.currentStitchModeLabel.TabIndex = 15;
             this.currentStitchModeLabel.Text = "Cross Stitch";
             // 
-            // drawingToolsControl
-            // 
-            this.drawingToolsControl.BackColor = System.Drawing.SystemColors.ActiveBorder;
-            this.drawingToolsControl.Location = new System.Drawing.Point(848, 13);
-            this.drawingToolsControl.Name = "drawingToolsControl";
-            this.drawingToolsControl.Padding = new System.Windows.Forms.Padding(3);
-            this.drawingToolsControl.Size = new System.Drawing.Size(89, 45);
-            this.drawingToolsControl.TabIndex = 18;
-            // 
             // RetrieveSavedFileButton
             // 
             this.RetrieveSavedFileButton.Location = new System.Drawing.Point(13, 489);
@@ -384,11 +377,32 @@ namespace EmbroideryCreator
             // 
             this.retrieveSavedFileDialog.FileName = "openFileDialog1";
             // 
+            // backstitchPictureBox
+            // 
+            this.backstitchPictureBox.Enabled = false;
+            this.backstitchPictureBox.InitialImage = global::EmbroideryCreator.Properties.Resources.ChooseImagePicture;
+            this.backstitchPictureBox.Location = new System.Drawing.Point(301, 12);
+            this.backstitchPictureBox.Name = "backstitchPictureBox";
+            this.backstitchPictureBox.Size = new System.Drawing.Size(529, 529);
+            this.backstitchPictureBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.backstitchPictureBox.TabIndex = 27;
+            this.backstitchPictureBox.TabStop = false;
+            // 
+            // drawingToolsControl
+            // 
+            this.drawingToolsControl.BackColor = System.Drawing.SystemColors.ActiveBorder;
+            this.drawingToolsControl.Location = new System.Drawing.Point(848, 13);
+            this.drawingToolsControl.Name = "drawingToolsControl";
+            this.drawingToolsControl.Padding = new System.Windows.Forms.Padding(3);
+            this.drawingToolsControl.Size = new System.Drawing.Size(89, 45);
+            this.drawingToolsControl.TabIndex = 18;
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1153, 579);
+            this.Controls.Add(this.backstitchPictureBox);
             this.Controls.Add(this.RetrieveSavedFileButton);
             this.Controls.Add(this.currentStitchModeLabel);
             this.Controls.Add(this.currentStitchModeTextLabel);
@@ -427,6 +441,7 @@ namespace EmbroideryCreator
             ((System.ComponentModel.ISupportInitialize)(this.numberOfColorsTrackBar)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numberOfIterationsTrackBar)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.mainPictureBox)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.backstitchPictureBox)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -468,6 +483,7 @@ namespace EmbroideryCreator
         private System.Windows.Forms.Label currentStitchModeLabel;
         private System.Windows.Forms.Button RetrieveSavedFileButton;
         private System.Windows.Forms.OpenFileDialog retrieveSavedFileDialog;
+        private System.Windows.Forms.PictureBox backstitchPictureBox;
     }
 }
 

@@ -53,6 +53,10 @@ namespace EmbroideryCreator
 
             crossStitchColorsRadioButton.Checked = true;
             backStitchColorsRadioButton.Checked = false;
+
+            mainPictureBox.Controls.Add(backstitchPictureBox);
+            backstitchPictureBox.Location = new Point(0, 0);
+            backstitchPictureBox.BackColor = Color.Transparent;
         }
 
         private void chooseNewImageButton_Click(object sender, EventArgs args)
@@ -144,9 +148,9 @@ namespace EmbroideryCreator
         private void SetBackstitchDrawMouseDown(Point pointOnImage)
         {
             //imageBeforeDrawing = mainPictureBox.Image.Clone() as Image;
-            imageBeforeDrawing = new Bitmap(mainPictureBox.Image);
+            imageBeforeDrawing = new Bitmap(backstitchPictureBox.Image);
             pointMouseDown = new Point(pointOnImage.X, pointOnImage.Y);
-            realImagePositionMouseDown = ImageTransformations.ConvertFromPictureBoxToRealImage(mainPictureBox, new Tuple<int, int>(pointMouseDown.X, pointMouseDown.Y));
+            realImagePositionMouseDown = ImageTransformations.ConvertFromPictureBoxToRealImage(backstitchPictureBox, new Tuple<int, int>(pointMouseDown.X, pointMouseDown.Y));
             roundedRealImagePositionMouseDown = imageAndOperationsData.ConvertFromGeneralPositionOnImagesToRoundedGeneralPositionOnImageIncludingHalfValues(realImagePositionMouseDown);
             //pointMouseUp = new Point(pointOnImage.X, pointOnImage.Y);
 
@@ -179,7 +183,7 @@ namespace EmbroideryCreator
             {
                 Tuple<float, float> startingPosition = imageAndOperationsData.ConvertFromGeneralPositionOnImageToCoordinatesIncludingHalfValues(realImagePositionMouseDown);
                 Tuple<float, float> endingPosition = imageAndOperationsData.ConvertFromGeneralPositionOnImageToCoordinatesIncludingHalfValues(realImagePositionMouseUp);
-                imageAndOperationsData.AddNewBackstitchLine(selectedBackstitchColorsControlsList[0].crossStitchColorIndex, startingPosition, endingPosition);
+                imageAndOperationsData.AddNewBackstitchLine(selectedBackstitchColorsControlsList[0].backstitchColorIndex, startingPosition, endingPosition);
             }
         }
 
@@ -187,16 +191,16 @@ namespace EmbroideryCreator
         {
             if (selectedBackstitchColorsControlsList.Count == 0) return;
             if (lastBackstitchPointMouseUp.X == pointMouseUp.X && lastBackstitchPointMouseUp.Y == pointMouseUp.Y) return;
-            realImagePositionMouseUp = ImageTransformations.ConvertFromPictureBoxToRealImage(mainPictureBox, new Tuple<int, int>(pointMouseUp.X, pointMouseUp.Y));
+            realImagePositionMouseUp = ImageTransformations.ConvertFromPictureBoxToRealImage(backstitchPictureBox, new Tuple<int, int>(pointMouseUp.X, pointMouseUp.Y));
             if (realImagePositionMouseUp.Item1 == lastBackstitchRealImagePositionMouseUp.Item1 && realImagePositionMouseUp.Item2 == lastBackstitchRealImagePositionMouseUp.Item2) return;
 
             roundedRealImagePositionMouseUp = imageAndOperationsData.ConvertFromGeneralPositionOnImagesToRoundedGeneralPositionOnImageIncludingHalfValues(realImagePositionMouseUp);
 
             if (roundedRealImagePositionMouseUp.Item1 == lastBackstitchRoundedRealImagePositionMouseUp.Item1 && roundedRealImagePositionMouseUp.Item2 == lastBackstitchRoundedRealImagePositionMouseUp.Item2) return;
 
-            mainPictureBox.Image = imageBeforeDrawing.Clone() as Image;
+            backstitchPictureBox.Image = imageBeforeDrawing.Clone() as Image;
 
-            Graphics graphics = Graphics.FromImage(mainPictureBox.Image);
+            Graphics graphics = Graphics.FromImage(backstitchPictureBox.Image);
 
             Color penColor = selectedBackstitchColorsControlsList[0].color;
             float backstitchLineThickness = imageAndOperationsData.GridThicknessInNumberOfPixels * 3;
@@ -258,6 +262,7 @@ namespace EmbroideryCreator
                     try
                     {
                         mainPictureBox.Image = new Bitmap(filePath);
+                        backstitchPictureBox.Image = new Bitmap(mainPictureBox.Image.Width, mainPictureBox.Image.Height);
 
                         imageAndOperationsData = new ImageAndOperationsData(new Bitmap(mainPictureBox.Image));
                     }
@@ -292,13 +297,15 @@ namespace EmbroideryCreator
             int newImageWidth = imageAndOperationsData.ResultingImage.Width;
             int newImageHeight = imageAndOperationsData.ResultingImage.Height;
             mainPictureBox.Image = imageAndOperationsData.ResultingImage;/*ImageTransformations.ResizeBitmap(imageAndOperationsData.resultingImage, mainPictureBox.Width * 10);*/
+            backstitchPictureBox.Image = new Bitmap(mainPictureBox.Image.Width, mainPictureBox.Image.Height);
 
             FillListsOfColors();
         }
 
         private void FillListsOfColors()
         {
-            List<Color> colorMeans = imageAndOperationsData.GetColors();
+            List<Color> crossStitchColorMeans = imageAndOperationsData.GetCrossStitchColors();
+            List<Color> backstitchColors = imageAndOperationsData.GetBackstitchColors();
 
             flowLayoutPanelListOfCrossStitchColors.AutoScroll = true;
             flowLayoutPanelListOfCrossStitchColors.FlowDirection = FlowDirection.TopDown;
@@ -315,14 +322,21 @@ namespace EmbroideryCreator
             flowLayoutPanelListOfBackstitchColors.Controls.Clear();
             selectedBackstitchColorsControlsList.Clear();
 
-            for (int i = 0; i < colorMeans.Count; i++)
+            for (int i = 0; i < crossStitchColorMeans.Count; i++)
             {
-                ReducedColorControl colorControl = new ReducedColorControl();
+                ReducedColorControl crossStitchColorControl = new ReducedColorControl();
                 //Bitmap colorImage = new Bitmap(1, 1);
                 //colorImage.SetPixel(0, 0, Color.Red);
-                colorControl.InitializeReducedColorControl(colorMeans[i], i, colorControl, this);
-                flowLayoutPanelListOfCrossStitchColors.Controls.Add(colorControl);
+                crossStitchColorControl.InitializeReducedColorControl(crossStitchColorMeans[i], i, /*crossStitchColorControl,*/ this);
+                flowLayoutPanelListOfCrossStitchColors.Controls.Add(crossStitchColorControl);
                 imageAndOperationsData.colorIsBackgroundList.Add(false);
+            }
+
+            for (int i = 0; i < backstitchColors.Count; i++)
+            {
+                BackstitchColorControl backstitchColorControl = new BackstitchColorControl();
+                backstitchColorControl.InitializeBackstitchColorControl(backstitchColors[i], i, this);
+                flowLayoutPanelListOfBackstitchColors.Controls.Add(backstitchColorControl);
             }
         }
 
@@ -343,7 +357,7 @@ namespace EmbroideryCreator
             foreach (object colorControl in flowLayoutPanelListOfBackstitchColors.Controls)
             {
                 BackstitchColorControl backstitchColorControl = (BackstitchColorControl)colorControl;
-                if (backstitchColorControl.crossStitchColorIndex != indexToRemainChecked)
+                if (backstitchColorControl.backstitchColorIndex != indexToRemainChecked)
                 {
                     backstitchColorControl.ModifyBackstitchSelectionCheckBox(false);
                 }
@@ -389,6 +403,7 @@ namespace EmbroideryCreator
             {
                 imageAndOperationsData = ImageAndOperationsDataSerialized.DeserializeData(retrieveSavedFileDialog.FileName);
                 mainPictureBox.Image = imageAndOperationsData.ResultingImage;
+                backstitchPictureBox.Image = new Bitmap(mainPictureBox.Image.Width, mainPictureBox.Image.Height);
 
                 FillListsOfColors();
             }
@@ -437,7 +452,7 @@ namespace EmbroideryCreator
 
                 //The following code deals with the list and dictionary management of the indexes, but first let's paint the pixels of the removed index
                 //with the color of the index that will stay
-                UpdateReducedColorByIndex(otherIndex, imageAndOperationsData.GetColors()[firstIndex]);
+                UpdateReducedColorByIndex(otherIndex, imageAndOperationsData.GetCrossStitchColors()[firstIndex]);
 
                 //Remove the desired index from the backend's list
                 imageAndOperationsData.MergeTwoColors(firstIndex, otherIndex);
@@ -465,7 +480,7 @@ namespace EmbroideryCreator
         private void AddNewColor(Color newColor)
         {
             ReducedColorControl colorControl = new ReducedColorControl();
-            colorControl.InitializeReducedColorControl(newColor, flowLayoutPanelListOfCrossStitchColors.Controls.Count, colorControl, this);
+            colorControl.InitializeReducedColorControl(newColor, flowLayoutPanelListOfCrossStitchColors.Controls.Count, /*colorControl,*/ this);
             flowLayoutPanelListOfCrossStitchColors.Controls.Add(colorControl);
             imageAndOperationsData.AddNewColor(newColor);
             imageAndOperationsData.colorIsBackgroundList.Add(false);
@@ -499,8 +514,8 @@ namespace EmbroideryCreator
 
             while (selectedBackstitchColorsControlsList.Count > 1)
             {
-                int firstIndex = selectedBackstitchColorsControlsList[0].crossStitchColorIndex;
-                int otherIndex = selectedBackstitchColorsControlsList[1].crossStitchColorIndex;
+                int firstIndex = selectedBackstitchColorsControlsList[0].backstitchColorIndex;
+                int otherIndex = selectedBackstitchColorsControlsList[1].backstitchColorIndex;
 
                 //The following code deals with the list and dictionary management of the indexes, but first let's paint the pixels of the removed index
                 //with the color of the index that will stay
@@ -516,9 +531,9 @@ namespace EmbroideryCreator
                 foreach (object control in flowLayoutPanelListOfBackstitchColors.Controls)
                 {
                     BackstitchColorControl backstitchColorControl = (BackstitchColorControl)control;
-                    if (backstitchColorControl.crossStitchColorIndex > otherIndex)
+                    if (backstitchColorControl.backstitchColorIndex > otherIndex)
                     {
-                        backstitchColorControl.crossStitchColorIndex--;
+                        backstitchColorControl.backstitchColorIndex--;
                     }
                 }
 
@@ -549,7 +564,7 @@ namespace EmbroideryCreator
 
             while (selectedBackstitchColorsControlsList.Count > 0)
             {
-                int firstIndex = selectedBackstitchColorsControlsList[0].crossStitchColorIndex;
+                int firstIndex = selectedBackstitchColorsControlsList[0].backstitchColorIndex;
 
                 //The following code deals with the list and dictionary management of the indexes, but first let's paint the pixels of the removed index
                 //with the color of the index that will stay
@@ -565,9 +580,9 @@ namespace EmbroideryCreator
                 foreach (object control in flowLayoutPanelListOfBackstitchColors.Controls)
                 {
                     BackstitchColorControl backstitchColorControl = (BackstitchColorControl)control;
-                    if (backstitchColorControl.crossStitchColorIndex > firstIndex)
+                    if (backstitchColorControl.backstitchColorIndex > firstIndex)
                     {
-                        backstitchColorControl.crossStitchColorIndex--;
+                        backstitchColorControl.backstitchColorIndex--;
                     }
                 }
 

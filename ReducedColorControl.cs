@@ -38,7 +38,7 @@ namespace EmbroideryCreator
 
         private void PaintNewColor() => myReferenceToMainForm.UpdateReducedColorByIndex(reducedColorIndex, color);
 
-        public void InitializeReducedColorControl(Color newColor, int i, ReducedColorControl colorControl, MainForm referenceToMainForm)
+        public void InitializeReducedColorControl(Color newColor, int i,/* ReducedColorControl colorControl, */MainForm referenceToMainForm)
         {
             reducedColorPictureBox.Image = ImageTransformations.CreateSolidColorBitmap(newColor, 30, 30);
             reducedColorIndex = i;

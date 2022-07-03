@@ -20,7 +20,7 @@ namespace EmbroideryCreator
         }
 
         public PictureBox backstitchColorPictureBox { get; private set; }
-        public int crossStitchColorIndex;
+        public int backstitchColorIndex;
         public MainForm myReferenceToMainForm;
         public Color color;
 
@@ -35,12 +35,12 @@ namespace EmbroideryCreator
             }
         }
 
-        private void PaintNewBackstitchColor() => myReferenceToMainForm.UpdateBackstitchColorByIndex(crossStitchColorIndex, color);
+        private void PaintNewBackstitchColor() => myReferenceToMainForm.UpdateBackstitchColorByIndex(backstitchColorIndex, color);
 
         public void InitializeBackstitchColorControl(Color newColor, int i,/* BackstitchColorControl colorControl, */MainForm referenceToMainForm)
         {
             backstitchColorPictureBox.Image = ImageTransformations.CreateSolidColorBitmap(newColor, 40, 5);
-            crossStitchColorIndex = i;
+            backstitchColorIndex = i;
             color = newColor;
             myReferenceToMainForm = referenceToMainForm;
         }
@@ -52,7 +52,7 @@ namespace EmbroideryCreator
                 AddThisControlToListOfSelectedBackstitchColorControls();
                 if (!myReferenceToMainForm.CheckIfMultipleSelectionIsActive())
                 {
-                    myReferenceToMainForm.UncheckAllOtherBackstitchColorControls(crossStitchColorIndex);
+                    myReferenceToMainForm.UncheckAllOtherBackstitchColorControls(backstitchColorIndex);
                 }
             }
             else

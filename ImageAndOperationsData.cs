@@ -31,7 +31,8 @@ namespace EmbroideryCreator
         private Dictionary<int, HashSet<BackstitchLine>> backstitchLines = new Dictionary<int, HashSet<BackstitchLine>>();
         private Dictionary<int, Color> backstitchColors = new Dictionary<int, Color>();
 
-        public List<Color> GetColors() => colorMeans;
+        public List<Color> GetCrossStitchColors() => colorMeans;
+        public List<Color> GetBackstitchColors() => backstitchColors.Values.ToList<Color>();
         public Dictionary<int, List<Tuple<int, int>>> GetPositionsOfEachColor() => positionsOfEachColor;
 
         public int BorderThicknessInNumberOfPixels { get; private set; } = 1;
@@ -502,7 +503,7 @@ namespace EmbroideryCreator
         }
     }
 
-    public struct BackstitchLine
+    [Serializable]public struct BackstitchLine
     {
         public Tuple<float, float> startingPosition;
         public Tuple<float, float> endingPosition;
