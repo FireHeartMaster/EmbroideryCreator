@@ -533,9 +533,10 @@ namespace EmbroideryCreator
 
                 foreach (BackstitchLine currentBackstitchLineToVerifyDistance in backstitchLines[i])
                 {
-                    float distanceToLine = ImageTransformations.CalculateDistanceOfPointToLine(imagePosition, currentBackstitchLineToVerifyDistance.startingPosition, currentBackstitchLineToVerifyDistance.endingPosition);
+                    //float distanceToLine = ImageTransformations.CalculateDistanceOfPointToLine(imagePosition, currentBackstitchLineToVerifyDistance.startingPosition, currentBackstitchLineToVerifyDistance.endingPosition);
 
-                    if(distanceToLine <= distanceToConsiderCloseEnough)
+                    //if(distanceToLine <= distanceToConsiderCloseEnough)
+                    if(ImageTransformations.IsPointCloseEnoughToLineDefinedByTwoPoints(imagePosition, currentBackstitchLineToVerifyDistance.startingPosition, currentBackstitchLineToVerifyDistance.endingPosition, distanceToConsiderCloseEnough))
                     {
                         indexFound = i;
                         backstitchLineFound = currentBackstitchLineToVerifyDistance;

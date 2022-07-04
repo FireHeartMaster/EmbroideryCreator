@@ -310,5 +310,63 @@ namespace EmbroideryCreator
             float denominator = (float)Math.Sqrt((lineEndingPoint.Item1 - lineStartingPoint.Item1) * (lineEndingPoint.Item1 - lineStartingPoint.Item1) + (lineEndingPoint.Item2 - lineStartingPoint.Item2) * (lineEndingPoint.Item2 - lineStartingPoint.Item2));
             return Math.Abs(numerator) / denominator;
         }
+
+
+        public static float DotProduct(Tuple<float, float> firstVector, Tuple<float, float> secondVector)
+        {
+            return firstVector.Item1 * secondVector.Item1 + firstVector.Item2 * secondVector.Item2;
+        }
+
+        public static bool TwoVectorsAreFacingSameDirection(Tuple<float, float> firstVector, Tuple<float, float> secondVector)
+        {
+            return DotProduct(firstVector, secondVector) >= 0;
+        }
+
+        public static Tuple<float, float> GetUnitVector(Tuple<float, float> vector)
+        {
+            float norm = GetNormOfVector(vector);
+            return new Tuple<float, float>(vector.Item1 / norm, vector.Item2 / norm);
+        }
+
+        private static float GetNormOfVector(Tuple<float, float> vector)
+        {
+            return (float)Math.Sqrt(DotProduct(vector, vector));
+        }
+
+        public static float GetSizeOfProjectionOnAnotherVector(Tuple<float, float> vectorToBeProjected, Tuple<float, float> referenceVector)
+        {
+            return DotProduct(vectorToBeProjected, GetUnitVector(referenceVector));
+        }
+
+        public static Tuple<float, float> GetProjectionOfVectorOntoAnother(Tuple<float, float> vectorToBeProjected, Tuple<float, float> referenceVector)
+        {
+            float sizeOfProjection = GetSizeOfProjectionOnAnotherVector(vectorToBeProjected, referenceVector);
+            return new Tuple<float, float>(referenceVector.Item1 * sizeOfProjection, referenceVector.Item2 * sizeOfProjection);
+        }
+
+        public static bool IsPointBetweenTwoOthers(Tuple<float, float> referencePoint, Tuple<float, float> lineStartingPoint, Tuple<float, float> lineEndingPoint)
+        {
+            Tuple<float, float> referenceVector = new Tuple<float, float>(lineEndingPoint.Item1 - lineStartingPoint.Item1, lineEndingPoint.Item2 - lineStartingPoint.Item2);
+            float sizeOfProjection = GetSizeOfProjectionOnAnotherVector(new Tuple<float, float>(referencePoint.Item1 - lineStartingPoint.Item1, referencePoint.Item2 - lineStartingPoint.Item2), referenceVector);
+
+            return sizeOfProjection >= 0 && sizeOfProjection <= GetNormOfVector(referenceVector);
+        }
+
+        public static bool IsPointCloseEnoughToLineDefinedByTwoPoints(Tuple<float, float> referencePoint, Tuple<float, float> lineStartingPoint, Tuple<float, float> lineEndingPoint, float closeDistance)
+        {
+            float distance = CalculateDistanceOfPointToLine(referencePoint, lineStartingPoint, lineEndingPoint);
+
+            if (distance > closeDistance) return false;
+
+            Tuple<float, float> referenceVector = new Tuple<float, float>(lineEndingPoint.Item1 - lineStartingPoint.Item1, lineEndingPoint.Item2 - lineStartingPoint.Item2);
+            Tuple<float, float> unitReferenceVector = GetUnitVector(referenceVector);
+            Tuple<float, float> closeDistanceVector = new Tuple<float, float>(unitReferenceVector.Item1 * closeDistance, unitReferenceVector.Item2 * closeDistance);
+
+
+            Tuple<float, float> auxStartingPoint = new Tuple<float, float>(lineStartingPoint.Item1 - closeDistanceVector.Item1, lineStartingPoint.Item2 - closeDistanceVector.Item2);
+            Tuple<float, float> auxEndingPoint = new Tuple<float, float>(lineEndingPoint.Item1 + closeDistanceVector.Item1, lineEndingPoint.Item2 + closeDistanceVector.Item2);
+
+            return IsPointBetweenTwoOthers(referencePoint, auxStartingPoint, auxEndingPoint);
+        }
     }
 }

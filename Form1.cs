@@ -606,6 +606,7 @@ namespace EmbroideryCreator
                 selectedBackstitchColorsControlsList.RemoveAt(0);
 
                 imageAndOperationsData.RemoveBackstitchColorByIndex(firstIndex);
+                backstitchPictureBox.Image = imageAndOperationsData.BackstitchImage;
             }
         }
 
