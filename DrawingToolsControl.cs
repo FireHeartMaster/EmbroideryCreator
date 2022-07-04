@@ -33,6 +33,11 @@ namespace EmbroideryCreator
             EnableNewTool(DrawingToolInUse.Bucket);
         }
 
+        private void eraserPictureBox_Click(object sender, EventArgs e)
+        {
+            EnableNewTool(DrawingToolInUse.Eraser);
+        }
+
         private void EnableNewTool(DrawingToolInUse newSelectedDrawingTool)
         {
             //ResetCurrentToolsImage();
@@ -47,6 +52,12 @@ namespace EmbroideryCreator
                     currentDrawingTool = DrawingToolInUse.Bucket;
                     currentActiveToolPictureBox = bucketPictureBox;
                     break;
+
+                case DrawingToolInUse.Eraser:
+                    currentDrawingTool = DrawingToolInUse.Eraser;
+                    currentActiveToolPictureBox = eraserPictureBox;
+                    break;
+
 
                 default:
                     break;
@@ -74,6 +85,7 @@ namespace EmbroideryCreator
     public enum DrawingToolInUse
     {
         Pencil,
-        Bucket
+        Bucket,
+        Eraser
     }
 }

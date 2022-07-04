@@ -83,6 +83,16 @@ namespace EmbroideryCreator.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap EraserIcon {
+            get {
+                object obj = ResourceManager.GetObject("EraserIcon", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap PencilIcon {
             get {
                 object obj = ResourceManager.GetObject("PencilIcon", resourceCulture);

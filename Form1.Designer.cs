@@ -394,7 +394,7 @@ namespace EmbroideryCreator
             this.drawingToolsControl.Location = new System.Drawing.Point(848, 13);
             this.drawingToolsControl.Name = "drawingToolsControl";
             this.drawingToolsControl.Padding = new System.Windows.Forms.Padding(3);
-            this.drawingToolsControl.Size = new System.Drawing.Size(89, 45);
+            this.drawingToolsControl.Size = new System.Drawing.Size(135, 45);
             this.drawingToolsControl.TabIndex = 18;
             // 
             // MainForm

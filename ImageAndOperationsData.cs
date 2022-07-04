@@ -108,6 +108,19 @@ namespace EmbroideryCreator
             }
         }
 
+        private void PaintAllBackstitchLines()
+        {
+            BackstitchImage = new Bitmap(ResultingImage.Width, ResultingImage.Height);
+
+            for (int i = 0; i < backstitchLines.Count; i++)
+            {
+                foreach (BackstitchLine backstitchLine in backstitchLines[i])
+                {
+                    PaintBackstitchLine(backstitchColors[i], backstitchLine);
+                }
+            }
+        }
+
         public ImageAndOperationsData(Bitmap importedImage)
         {
             originalImage = new Bitmap(importedImage);
@@ -248,6 +261,10 @@ namespace EmbroideryCreator
             //resultingImage = withBorderImage;
             ResultingImage = processedImage;
             BackstitchImage = new Bitmap(ResultingImage.Width, ResultingImage.Height);
+            for (int i = 0; i < backstitchLines.Count; i++)
+            {
+                backstitchLines[i] = new HashSet<BackstitchLine>();
+            }
         }
 
         //extremmely long time to execute and resource consuming
@@ -260,6 +277,10 @@ namespace EmbroideryCreator
             processedImage = AddBorderIncresingSizeOfOriginalImage(processedImage);
             ResultingImage = processedImage;
             BackstitchImage = new Bitmap(ResultingImage.Width, ResultingImage.Height);
+            for (int i = 0; i < backstitchLines.Count; i++)
+            {
+                backstitchLines[i] = new HashSet<BackstitchLine>();
+            }
         }
 
         public void MergeTwoColors(int firstIndex, int otherIndex)
@@ -328,6 +349,14 @@ namespace EmbroideryCreator
             int y = (int)(((float)(generalPosition.Item2 - BorderThicknessInNumberOfPixels)) / newPixelSize);
 
             return new Tuple<int, int>(x, y);
+        }
+
+        private Tuple<float, float> ConvertFromGeneralPositionOnImageToFloatCoordinates(Tuple<int, int> generalPosition)
+        {
+            float x = ((float)(generalPosition.Item1 - BorderThicknessInNumberOfPixels)) / newPixelSize;
+            float y = ((float)(generalPosition.Item2 - BorderThicknessInNumberOfPixels)) / newPixelSize;
+
+            return new Tuple<float, float>(x, y);
         }
 
         public Tuple<float, float> ConvertFromGeneralPositionOnImageToCoordinatesIncludingHalfValues(Tuple<int, int> generalPosition)
@@ -461,7 +490,8 @@ namespace EmbroideryCreator
             {
                 backstitchLines.Remove(indexToRemove);
                 backstitchColors.Remove(indexToRemove);
-                //TODO: repaint image without the lines of the removed color
+
+                PaintAllBackstitchLines();
             }
         }
 
@@ -473,20 +503,60 @@ namespace EmbroideryCreator
                 HashSet<BackstitchLine> a = backstitchLines[indexToAddLine];
                 BackstitchLine newBackstitchLine = new BackstitchLine(startingPosition, endingPosition);
                 backstitchLines[indexToAddLine].Add(newBackstitchLine);
-                //TODO: Paint new line to the image
+
                 PaintBackstitchLine(backstitchColors[indexToAddLine], newBackstitchLine);
             }
         }
 
-        public void RemoveBackstitchLine(int indexToAddLine, Tuple<float, float> startingPosition, Tuple<float, float> endingPosition)
+
+        public void RemoveBackstitchLineClicked(Tuple<int, int> positionClickedInPixels)
         {
-            if (startingPosition.Item1 >= 0 && startingPosition.Item1 < matrixOfNewColors.GetLength(0) &&
-                    endingPosition.Item2 >= 0 && endingPosition.Item2 < matrixOfNewColors.GetLength(1))
+            Tuple<int, BackstitchLine> indexAndLine = FindBackstitchLineByPosition(positionClickedInPixels);
+
+            if(indexAndLine.Item1 != -1)
             {
-                backstitchLines[indexToAddLine].Remove(new BackstitchLine(startingPosition, endingPosition));
+                RemoveBackstitchLine(indexAndLine.Item1, indexAndLine.Item2);
+            }
+        }
+
+        private Tuple<int, BackstitchLine> FindBackstitchLineByPosition(Tuple<int, int> generalPixelPosition)
+        {
+            int indexFound = -1;
+            BackstitchLine backstitchLineFound = new BackstitchLine();
+
+            float distanceToConsiderCloseEnough = (3.0f * GridThicknessInNumberOfPixels / newPixelSize) * 0.5f;
+            Tuple<float, float> imagePosition = ConvertFromGeneralPositionOnImageToFloatCoordinates(generalPixelPosition);
+
+            for (int i = 0; i < backstitchLines.Count; i++)
+            {
+                //TODO: Verify if the reference point is between the starting and ending points of a backstitch line
+
+                foreach (BackstitchLine currentBackstitchLineToVerifyDistance in backstitchLines[i])
+                {
+                    float distanceToLine = ImageTransformations.CalculateDistanceOfPointToLine(imagePosition, currentBackstitchLineToVerifyDistance.startingPosition, currentBackstitchLineToVerifyDistance.endingPosition);
+
+                    if(distanceToLine <= distanceToConsiderCloseEnough)
+                    {
+                        indexFound = i;
+                        backstitchLineFound = currentBackstitchLineToVerifyDistance;
+                        
+                        return new Tuple<int, BackstitchLine>(indexFound, backstitchLineFound);
+                    }
+                }
             }
 
-            //TODO: Repaint image without removed line
+            return new Tuple<int, BackstitchLine>(indexFound, backstitchLineFound);
+        }
+
+        private void RemoveBackstitchLine(int indexToRemoveLine, BackstitchLine backstitchLine)
+        {
+            if (backstitchLine.startingPosition.Item1 >= 0 && backstitchLine.startingPosition.Item1 < matrixOfNewColors.GetLength(0) &&
+                    backstitchLine.endingPosition.Item2 >= 0 && backstitchLine.endingPosition.Item2 < matrixOfNewColors.GetLength(1))
+            {
+                backstitchLines[indexToRemoveLine].Remove(backstitchLine);
+            }
+
+            PaintAllBackstitchLines();
         }
 
         public void UpdateBackstitchColorByIndex(int indexToUpdate, Color newColor)

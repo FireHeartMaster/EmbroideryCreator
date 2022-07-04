@@ -29,23 +29,27 @@ namespace EmbroideryCreator
         /// </summary>
         private void InitializeComponent()
         {
-            this.selectedToolpictureBox = new System.Windows.Forms.PictureBox();
+            this.eraserPictureBox = new System.Windows.Forms.PictureBox();
             this.bucketPictureBox = new System.Windows.Forms.PictureBox();
             this.pencilPictureBox = new System.Windows.Forms.PictureBox();
-            ((System.ComponentModel.ISupportInitialize)(this.selectedToolpictureBox)).BeginInit();
+            this.selectedToolpictureBox = new System.Windows.Forms.PictureBox();
+            ((System.ComponentModel.ISupportInitialize)(this.eraserPictureBox)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.bucketPictureBox)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pencilPictureBox)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.selectedToolpictureBox)).BeginInit();
             this.SuspendLayout();
             // 
-            // selectedToolpictureBox
+            // eraserPictureBox
             // 
-            this.selectedToolpictureBox.Image = global::EmbroideryCreator.Properties.Resources.SelectedToolIcon;
-            this.selectedToolpictureBox.Location = new System.Drawing.Point(4, 1);
-            this.selectedToolpictureBox.Name = "selectedToolpictureBox";
-            this.selectedToolpictureBox.Size = new System.Drawing.Size(40, 40);
-            this.selectedToolpictureBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-            this.selectedToolpictureBox.TabIndex = 2;
-            this.selectedToolpictureBox.TabStop = false;
+            this.eraserPictureBox.Image = global::EmbroideryCreator.Properties.Resources.EraserIcon;
+            this.eraserPictureBox.Location = new System.Drawing.Point(93, 6);
+            this.eraserPictureBox.Margin = new System.Windows.Forms.Padding(6);
+            this.eraserPictureBox.Name = "eraserPictureBox";
+            this.eraserPictureBox.Size = new System.Drawing.Size(30, 30);
+            this.eraserPictureBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.eraserPictureBox.TabIndex = 3;
+            this.eraserPictureBox.TabStop = false;
+            this.eraserPictureBox.Click += new System.EventHandler(this.eraserPictureBox_Click);
             // 
             // bucketPictureBox
             // 
@@ -71,20 +75,32 @@ namespace EmbroideryCreator
             this.pencilPictureBox.TabStop = false;
             this.pencilPictureBox.Click += new System.EventHandler(this.pencilPictureBox_Click);
             // 
+            // selectedToolpictureBox
+            // 
+            this.selectedToolpictureBox.Image = global::EmbroideryCreator.Properties.Resources.SelectedToolIcon;
+            this.selectedToolpictureBox.Location = new System.Drawing.Point(4, 1);
+            this.selectedToolpictureBox.Name = "selectedToolpictureBox";
+            this.selectedToolpictureBox.Size = new System.Drawing.Size(40, 40);
+            this.selectedToolpictureBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.selectedToolpictureBox.TabIndex = 2;
+            this.selectedToolpictureBox.TabStop = false;
+            // 
             // DrawingToolsControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.ActiveBorder;
+            this.Controls.Add(this.eraserPictureBox);
             this.Controls.Add(this.bucketPictureBox);
             this.Controls.Add(this.pencilPictureBox);
             this.Controls.Add(this.selectedToolpictureBox);
             this.Name = "DrawingToolsControl";
             this.Padding = new System.Windows.Forms.Padding(3);
-            this.Size = new System.Drawing.Size(89, 45);
-            ((System.ComponentModel.ISupportInitialize)(this.selectedToolpictureBox)).EndInit();
+            this.Size = new System.Drawing.Size(129, 45);
+            ((System.ComponentModel.ISupportInitialize)(this.eraserPictureBox)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.bucketPictureBox)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pencilPictureBox)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.selectedToolpictureBox)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -94,5 +110,6 @@ namespace EmbroideryCreator
         private System.Windows.Forms.PictureBox pencilPictureBox;
         private System.Windows.Forms.PictureBox bucketPictureBox;
         private System.Windows.Forms.PictureBox selectedToolpictureBox;
+        private System.Windows.Forms.PictureBox eraserPictureBox;
     }
 }

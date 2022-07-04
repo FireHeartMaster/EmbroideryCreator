@@ -113,6 +113,7 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Resources\EraserIcon.png" />
     <None Include="Resources\SelectedToolIcon.png" />
     <None Include="Resources\PencilIcon.png" />
     <None Include="Resources\BucketIcon.png" />

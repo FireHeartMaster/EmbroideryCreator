@@ -303,5 +303,12 @@ namespace EmbroideryCreator
             int verticalPosition = (int)(ratio * (pictureBoxPosition.Item2 - (pictureBox.Size.Height * 0.5f)) + pictureBox.Image.Height * 0.5f);
             return new Tuple<int, int>(horizontalPosition, verticalPosition);
         }
+
+        public static float CalculateDistanceOfPointToLine(Tuple<float, float> referencePoint, Tuple<float, float> lineStartingPoint, Tuple<float, float> lineEndingPoint)
+        {
+            float numerator = (lineEndingPoint.Item1 - lineStartingPoint.Item1) * (referencePoint.Item2 - lineStartingPoint.Item2) - (lineEndingPoint.Item2 - lineStartingPoint.Item2) * (referencePoint.Item1 - lineStartingPoint.Item1);
+            float denominator = (float)Math.Sqrt((lineEndingPoint.Item1 - lineStartingPoint.Item1) * (lineEndingPoint.Item1 - lineStartingPoint.Item1) + (lineEndingPoint.Item2 - lineStartingPoint.Item2) * (lineEndingPoint.Item2 - lineStartingPoint.Item2));
+            return Math.Abs(numerator) / denominator;
+        }
     }
 }

@@ -118,7 +118,19 @@ namespace EmbroideryCreator
                         //    pointMouseUp = e.Location;
                         //}
                         pointMouseUp = e.Location;
-                        PaintBackstitch();
+                        switch (drawingToolsControl.currentDrawingTool)
+                        {
+                            case DrawingToolInUse.Pencil:
+                                PaintBackstitch();
+                                break;
+
+                            case DrawingToolInUse.Eraser:
+                                TryToEraseBackstitchLineAtGeneralPosition(pointMouseUp);
+                                break;
+
+                            default:
+                                break;
+                        }
                         break;
                 }
             }
@@ -147,44 +159,55 @@ namespace EmbroideryCreator
 
         private void SetBackstitchDrawMouseDown(Point pointOnImage)
         {
-            //imageBeforeDrawing = mainPictureBox.Image.Clone() as Image;
-            imageBeforeDrawing = new Bitmap(backstitchPictureBox.Image);
-            pointMouseDown = new Point(pointOnImage.X, pointOnImage.Y);
-            realImagePositionMouseDown = ImageTransformations.ConvertFromPictureBoxToRealImage(backstitchPictureBox, new Tuple<int, int>(pointMouseDown.X, pointMouseDown.Y));
-            roundedRealImagePositionMouseDown = imageAndOperationsData.ConvertFromGeneralPositionOnImagesToRoundedGeneralPositionOnImageIncludingHalfValues(realImagePositionMouseDown);
-            //pointMouseUp = new Point(pointOnImage.X, pointOnImage.Y);
+            switch (drawingToolsControl.currentDrawingTool)
+            {
+                case DrawingToolInUse.Pencil:
+                    imageBeforeDrawing = new Bitmap(backstitchPictureBox.Image);
+                    pointMouseDown = new Point(pointOnImage.X, pointOnImage.Y);
+                    realImagePositionMouseDown = ImageTransformations.ConvertFromPictureBoxToRealImage(backstitchPictureBox, new Tuple<int, int>(pointMouseDown.X, pointMouseDown.Y));
+                    roundedRealImagePositionMouseDown = imageAndOperationsData.ConvertFromGeneralPositionOnImagesToRoundedGeneralPositionOnImageIncludingHalfValues(realImagePositionMouseDown);
+                    break;
 
-            //Subscribe to Paint event
-            //if(backstitchPaintEventHandler == null)
-            //{
-            //    backstitchPaintEventHandler = new PaintEventHandler(PaintBackstitch);
-            //}
+                case DrawingToolInUse.Eraser:
+                    TryToEraseBackstitchLineAtGeneralPosition(pointOnImage);
+                    break;
 
-            //if (!backstitchEventHandlerAlreadySubscribed)
-            //{
-            //    mainPictureBox.Paint += backstitchPaintEventHandler;
-            //    backstitchEventHandlerAlreadySubscribed = true;
-            //}
+                default:
+                    break;
+            }
+        }
+
+        private void TryToEraseBackstitchLineAtGeneralPosition(Point pointOnImage)
+        {
+            if (lastBackstitchPointMouseUp.X == pointOnImage.X && lastBackstitchPointMouseUp.Y == pointOnImage.Y) return;
+
+            Tuple<int, int> realImagePosition = ImageTransformations.ConvertFromPictureBoxToRealImage(backstitchPictureBox, new Tuple<int, int>(pointOnImage.X, pointOnImage.Y));
+            imageAndOperationsData.RemoveBackstitchLineClicked(realImagePosition);
+            backstitchPictureBox.Image = imageAndOperationsData.BackstitchImage;
+
+            lastBackstitchPointMouseUp.X = pointOnImage.X;
+            lastBackstitchPointMouseUp.Y = pointOnImage.Y;
         }
 
         private void SetBackstitchDrawMouseUp()
         {
-            //mainPictureBox.Image = imageBeforeDrawing.Clone() as Image;
-
-            //TODO: set backstitch points in the backend
-
-            //Unsubscribe to Paint event
-            //if (backstitchEventHandlerAlreadySubscribed)
-            //{
-            //    mainPictureBox.Paint -= backstitchPaintEventHandler;
-            //    backstitchEventHandlerAlreadySubscribed = false;
-            //}
-            if(selectedBackstitchColorsControlsList.Count > 0)
+            switch (drawingToolsControl.currentDrawingTool)
             {
-                Tuple<float, float> startingPosition = imageAndOperationsData.ConvertFromGeneralPositionOnImageToCoordinatesIncludingHalfValues(realImagePositionMouseDown);
-                Tuple<float, float> endingPosition = imageAndOperationsData.ConvertFromGeneralPositionOnImageToCoordinatesIncludingHalfValues(realImagePositionMouseUp);
-                imageAndOperationsData.AddNewBackstitchLine(selectedBackstitchColorsControlsList[0].backstitchColorIndex, startingPosition, endingPosition);
-                //backstitchPictureBox.Image = imageAndOperationsData.BackstitchImage;
+                case DrawingToolInUse.Pencil:
+                    if (selectedBackstitchColorsControlsList.Count > 0)
+                    {
+                        Tuple<float, float> startingPosition = imageAndOperationsData.ConvertFromGeneralPositionOnImageToCoordinatesIncludingHalfValues(realImagePositionMouseDown);
+                        Tuple<float, float> endingPosition = imageAndOperationsData.ConvertFromGeneralPositionOnImageToCoordinatesIncludingHalfValues(realImagePositionMouseUp);
+                        imageAndOperationsData.AddNewBackstitchLine(selectedBackstitchColorsControlsList[0].backstitchColorIndex, startingPosition, endingPosition);
+                        //backstitchPictureBox.Image = imageAndOperationsData.BackstitchImage;
+                    }
+                    break;
+
+                case DrawingToolInUse.Eraser:
+                    break;
+
+                default:
+                    break;
             }
         }
 
@@ -559,23 +582,11 @@ namespace EmbroideryCreator
 
         private void deleteBackstitchColorButton_Click(object sender, EventArgs e)
         {
-            if (selectedBackstitchColorsControlsList.Count < 1) return;
-
-            //int firstIndex = selectedColorsControlsList[0].colorIndex;
+            if (selectedBackstitchColorsControlsList.Count < 1) return;            
 
             while (selectedBackstitchColorsControlsList.Count > 0)
             {
                 int firstIndex = selectedBackstitchColorsControlsList[0].backstitchColorIndex;
-
-                //The following code deals with the list and dictionary management of the indexes, but first let's paint the pixels of the removed index
-                //with the color of the index that will stay
-                //UpdateBackstitchColorByIndex(otherIndex, imageAndOperationsData.GetColors()[firstIndex]);
-                //TODO: Update backstitch colors using the correct function (imageAndOperationsData.GetColors retrieves the reduced colors,
-                //not the backstitch ones)
-
-                //Remove the desired index from the backend's list
-                //imageAndOperationsData.MergeTwoColors(firstIndex, otherIndex);
-                //TODO: merge two backstitch colors in the backend
 
                 //Redistribute index values to the list of the frontend
                 foreach (object control in flowLayoutPanelListOfBackstitchColors.Controls)
@@ -593,6 +604,8 @@ namespace EmbroideryCreator
                 BackstitchColorControl controlToRemove = selectedBackstitchColorsControlsList[0];
                 controlToRemove.Dispose();
                 selectedBackstitchColorsControlsList.RemoveAt(0);
+
+                imageAndOperationsData.RemoveBackstitchColorByIndex(firstIndex);
             }
         }
 
