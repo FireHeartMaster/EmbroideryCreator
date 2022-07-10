@@ -56,6 +56,7 @@ namespace EmbroideryCreator
             crossStitchColorsRadioButton.Checked = true;
             backStitchColorsRadioButton.Checked = false;
 
+            pictureBoxesByVisibilityOrder.Add(baseLayerPictureBox);
             pictureBoxesByVisibilityOrder.Add(mainPictureBox);
             pictureBoxesByVisibilityOrder.Add(gridPictureBox);
             pictureBoxesByVisibilityOrder.Add(borderPictureBox);
@@ -340,7 +341,11 @@ namespace EmbroideryCreator
                     try
                     {
                         mainPictureBox.Image = new Bitmap(filePath);
+                        gridPictureBox.Image = new Bitmap(mainPictureBox.Image.Width, mainPictureBox.Image.Height);
+                        borderPictureBox.Image = new Bitmap(mainPictureBox.Image.Width, mainPictureBox.Image.Height);
                         backstitchPictureBox.Image = new Bitmap(mainPictureBox.Image.Width, mainPictureBox.Image.Height);
+
+                        baseLayerPictureBox.Image = ImageTransformations.CreateSolidColorBitmap(Color.White, mainPictureBox.Image.Width, mainPictureBox.Image.Height);
 
                         imageAndOperationsData = new ImageAndOperationsData(new Bitmap(mainPictureBox.Image));
                     }
@@ -379,6 +384,9 @@ namespace EmbroideryCreator
             gridPictureBox.Image = imageAndOperationsData.GridImage;
             borderPictureBox.Image = imageAndOperationsData.BorderImage;
             backstitchPictureBox.Image = new Bitmap(mainPictureBox.Image.Width, mainPictureBox.Image.Height);
+
+            baseLayerPictureBox.Image = ImageTransformations.CreateSolidColorBitmap(Color.White, imageAndOperationsData.ResultingImage.Width, imageAndOperationsData.ResultingImage.Height);
+
 
             FillListsOfColors();
 
@@ -490,6 +498,8 @@ namespace EmbroideryCreator
                 backstitchPictureBox.Image = imageAndOperationsData.BackstitchImage;/*new Bitmap(mainPictureBox.Image.Width, mainPictureBox.Image.Height);*/
                 gridPictureBox.Image = imageAndOperationsData.GridImage;
                 borderPictureBox.Image = imageAndOperationsData.BorderImage;
+
+                baseLayerPictureBox.Image = ImageTransformations.CreateSolidColorBitmap(Color.White, mainPictureBox.Image.Width, mainPictureBox.Image.Height);
 
                 FillListsOfColors();
                 ResetOrderOfVisibilityOfPictureBoxes();
@@ -706,6 +716,11 @@ namespace EmbroideryCreator
         public bool CheckIfMultipleSelectionIsActive()
         {            
             return ModifierKeys.HasFlag(multipleSelectionKeyboardKey);
+        }
+
+        private void mainImageVisibleCheckBox_CheckedChanged(object sender, EventArgs e)
+        {
+            ChangeVisibilityOfPictureBox(mainImageVisibleCheckBox, mainPictureBox);
         }
 
         private void gridVisibleCheckBox_CheckedChanged(object sender, EventArgs e)
