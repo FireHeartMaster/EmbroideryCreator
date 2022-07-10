@@ -64,11 +64,18 @@ namespace EmbroideryCreator
             this.retrieveSavedFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.backstitchPictureBox = new System.Windows.Forms.PictureBox();
             this.drawingToolsControl = new EmbroideryCreator.DrawingToolsControl();
+            this.gridPictureBox = new System.Windows.Forms.PictureBox();
+            this.borderPictureBox = new System.Windows.Forms.PictureBox();
+            this.gridVisibleCheckBox = new System.Windows.Forms.CheckBox();
+            this.borderVisibleCheckBox = new System.Windows.Forms.CheckBox();
+            this.backstitchVisibleCheckBox = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.widthSizeTrackBar)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numberOfColorsTrackBar)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numberOfIterationsTrackBar)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mainPictureBox)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.backstitchPictureBox)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.gridPictureBox)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.borderPictureBox)).BeginInit();
             this.SuspendLayout();
             // 
             // widthSizeTrackBar
@@ -250,7 +257,7 @@ namespace EmbroideryCreator
             // 
             this.mainPictureBox.Image = global::EmbroideryCreator.Properties.Resources.ChooseImagePicture;
             this.mainPictureBox.InitialImage = global::EmbroideryCreator.Properties.Resources.ChooseImagePicture;
-            this.mainPictureBox.Location = new System.Drawing.Point(301, 12);
+            this.mainPictureBox.Location = new System.Drawing.Point(299, 12);
             this.mainPictureBox.Name = "mainPictureBox";
             this.mainPictureBox.Size = new System.Drawing.Size(529, 529);
             this.mainPictureBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
@@ -381,7 +388,7 @@ namespace EmbroideryCreator
             // 
             this.backstitchPictureBox.Enabled = false;
             this.backstitchPictureBox.InitialImage = global::EmbroideryCreator.Properties.Resources.ChooseImagePicture;
-            this.backstitchPictureBox.Location = new System.Drawing.Point(301, 12);
+            this.backstitchPictureBox.Location = new System.Drawing.Point(299, 12);
             this.backstitchPictureBox.Name = "backstitchPictureBox";
             this.backstitchPictureBox.Size = new System.Drawing.Size(529, 529);
             this.backstitchPictureBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
@@ -397,11 +404,76 @@ namespace EmbroideryCreator
             this.drawingToolsControl.Size = new System.Drawing.Size(135, 45);
             this.drawingToolsControl.TabIndex = 18;
             // 
+            // gridPictureBox
+            // 
+            this.gridPictureBox.Enabled = false;
+            this.gridPictureBox.InitialImage = global::EmbroideryCreator.Properties.Resources.ChooseImagePicture;
+            this.gridPictureBox.Location = new System.Drawing.Point(299, 12);
+            this.gridPictureBox.Name = "gridPictureBox";
+            this.gridPictureBox.Size = new System.Drawing.Size(529, 529);
+            this.gridPictureBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.gridPictureBox.TabIndex = 28;
+            this.gridPictureBox.TabStop = false;
+            // 
+            // borderPictureBox
+            // 
+            this.borderPictureBox.Enabled = false;
+            this.borderPictureBox.InitialImage = global::EmbroideryCreator.Properties.Resources.ChooseImagePicture;
+            this.borderPictureBox.Location = new System.Drawing.Point(299, 12);
+            this.borderPictureBox.Name = "borderPictureBox";
+            this.borderPictureBox.Size = new System.Drawing.Size(529, 529);
+            this.borderPictureBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.borderPictureBox.TabIndex = 29;
+            this.borderPictureBox.TabStop = false;
+            // 
+            // gridVisibleCheckBox
+            // 
+            this.gridVisibleCheckBox.AutoSize = true;
+            this.gridVisibleCheckBox.Checked = true;
+            this.gridVisibleCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.gridVisibleCheckBox.Location = new System.Drawing.Point(215, 409);
+            this.gridVisibleCheckBox.Name = "gridVisibleCheckBox";
+            this.gridVisibleCheckBox.Size = new System.Drawing.Size(45, 17);
+            this.gridVisibleCheckBox.TabIndex = 30;
+            this.gridVisibleCheckBox.Text = "Grid";
+            this.gridVisibleCheckBox.UseVisualStyleBackColor = true;
+            this.gridVisibleCheckBox.CheckedChanged += new System.EventHandler(this.gridVisibleCheckBox_CheckedChanged);
+            // 
+            // borderVisibleCheckBox
+            // 
+            this.borderVisibleCheckBox.AutoSize = true;
+            this.borderVisibleCheckBox.Checked = true;
+            this.borderVisibleCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.borderVisibleCheckBox.Location = new System.Drawing.Point(215, 432);
+            this.borderVisibleCheckBox.Name = "borderVisibleCheckBox";
+            this.borderVisibleCheckBox.Size = new System.Drawing.Size(57, 17);
+            this.borderVisibleCheckBox.TabIndex = 31;
+            this.borderVisibleCheckBox.Text = "Border";
+            this.borderVisibleCheckBox.UseVisualStyleBackColor = true;
+            this.borderVisibleCheckBox.CheckedChanged += new System.EventHandler(this.borderCheckBox_CheckedChanged);
+            // 
+            // backstitchVisibleCheckBox
+            // 
+            this.backstitchVisibleCheckBox.AutoSize = true;
+            this.backstitchVisibleCheckBox.Checked = true;
+            this.backstitchVisibleCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.backstitchVisibleCheckBox.Location = new System.Drawing.Point(215, 455);
+            this.backstitchVisibleCheckBox.Name = "backstitchVisibleCheckBox";
+            this.backstitchVisibleCheckBox.Size = new System.Drawing.Size(76, 17);
+            this.backstitchVisibleCheckBox.TabIndex = 32;
+            this.backstitchVisibleCheckBox.Text = "Backstitch";
+            this.backstitchVisibleCheckBox.UseVisualStyleBackColor = true;
+            this.backstitchVisibleCheckBox.CheckedChanged += new System.EventHandler(this.backstitchVisibleCheckBox_CheckedChanged);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1153, 579);
+            this.Controls.Add(this.backstitchVisibleCheckBox);
+            this.Controls.Add(this.borderVisibleCheckBox);
+            this.Controls.Add(this.borderPictureBox);
+            this.Controls.Add(this.gridVisibleCheckBox);
             this.Controls.Add(this.backstitchPictureBox);
             this.Controls.Add(this.RetrieveSavedFileButton);
             this.Controls.Add(this.currentStitchModeLabel);
@@ -432,6 +504,7 @@ namespace EmbroideryCreator
             this.Controls.Add(this.chooseNewImageButton);
             this.Controls.Add(this.numberOfColorsTrackBar);
             this.Controls.Add(this.widthSizeTrackBar);
+            this.Controls.Add(this.gridPictureBox);
             this.Controls.Add(this.mainPictureBox);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.Name = "MainForm";
@@ -442,6 +515,8 @@ namespace EmbroideryCreator
             ((System.ComponentModel.ISupportInitialize)(this.numberOfIterationsTrackBar)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.mainPictureBox)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.backstitchPictureBox)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.gridPictureBox)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.borderPictureBox)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -484,6 +559,11 @@ namespace EmbroideryCreator
         private System.Windows.Forms.Button RetrieveSavedFileButton;
         private System.Windows.Forms.OpenFileDialog retrieveSavedFileDialog;
         private System.Windows.Forms.PictureBox backstitchPictureBox;
+        private System.Windows.Forms.PictureBox gridPictureBox;
+        private System.Windows.Forms.PictureBox borderPictureBox;
+        private System.Windows.Forms.CheckBox gridVisibleCheckBox;
+        private System.Windows.Forms.CheckBox borderVisibleCheckBox;
+        private System.Windows.Forms.CheckBox backstitchVisibleCheckBox;
     }
 }
 

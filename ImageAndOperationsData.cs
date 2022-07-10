@@ -17,12 +17,14 @@ namespace EmbroideryCreator
         //private Bitmap withBorderImage;
         public Bitmap ResultingImage { get; private set; }
         public Bitmap BackstitchImage { get; private set; }
+        public Bitmap GridImage { get; private set; }
+        public Bitmap BorderImage { get; private set; }
 
         public int newWidth = 100;
         public int numberOfColors = 10;
         public int numberOfIterations = 10;
 
-        private int newPixelSize = 10;
+        private int newPixelSize = 32;
         
         private List<Color> colorMeans;
         private Dictionary<int, List<Tuple<int, int>>> positionsOfEachColor = new Dictionary<int, List<Tuple<int, int>>>();
@@ -170,7 +172,40 @@ namespace EmbroideryCreator
             return colorReducedImage;
         }
 
-        private Bitmap AddGrid(Bitmap colorReducedImage)
+        private Bitmap ResizingImage(Bitmap colorReducedImage)
+        {
+            //bool largerIsWidth = colorReducedImage.Width > colorReducedImage.Height;
+            Bitmap augmentedImage = ImageTransformations.ResizeBitmap(colorReducedImage, newPixelSize);
+            return augmentedImage;
+        }
+
+        private Bitmap AddGridToImage(Bitmap imageToAddGrid, int numberOfVerticalGridLines, int numberOfHorizontalGridLines)
+        {
+            int intervalForDarkerLines = 10;
+            using (var graphics = Graphics.FromImage(imageToAddGrid))
+            {
+                //vertical lines
+                for (int x = 0; x <= numberOfVerticalGridLines; x++)
+                {
+                    Color penColor = x % intervalForDarkerLines == 0 ? Color.Black : Color.Gray;
+                    Pen pen = new Pen(penColor, 1.0f);
+                    GridThicknessInNumberOfPixels = 1;
+                    graphics.DrawLine(pen, x * newPixelSize/* - newPixelSize*0.5f*/, 0, x * newPixelSize/* - newPixelSize*0.5f*/, imageToAddGrid.Height - 1);
+                }
+
+                //horizontal lines
+                for (int y = 0; y <= numberOfHorizontalGridLines; y++)
+                {
+                    Color penColor = y % intervalForDarkerLines == 0 ? Color.Black : Color.Gray;
+                    Pen pen = new Pen(penColor, 1.0f);
+                    GridThicknessInNumberOfPixels = 1;
+                    graphics.DrawLine(pen, 0, y * newPixelSize/* - newPixelSize*0.5f*/, imageToAddGrid.Width - 1, y * newPixelSize/* - newPixelSize*0.5f*/);
+                }
+            }
+            return imageToAddGrid;
+        }
+
+        private Bitmap AddGridResizingImage(Bitmap colorReducedImage)
         {
             //bool largerIsWidth = colorReducedImage.Width > colorReducedImage.Height;
             Bitmap augmentedImage = ImageTransformations.ResizeBitmap(colorReducedImage, newPixelSize);
@@ -200,31 +235,51 @@ namespace EmbroideryCreator
             return withGridImage;
         }
 
-        private Bitmap AddBorder(Bitmap withGridImage)
+        private Bitmap AddPaddingToImage(Bitmap smallerImage)
         {
-            Bitmap withBorderImage = (Bitmap)withGridImage.Clone();
-            using (var graphics = Graphics.FromImage(withBorderImage))
-            {
-                Color penColor = Color.Black;
-                int penSize = (int)(newPixelSize * 0.5f) + 1;
-                Pen pen = new Pen(penColor, penSize);
-                int offset = (int)(penSize % 2 == 0 ? penSize * 0.5f : (penSize + 1) * 0.5f);
-                BorderThicknessInNumberOfPixels = penSize;
+            SetPenAndBorderThickness(out _, out _);
 
-                graphics.DrawLine(pen, 0, offset, withGridImage.Width, offset); //upper border
-                graphics.DrawLine(pen, offset, 0, offset, withGridImage.Height); //left border
-                graphics.DrawLine(pen, 0, withGridImage.Height - offset + 1, withGridImage.Width, withGridImage.Height - offset + 1); //bottom border
-                graphics.DrawLine(pen, withGridImage.Width - offset + 1, 0, withGridImage.Width - offset + 1, withGridImage.Height); //right border
+            Bitmap imageWithPadding = new Bitmap(smallerImage.Width + 2 * BorderThicknessInNumberOfPixels - GridThicknessInNumberOfPixels, smallerImage.Height + 2 * BorderThicknessInNumberOfPixels - GridThicknessInNumberOfPixels);
+            //I'm subtracting the grid thickness here to add a small offset to hide the first top horizontal and the first left vertical lines of the grid,
+            //otherwise we end up with an asymmetric grid starting with black lines at the top and at the left but with no lines on the right and at the bottom
+
+            using (var graphics = Graphics.FromImage(imageWithPadding))
+            {
+                graphics.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.NearestNeighbor;
+                graphics.PixelOffsetMode = System.Drawing.Drawing2D.PixelOffsetMode.HighQuality;
+
+                //Let's add this offset to hide the first top horizontal and the first left vertical lines of the grid, otherwise we end up with an asymmetric grid
+                //starting with black lines at the top and at the left but with no lines on the right and at the bottom
+                int offset = GridThicknessInNumberOfPixels;
+                graphics.DrawImage(smallerImage, BorderThicknessInNumberOfPixels - offset, BorderThicknessInNumberOfPixels - offset, smallerImage.Width, smallerImage.Height);
             }
-            return withBorderImage;
+            return imageWithPadding;
         }
 
-        private Bitmap AddBorderIncresingSizeOfOriginalImage(Bitmap withGridImage)
+        private Bitmap AddBorder(Bitmap imageToAddBorder)
         {
-            Color penColor = Color.Black;
-            int penSize = (int)(newPixelSize * 0.5f)/* + 1*/;
-            Pen pen = new Pen(penColor, penSize);
-            BorderThicknessInNumberOfPixels = penSize;
+            SetPenAndBorderThickness(out int penSize, out Pen pen);
+
+            //Bitmap withoutBorderImage = new Bitmap(withoutBorderImage_.Width + 2 * BorderThicknessInNumberOfPixels - GridThicknessInNumberOfPixels, withoutBorderImage_.Height + 2 * BorderThicknessInNumberOfPixels - GridThicknessInNumberOfPixels);
+            //I'm subtracting the grid thickness here to add a small offset to hide the first top horizontal and the first left vertical lines of the grid,
+            //otherwise we end up with an asymmetric grid starting with black lines at the top and at the left but with no lines on the right and at the bottom
+
+            using (var graphics = Graphics.FromImage(imageToAddBorder))
+            {
+                int offset = GridThicknessInNumberOfPixels;
+
+                int offsetForBorder = (int)(penSize % 2 == 0 ? penSize * 0.5f : (penSize + 1) * 0.5f);
+                graphics.DrawLine(pen, 0, offsetForBorder, imageToAddBorder.Width, offsetForBorder); //upper border
+                graphics.DrawLine(pen, offsetForBorder, 0, offsetForBorder, imageToAddBorder.Height); //left border
+                graphics.DrawLine(pen, 0, imageToAddBorder.Height - offsetForBorder + 1, imageToAddBorder.Width, imageToAddBorder.Height - offsetForBorder + 1); //bottom border
+                graphics.DrawLine(pen, imageToAddBorder.Width - offset - 1, 0, imageToAddBorder.Width - offset - 1, imageToAddBorder.Height); //right border
+            }
+            return imageToAddBorder;
+        }
+
+        private Bitmap AddBorderIncreasingSizeOfOriginalImageByAddingPadding(Bitmap withGridImage)
+        {
+            SetPenAndBorderThickness(out int penSize, out Pen pen);
 
             Bitmap withBorderImage = new Bitmap(withGridImage.Width + 2 * BorderThicknessInNumberOfPixels - GridThicknessInNumberOfPixels, withGridImage.Height + 2 * BorderThicknessInNumberOfPixels - GridThicknessInNumberOfPixels);
             //I'm subtracting the grid thickness here to add a small offset to hide the first top horizontal and the first left vertical lines of the grid,
@@ -251,13 +306,21 @@ namespace EmbroideryCreator
             return withBorderImage;
         }
 
+        private void SetPenAndBorderThickness(out int penSize, out Pen pen)
+        {
+            Color penColor = Color.Black;
+            penSize = (int)(newPixelSize * 0.5f)/* + 1*/;
+            pen = new Pen(penColor, penSize);
+            BorderThicknessInNumberOfPixels = penSize;
+        }
+
         public void ProcessImage()
         {
             Bitmap processedImage = originalImage;
             processedImage = PixelateImage(processedImage);
             processedImage = ReduceNumberOfColors(processedImage);
-            processedImage = AddGrid(processedImage);
-            processedImage = AddBorderIncresingSizeOfOriginalImage(processedImage);
+            processedImage = AddGridResizingImage(processedImage);
+            processedImage = AddBorderIncreasingSizeOfOriginalImageByAddingPadding(processedImage);
             //resultingImage = withBorderImage;
             ResultingImage = processedImage;
             BackstitchImage = new Bitmap(ResultingImage.Width, ResultingImage.Height);
@@ -273,9 +336,37 @@ namespace EmbroideryCreator
             Bitmap processedImage = originalImage;
             processedImage = ReduceNumberOfColors(processedImage);
             processedImage = PixelateImageAlternateOrder(processedImage);
-            processedImage = AddGrid(processedImage);
-            processedImage = AddBorderIncresingSizeOfOriginalImage(processedImage);
+            processedImage = AddGridResizingImage(processedImage);
+            processedImage = AddBorderIncreasingSizeOfOriginalImageByAddingPadding(processedImage);
             ResultingImage = processedImage;
+            BackstitchImage = new Bitmap(ResultingImage.Width, ResultingImage.Height);
+            for (int i = 0; i < backstitchLines.Count; i++)
+            {
+                backstitchLines[i] = new HashSet<BackstitchLine>();
+            }
+        }
+
+        public void ProcessImageInSeparateLayers()
+        {
+            Bitmap processedImage = originalImage;
+            processedImage = PixelateImage(processedImage);
+            processedImage = ReduceNumberOfColors(processedImage);
+            //processedImage = AddGridResizingImage(processedImage);
+            //processedImage = AddBorderIncreasingSizeOfOriginalImageByAddingPadding(processedImage);
+            int reducedNumberOfColorsWidth = processedImage.Width;
+            int reducedNumberOfColorsHeight = processedImage.Height;
+            
+            processedImage = ResizingImage(processedImage);
+            GridImage = AddGridToImage(new Bitmap(processedImage.Width, processedImage.Height), reducedNumberOfColorsWidth, reducedNumberOfColorsHeight);
+            
+            //BorderImage = AddPaddingToImage(new Bitmap(processedImage.Width, processedImage.Height));
+            GridImage = AddPaddingToImage(GridImage);
+            ResultingImage = AddPaddingToImage(processedImage);
+            
+            BorderImage = AddBorder(new Bitmap(ResultingImage.Width, ResultingImage.Height));
+            
+            //resultingImage = withBorderImage;
+            //ResultingImage = processedImage;
             BackstitchImage = new Bitmap(ResultingImage.Width, ResultingImage.Height);
             for (int i = 0; i < backstitchLines.Count; i++)
             {

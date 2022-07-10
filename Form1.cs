@@ -43,6 +43,8 @@ namespace EmbroideryCreator
 
         private Keys multipleSelectionKeyboardKey = Keys.Control;
 
+        private List<PictureBox> pictureBoxesByVisibilityOrder = new List<PictureBox>();
+
         public MainForm()
         {
             InitializeComponent();
@@ -54,9 +56,47 @@ namespace EmbroideryCreator
             crossStitchColorsRadioButton.Checked = true;
             backStitchColorsRadioButton.Checked = false;
 
-            mainPictureBox.Controls.Add(backstitchPictureBox);
-            backstitchPictureBox.Location = new Point(0, 0);
-            backstitchPictureBox.BackColor = Color.Transparent;
+            pictureBoxesByVisibilityOrder.Add(mainPictureBox);
+            pictureBoxesByVisibilityOrder.Add(gridPictureBox);
+            pictureBoxesByVisibilityOrder.Add(borderPictureBox);
+            pictureBoxesByVisibilityOrder.Add(backstitchPictureBox);
+
+
+            //SetTransparentPictureBox(gridPictureBox, mainPictureBox);
+            //SetTransparentPictureBox(borderPictureBox, gridPictureBox);
+            //SetTransparentPictureBox(backstitchPictureBox, borderPictureBox);
+            //ResetOrderOfVisibilityOfPictureBoxes();
+
+            ResetOrderOfVisibilityOfPictureBoxes();
+        }
+
+        private void SetTransparentPictureBox(PictureBox transparentPictureBox, PictureBox solidPictureBox)
+        {
+            solidPictureBox.Controls.Add(transparentPictureBox);
+            transparentPictureBox.Location = new Point(0, 0);
+            transparentPictureBox.BackColor = Color.Transparent;
+        }
+
+        int GetNextVisiblePictureBox(int currentIndex, List<PictureBox> listOfPictureBoxes)
+        {
+            if (currentIndex <= 0) return 0;
+
+            if(listOfPictureBoxes[currentIndex - 1].Visible)
+            {
+                return currentIndex - 1;
+            }
+            else
+            {
+                return GetNextVisiblePictureBox(currentIndex - 1, listOfPictureBoxes);
+            }
+        }
+        private void ResetOrderOfVisibilityOfPictureBoxes()
+        {
+            for (int i = 1; i < pictureBoxesByVisibilityOrder.Count; i++)
+            {
+                int parentIndex = GetNextVisiblePictureBox(i, pictureBoxesByVisibilityOrder);
+                SetTransparentPictureBox(pictureBoxesByVisibilityOrder[i], pictureBoxesByVisibilityOrder[parentIndex]);
+            }
         }
 
         private void chooseNewImageButton_Click(object sender, EventArgs args)
@@ -317,13 +357,18 @@ namespace EmbroideryCreator
             imageAndOperationsData.numberOfColors = numberOfColorsTrackBar.Value;
             imageAndOperationsData.numberOfIterations = numberOfIterationsTrackBar.Value;
 
-            imageAndOperationsData.ProcessImage();
-            int newImageWidth = imageAndOperationsData.ResultingImage.Width;
-            int newImageHeight = imageAndOperationsData.ResultingImage.Height;
+            //imageAndOperationsData.ProcessImage();
+            imageAndOperationsData.ProcessImageInSeparateLayers();
+            //int newImageWidth = imageAndOperationsData.ResultingImage.Width;
+            //int newImageHeight = imageAndOperationsData.ResultingImage.Height;
             mainPictureBox.Image = imageAndOperationsData.ResultingImage;/*ImageTransformations.ResizeBitmap(imageAndOperationsData.resultingImage, mainPictureBox.Width * 10);*/
+            gridPictureBox.Image = imageAndOperationsData.GridImage;
+            borderPictureBox.Image = imageAndOperationsData.BorderImage;
             backstitchPictureBox.Image = new Bitmap(mainPictureBox.Image.Width, mainPictureBox.Image.Height);
 
             FillListsOfColors();
+
+            ResetOrderOfVisibilityOfPictureBoxes();
         }
 
         private void FillListsOfColors()
@@ -643,6 +688,28 @@ namespace EmbroideryCreator
         public bool CheckIfMultipleSelectionIsActive()
         {            
             return ModifierKeys.HasFlag(multipleSelectionKeyboardKey);
+        }
+
+        private void gridVisibleCheckBox_CheckedChanged(object sender, EventArgs e)
+        {
+            ChangeVisibilityOfPictureBox(gridVisibleCheckBox, gridPictureBox);
+        }
+
+        private void borderCheckBox_CheckedChanged(object sender, EventArgs e)
+        {
+            ChangeVisibilityOfPictureBox(borderVisibleCheckBox, borderPictureBox);
+        }
+
+        private void backstitchVisibleCheckBox_CheckedChanged(object sender, EventArgs e)
+        {
+            ChangeVisibilityOfPictureBox(backstitchVisibleCheckBox, backstitchPictureBox);
+        }
+
+        private void ChangeVisibilityOfPictureBox(CheckBox checkBoxOfPictureBoxToChangeVisibility, PictureBox pictureBoxToChangeVisibility)
+        {
+            pictureBoxToChangeVisibility.Visible = checkBoxOfPictureBoxToChangeVisibility.Checked;
+
+            ResetOrderOfVisibilityOfPictureBoxes();
         }
     }
 
