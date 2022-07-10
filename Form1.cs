@@ -58,6 +58,7 @@ namespace EmbroideryCreator
 
             pictureBoxesByVisibilityOrder.Add(baseLayerPictureBox);
             pictureBoxesByVisibilityOrder.Add(mainPictureBox);
+            pictureBoxesByVisibilityOrder.Add(threadPictureBox);
             pictureBoxesByVisibilityOrder.Add(gridPictureBox);
             pictureBoxesByVisibilityOrder.Add(borderPictureBox);
             pictureBoxesByVisibilityOrder.Add(backstitchPictureBox);
@@ -322,6 +323,7 @@ namespace EmbroideryCreator
 
             //reload picture box
             mainPictureBox.Image = imageAndOperationsData.ResultingImage;
+            threadPictureBox.Image = imageAndOperationsData.CrossStitchResultingImage;
         }
 
         private void SelectNewImageFile()
@@ -341,6 +343,7 @@ namespace EmbroideryCreator
                     try
                     {
                         mainPictureBox.Image = new Bitmap(filePath);
+                        threadPictureBox.Image = new Bitmap(mainPictureBox.Image.Width, mainPictureBox.Image.Height);
                         gridPictureBox.Image = new Bitmap(mainPictureBox.Image.Width, mainPictureBox.Image.Height);
                         borderPictureBox.Image = new Bitmap(mainPictureBox.Image.Width, mainPictureBox.Image.Height);
                         backstitchPictureBox.Image = new Bitmap(mainPictureBox.Image.Width, mainPictureBox.Image.Height);
@@ -381,6 +384,7 @@ namespace EmbroideryCreator
             //int newImageWidth = imageAndOperationsData.ResultingImage.Width;
             //int newImageHeight = imageAndOperationsData.ResultingImage.Height;
             mainPictureBox.Image = imageAndOperationsData.ResultingImage;/*ImageTransformations.ResizeBitmap(imageAndOperationsData.resultingImage, mainPictureBox.Width * 10);*/
+            threadPictureBox.Image = imageAndOperationsData.CrossStitchResultingImage;
             gridPictureBox.Image = imageAndOperationsData.GridImage;
             borderPictureBox.Image = imageAndOperationsData.BorderImage;
             backstitchPictureBox.Image = new Bitmap(mainPictureBox.Image.Width, mainPictureBox.Image.Height);
@@ -495,6 +499,7 @@ namespace EmbroideryCreator
             {
                 imageAndOperationsData = ImageAndOperationsDataSerialized.DeserializeData(retrieveSavedFileDialog.FileName);
                 mainPictureBox.Image = imageAndOperationsData.ResultingImage;
+                threadPictureBox.Image = imageAndOperationsData.CrossStitchResultingImage;
                 backstitchPictureBox.Image = imageAndOperationsData.BackstitchImage;/*new Bitmap(mainPictureBox.Image.Width, mainPictureBox.Image.Height);*/
                 gridPictureBox.Image = imageAndOperationsData.GridImage;
                 borderPictureBox.Image = imageAndOperationsData.BorderImage;
@@ -528,6 +533,7 @@ namespace EmbroideryCreator
         {
             imageAndOperationsData.ChangeColorByIndex(index, newColor);
             mainPictureBox.Image = imageAndOperationsData.ResultingImage;
+            threadPictureBox.Image = imageAndOperationsData.CrossStitchResultingImage;
         }
 
         public void UpdateBackstitchColorByIndex(int index, Color newColor)
@@ -721,6 +727,11 @@ namespace EmbroideryCreator
         private void mainImageVisibleCheckBox_CheckedChanged(object sender, EventArgs e)
         {
             ChangeVisibilityOfPictureBox(mainImageVisibleCheckBox, mainPictureBox);
+        }
+
+        private void threadImageVisibleCheckBox_CheckedChanged(object sender, EventArgs e)
+        {
+            ChangeVisibilityOfPictureBox(threadImageVisibleCheckBox, threadPictureBox);
         }
 
         private void gridVisibleCheckBox_CheckedChanged(object sender, EventArgs e)

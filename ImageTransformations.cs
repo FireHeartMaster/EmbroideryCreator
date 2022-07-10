@@ -247,20 +247,7 @@ namespace EmbroideryCreator
 
         public static Bitmap ResizeBitmap(Bitmap sourceBMP, int newPixelSize)
         {
-            bool biggerIsWidth = sourceBMP.Width > sourceBMP.Height;
-            int newMaxSize = (biggerIsWidth ? sourceBMP.Width : sourceBMP.Height) * newPixelSize;
-            int width; 
-            int height;            
-            if (biggerIsWidth)
-            {
-                width = newMaxSize;
-                height = (int)((((float)sourceBMP.Height) / sourceBMP.Width) * newMaxSize);
-            }
-            else
-            {
-                width = (int)((((float)sourceBMP.Width) / sourceBMP.Height) * newMaxSize);
-                height = newMaxSize;
-            }
+            GetNewSize(sourceBMP.Width, sourceBMP.Height, newPixelSize, out int width, out int height);
 
             Bitmap result = new Bitmap(width, height);
             using (Graphics graphics = Graphics.FromImage(result))
@@ -268,11 +255,27 @@ namespace EmbroideryCreator
                 graphics.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.NearestNeighbor;
                 graphics.PixelOffsetMode = System.Drawing.Drawing2D.PixelOffsetMode.HighQuality;
                 //int positionOffset = newPixelSize / 2; //Because of a bug with DrawImage, the source image isn't drawn in the correct position on the target image,
-                                                         //it ended up slightly more to the top and to the left, that's why we need to use an offset or to set the pixel
-                                                         //offset mode to high quality
+                //it ended up slightly more to the top and to the left, that's why we need to use an offset or to set the pixel
+                //offset mode to high quality
                 graphics.DrawImage(sourceBMP, /*positionOffset*/0, /*positionOffset*/0, width, height);
             }
             return result;
+        }
+
+        public static void GetNewSize(int originalWidth, int originalHeight, int newPixelSize, out int width, out int height)
+        {
+            bool biggerIsWidth = originalWidth > originalHeight;
+            int newMaxSize = (biggerIsWidth ? originalWidth : originalHeight) * newPixelSize;
+            if (biggerIsWidth)
+            {
+                width = newMaxSize;
+                height = (int)((((float)originalHeight) / originalWidth) * newMaxSize);
+            }
+            else
+            {
+                width = (int)((((float)originalWidth) / originalHeight) * newMaxSize);
+                height = newMaxSize;
+            }
         }
 
         public static Bitmap CombineImages(Bitmap baseImage, Bitmap topImage)

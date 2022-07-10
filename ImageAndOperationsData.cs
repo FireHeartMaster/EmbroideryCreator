@@ -16,6 +16,7 @@ namespace EmbroideryCreator
         //private Bitmap withGridImage;
         //private Bitmap withBorderImage;
         public Bitmap ResultingImage { get; private set; }
+        public Bitmap CrossStitchResultingImage { get; private set; }
         public Bitmap BackstitchImage { get; private set; }
         public Bitmap GridImage { get; private set; }
         public Bitmap BorderImage { get; private set; }
@@ -41,12 +42,15 @@ namespace EmbroideryCreator
         public int BorderThicknessInNumberOfPixels { get; private set; } = 1;
         public int GridThicknessInNumberOfPixels { get; private set; } = 1;
 
+        Dictionary<Color, Bitmap> dictionaryOfColoredCrossByColor = new Dictionary<Color, Bitmap>();
+
         public void ChangeColorByIndex(int indexToUpdate, Color newColor)
         {
             if(indexToUpdate >= 0 && indexToUpdate < colorMeans.Count)
             {
                 colorMeans[indexToUpdate] = newColor;
                 PaintNewColorOnImage(indexToUpdate, newColor, ResultingImage);
+                PaintCrossOfNewColorOnImage(indexToUpdate, newColor, CrossStitchResultingImage);
             }
         }
 
@@ -62,11 +66,33 @@ namespace EmbroideryCreator
             }
         }
 
+        private void PaintCrossOfNewColorOnImage(int indexToUpdate, Color newColor, Bitmap image)
+        {
+            using (var graphics = Graphics.FromImage(image))
+            {
+                foreach (Tuple<int, int> position in positionsOfEachColor[indexToUpdate])
+                {
+                    FillCrossAtCoordinate(newColor, graphics, position);
+                }
+            }
+        }
+
         private void PaintNewColorOnPixelPosition(Tuple<int, int> position, Color newColor, Bitmap image)
         {
             using (var graphics = Graphics.FromImage(image))
             {
                 FillPixelAtCoordinate(newColor, graphics, position);
+            }
+        }
+
+        private void PaintCrossOnPixelPosition(Tuple<int, int> position, Color color, Bitmap crossStitchResultingImage)
+        {
+            using (var graphics = Graphics.FromImage(crossStitchResultingImage))
+            {
+                graphics.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.NearestNeighbor;
+                graphics.PixelOffsetMode = System.Drawing.Drawing2D.PixelOffsetMode.HighQuality;
+
+                FillCrossAtCoordinate(color, graphics, position);
             }
         }
 
@@ -81,6 +107,17 @@ namespace EmbroideryCreator
             }
         }
 
+        private void PaintCrossOnSeveralPixelPositions(List<Tuple<int, int>> positions, Color newColor, Bitmap image)
+        {
+            using (var graphics = Graphics.FromImage(image))
+            {
+                foreach (var position in positions)
+                {
+                    FillCrossAtCoordinate(newColor, graphics, position);
+                }
+            }
+        }
+
         private void FillPixelAtCoordinate(Color newColor, Graphics graphics, Tuple<int, int> position)
         {
             graphics.FillRectangle(new SolidBrush(newColor),
@@ -88,6 +125,53 @@ namespace EmbroideryCreator
                                                         BorderThicknessInNumberOfPixels + (position.Item2) * (newPixelSize) - GridThicknessInNumberOfPixels,
                                                         newPixelSize/* - GridThicknessInNumberOfPixels*/,
                                                         newPixelSize/* - GridThicknessInNumberOfPixels*/);
+        }
+
+        private void FillCrossAtCoordinate(Color color, Graphics graphics, Tuple<int, int> position)
+        {
+            //throw new NotImplementedException();
+            Bitmap crossOfSelectedColor;
+            if (!dictionaryOfColoredCrossByColor.ContainsKey(color))
+            {
+                dictionaryOfColoredCrossByColor.Add(color, GenerateCrossOfSelectedColor(color));
+            }
+
+            crossOfSelectedColor = dictionaryOfColoredCrossByColor[color];
+            graphics.DrawImage(crossOfSelectedColor, 
+                                                        BorderThicknessInNumberOfPixels + (position.Item1) * (newPixelSize) - GridThicknessInNumberOfPixels,
+                                                        BorderThicknessInNumberOfPixels + (position.Item2) * (newPixelSize) - GridThicknessInNumberOfPixels,
+                                                        newPixelSize/* - GridThicknessInNumberOfPixels*/,
+                                                        newPixelSize/* - GridThicknessInNumberOfPixels*/);
+        }
+
+        private Bitmap GenerateCrossOfSelectedColor(Color color)
+        {
+            //throw new NotImplementedException();
+            int alphaIntensity = 100;
+            Bitmap coloredCross = new Bitmap(Properties.Resources.ThreadCross);
+            
+            using(Graphics graphics = Graphics.FromImage(coloredCross))
+            {
+                graphics.FillRectangle(new SolidBrush(Color.FromArgb(alphaIntensity, color)), 0, 0, coloredCross.Width, coloredCross.Height);
+            }
+
+            Color noColor = Color.FromArgb(0, 0, 0, 0);
+            for (int x = 0; x < coloredCross.Width; x++)
+            {
+                for (int y = 0; y < coloredCross.Height; y++)
+                {
+                    if(Properties.Resources.ThreadCross.GetPixel(x, y).A == 0)
+                    {
+                        coloredCross.SetPixel(x, y, noColor);
+                    }
+                    else
+                    {
+                        coloredCross.SetPixel(x, y, Color.FromArgb(Properties.Resources.ThreadCross.GetPixel(x, y).A, coloredCross.GetPixel(x, y)));
+                    }
+                }
+            }
+            
+            return coloredCross;
         }
 
         private void PaintBackstitchLine(Color colorToPaint, BackstitchLine backstitchLine)
@@ -366,7 +450,9 @@ namespace EmbroideryCreator
             //BorderImage = AddPaddingToImage(new Bitmap(processedImage.Width, processedImage.Height));
             GridImage = AddPaddingToImage(GridImage);
             ResultingImage = AddPaddingToImage(processedImage);
-            
+
+            RepaintMainImage(false, true);  //Setting cross stitch image / thread image
+
             BorderImage = AddBorder(new Bitmap(ResultingImage.Width, ResultingImage.Height));
             
             //resultingImage = withBorderImage;
@@ -423,6 +509,38 @@ namespace EmbroideryCreator
             positionsOfEachColor[colorIndexToPaint].Add(position);
             
             PaintNewColorOnPixelPosition(position, colorMeans[colorIndexToPaint], ResultingImage);
+            PaintCrossOnPixelPosition(position, colorMeans[colorIndexToPaint], CrossStitchResultingImage);
+        }
+
+        private void RepaintMainImage(bool paintColors = true, bool paintCrosses = true)
+        {
+            ImageTransformations.GetNewSize(originalImage.Width, originalImage.Height, newPixelSize, out int resultingImageWidth, out int resultingImageHeight);
+            if (paintColors)
+            {
+                ResultingImage = AddPaddingToImage(new Bitmap(resultingImageWidth, resultingImageHeight));
+            }
+            if (paintCrosses)
+            {
+                CrossStitchResultingImage = new Bitmap(ResultingImage.Width, ResultingImage.Height);
+            }
+
+            for (int i = 0; i < matrixOfNewColors.GetLength(0); i++)
+            {
+                for (int j = 0; j < matrixOfNewColors.GetLength(1); j++)
+                {
+                    Tuple<int, int> position = new Tuple<int, int>(i, j);
+                    int colorIndexToPaint = matrixOfNewColors[position.Item1, position.Item2];
+
+                    if (paintColors)
+                    {
+                        PaintNewColorOnPixelPosition(position, colorMeans[colorIndexToPaint], ResultingImage);
+                    }
+                    if (paintCrosses)
+                    {
+                        PaintCrossOnPixelPosition(position, colorMeans[colorIndexToPaint], CrossStitchResultingImage);
+                    }
+                }
+            }
         }
 
         public void PaintNewColorOnGeneralPosition(Tuple<int, int> generalPosition, int colorIndexToPaint)
@@ -555,6 +673,7 @@ namespace EmbroideryCreator
 
             //repaint
             PaintNewColorOnSeveralPixelPositions(listOfPositionsToChange, colorMeans[colorIndexToPaint], ResultingImage);
+            PaintCrossOnSeveralPixelPositions(listOfPositionsToChange, colorMeans[colorIndexToPaint], CrossStitchResultingImage);
         }
 
         public void AddNewBackstitchColor(Color newColor)
