@@ -323,7 +323,7 @@ namespace EmbroideryCreator
 
             //reload picture box
             mainPictureBox.Image = imageAndOperationsData.ResultingImage;
-            threadPictureBox.Image = imageAndOperationsData.CrossStitchResultingImage;
+            threadPictureBox.Image = imageAndOperationsData.ThreadImage;
         }
 
         private void SelectNewImageFile()
@@ -384,7 +384,7 @@ namespace EmbroideryCreator
             //int newImageWidth = imageAndOperationsData.ResultingImage.Width;
             //int newImageHeight = imageAndOperationsData.ResultingImage.Height;
             mainPictureBox.Image = imageAndOperationsData.ResultingImage;/*ImageTransformations.ResizeBitmap(imageAndOperationsData.resultingImage, mainPictureBox.Width * 10);*/
-            threadPictureBox.Image = imageAndOperationsData.CrossStitchResultingImage;
+            threadPictureBox.Image = imageAndOperationsData.ThreadImage;
             gridPictureBox.Image = imageAndOperationsData.GridImage;
             borderPictureBox.Image = imageAndOperationsData.BorderImage;
             backstitchPictureBox.Image = new Bitmap(mainPictureBox.Image.Width, mainPictureBox.Image.Height);
@@ -499,7 +499,7 @@ namespace EmbroideryCreator
             {
                 imageAndOperationsData = ImageAndOperationsDataSerialized.DeserializeData(retrieveSavedFileDialog.FileName);
                 mainPictureBox.Image = imageAndOperationsData.ResultingImage;
-                threadPictureBox.Image = imageAndOperationsData.CrossStitchResultingImage;
+                threadPictureBox.Image = imageAndOperationsData.ThreadImage;
                 backstitchPictureBox.Image = imageAndOperationsData.BackstitchImage;/*new Bitmap(mainPictureBox.Image.Width, mainPictureBox.Image.Height);*/
                 gridPictureBox.Image = imageAndOperationsData.GridImage;
                 borderPictureBox.Image = imageAndOperationsData.BorderImage;
@@ -533,7 +533,7 @@ namespace EmbroideryCreator
         {
             imageAndOperationsData.ChangeColorByIndex(index, newColor);
             mainPictureBox.Image = imageAndOperationsData.ResultingImage;
-            threadPictureBox.Image = imageAndOperationsData.CrossStitchResultingImage;
+            threadPictureBox.Image = imageAndOperationsData.ThreadImage;
         }
 
         public void UpdateBackstitchColorByIndex(int index, Color newColor)
