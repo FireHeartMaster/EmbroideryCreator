@@ -273,8 +273,10 @@ namespace EmbroideryCreator
                 int offsetForBorder = (int)(penSize % 2 == 0 ? penSize * 0.5f : (penSize + 1) * 0.5f);
                 graphics.DrawLine(pen, 0, offsetForBorder, imageToAddBorder.Width, offsetForBorder); //upper border
                 graphics.DrawLine(pen, offsetForBorder, 0, offsetForBorder, imageToAddBorder.Height); //left border
-                graphics.DrawLine(pen, 0, imageToAddBorder.Height - offsetForBorder + 1, imageToAddBorder.Width, imageToAddBorder.Height - offsetForBorder + 1); //bottom border
-                graphics.DrawLine(pen, imageToAddBorder.Width - offset - 1, 0, imageToAddBorder.Width - offset - 1, imageToAddBorder.Height); //right border
+                int bottomBorderOffset = 1; //without this exact value, the line isn't draw at the precise position we need. I don't know yet why this exact value. It doesn't seem to depend on the size of the image
+                graphics.DrawLine(pen, 0, imageToAddBorder.Height - offsetForBorder + 1 - bottomBorderOffset, imageToAddBorder.Width, imageToAddBorder.Height - offsetForBorder + 1 - bottomBorderOffset); //bottom border
+                int rightBorderOffset = 6; //without this exact value, the line isn't draw at the precise position we need. I don't know yet why this exact value. It doesn't seem to depend on the size of the image
+                graphics.DrawLine(pen, imageToAddBorder.Width - offset - 1- rightBorderOffset, 0, imageToAddBorder.Width - offset - 1- rightBorderOffset, imageToAddBorder.Height); //right border
             }
             return imageToAddBorder;
         }
