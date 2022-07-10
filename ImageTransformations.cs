@@ -275,6 +275,21 @@ namespace EmbroideryCreator
             return result;
         }
 
+        public static Bitmap CombineImages(Bitmap baseImage, Bitmap topImage)
+        {
+            Bitmap imagesCombined = new Bitmap(baseImage);
+
+            using(Graphics graphics = Graphics.FromImage(imagesCombined))
+            {
+                graphics.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.NearestNeighbor;
+                graphics.PixelOffsetMode = System.Drawing.Drawing2D.PixelOffsetMode.HighQuality;
+
+                graphics.DrawImage(topImage, 0, 0, topImage.Width, topImage.Height);
+            }
+
+            return imagesCombined;
+        }
+
         public static Bitmap CreateSolidColorBitmap(Color color, int width, int height)
         {
             Bitmap bitmap = new Bitmap(width, height);

@@ -84,10 +84,10 @@ namespace EmbroideryCreator
         private void FillPixelAtCoordinate(Color newColor, Graphics graphics, Tuple<int, int> position)
         {
             graphics.FillRectangle(new SolidBrush(newColor),
-                                                        BorderThicknessInNumberOfPixels + (position.Item1) * (newPixelSize),
-                                                        BorderThicknessInNumberOfPixels + (position.Item2) * (newPixelSize),
-                                                        newPixelSize - GridThicknessInNumberOfPixels,
-                                                        newPixelSize - GridThicknessInNumberOfPixels);
+                                                        BorderThicknessInNumberOfPixels + (position.Item1) * (newPixelSize) - GridThicknessInNumberOfPixels,
+                                                        BorderThicknessInNumberOfPixels + (position.Item2) * (newPixelSize) - GridThicknessInNumberOfPixels,
+                                                        newPixelSize/* - GridThicknessInNumberOfPixels*/,
+                                                        newPixelSize/* - GridThicknessInNumberOfPixels*/);
         }
 
         private void PaintBackstitchLine(Color colorToPaint, BackstitchLine backstitchLine)
@@ -128,10 +128,12 @@ namespace EmbroideryCreator
             originalImage = new Bitmap(importedImage);
         }
 
-        public ImageAndOperationsData(Bitmap originalImage, Bitmap resultingImage, Bitmap backstitchImage, int newWidth, int numberOfColors, int numberOfIterations, int newPixelSize, List<Color> colorMeans, Dictionary<int, List<Tuple<int, int>>> positionsOfEachColor, int[,] matrixOfNewColors, List<bool> colorIsBackgroundList, Dictionary<int, HashSet<BackstitchLine>> backstitchLines, Dictionary<int, Color> backstitchColors, int borderThicknessInNumberOfPixels, int gridThicknessInNumberOfPixels) : this(originalImage)
+        public ImageAndOperationsData(Bitmap originalImage, Bitmap resultingImage, Bitmap backstitchImage, Bitmap gridImage, Bitmap borderImage, int newWidth, int numberOfColors, int numberOfIterations, int newPixelSize, List<Color> colorMeans, Dictionary<int, List<Tuple<int, int>>> positionsOfEachColor, int[,] matrixOfNewColors, List<bool> colorIsBackgroundList, Dictionary<int, HashSet<BackstitchLine>> backstitchLines, Dictionary<int, Color> backstitchColors, int borderThicknessInNumberOfPixels, int gridThicknessInNumberOfPixels) : this(originalImage)
         {
             ResultingImage = resultingImage;
             BackstitchImage = backstitchImage;
+            GridImage = gridImage;
+            BorderImage = borderImage;
             this.newWidth = newWidth;
             this.numberOfColors = numberOfColors;
             this.numberOfIterations = numberOfIterations;
@@ -148,7 +150,7 @@ namespace EmbroideryCreator
 
         public void SerializeData(string filePath)
         {
-            ImageAndOperationsDataSerialized serializableData = new ImageAndOperationsDataSerialized(originalImage, ResultingImage, BackstitchImage, newWidth, numberOfColors, numberOfIterations, newPixelSize, colorMeans, positionsOfEachColor, matrixOfNewColors, colorIsBackgroundList, backstitchLines, backstitchColors, BorderThicknessInNumberOfPixels, GridThicknessInNumberOfPixels);
+            ImageAndOperationsDataSerialized serializableData = new ImageAndOperationsDataSerialized(originalImage, ResultingImage, BackstitchImage, GridImage, BorderImage, newWidth, numberOfColors, numberOfIterations, newPixelSize, colorMeans, positionsOfEachColor, matrixOfNewColors, colorIsBackgroundList, backstitchLines, backstitchColors, BorderThicknessInNumberOfPixels, GridThicknessInNumberOfPixels);
 
             SerializerHelper.WriteToFile<ImageAndOperationsDataSerialized>(filePath, serializableData);
         }
@@ -189,7 +191,7 @@ namespace EmbroideryCreator
                 {
                     Color penColor = x % intervalForDarkerLines == 0 ? Color.Black : Color.Gray;
                     Pen pen = new Pen(penColor, 1.0f);
-                    GridThicknessInNumberOfPixels = 1;
+                    //GridThicknessInNumberOfPixels = 1;
                     graphics.DrawLine(pen, x * newPixelSize/* - newPixelSize*0.5f*/, 0, x * newPixelSize/* - newPixelSize*0.5f*/, imageToAddGrid.Height - 1);
                 }
 
@@ -198,7 +200,7 @@ namespace EmbroideryCreator
                 {
                     Color penColor = y % intervalForDarkerLines == 0 ? Color.Black : Color.Gray;
                     Pen pen = new Pen(penColor, 1.0f);
-                    GridThicknessInNumberOfPixels = 1;
+                    //GridThicknessInNumberOfPixels = 1;
                     graphics.DrawLine(pen, 0, y * newPixelSize/* - newPixelSize*0.5f*/, imageToAddGrid.Width - 1, y * newPixelSize/* - newPixelSize*0.5f*/);
                 }
             }
@@ -219,7 +221,7 @@ namespace EmbroideryCreator
                 {
                     Color penColor = x % intervalForDarkerLines == 0 ? Color.Black : Color.Gray;
                     Pen pen = new Pen(penColor, 1.0f);
-                    GridThicknessInNumberOfPixels = 1;
+                    //GridThicknessInNumberOfPixels = 1;
                     graphics.DrawLine(pen, x * newPixelSize/* - newPixelSize*0.5f*/, 0, x * newPixelSize/* - newPixelSize*0.5f*/, withGridImage.Height - 1);
                 }
 
@@ -228,7 +230,7 @@ namespace EmbroideryCreator
                 {
                     Color penColor = y % intervalForDarkerLines == 0 ? Color.Black : Color.Gray;
                     Pen pen = new Pen(penColor, 1.0f);
-                    GridThicknessInNumberOfPixels = 1;
+                    //GridThicknessInNumberOfPixels = 1;
                     graphics.DrawLine(pen, 0, y * newPixelSize/* - newPixelSize*0.5f*/, withGridImage.Width - 1, y * newPixelSize/* - newPixelSize*0.5f*/);
                 }
             }

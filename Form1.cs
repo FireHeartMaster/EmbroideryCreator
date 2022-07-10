@@ -99,6 +99,20 @@ namespace EmbroideryCreator
             }
         }
 
+        private Bitmap CombineImagesWithVisibilityOfPictureBoxes()
+        {
+            Bitmap imagesCombined = new Bitmap(pictureBoxesByVisibilityOrder[0].Image);
+            for (int i = 1; i < pictureBoxesByVisibilityOrder.Count; i++)
+            {
+                if (pictureBoxesByVisibilityOrder[i].Visible)
+                {
+                    imagesCombined = ImageTransformations.CombineImages(imagesCombined, new Bitmap(pictureBoxesByVisibilityOrder[i].Image));
+                }
+            }
+
+            return imagesCombined;
+        }
+
         private void chooseNewImageButton_Click(object sender, EventArgs args)
         {
             SelectNewImageFile();
@@ -451,7 +465,8 @@ namespace EmbroideryCreator
 
                 if (saveImageFileDialog.ShowDialog() == DialogResult.OK)
                 {
-                    imageAndOperationsData.ResultingImage.Save(saveImageFileDialog.FileNames[0]);
+                    Bitmap imageToSave = CombineImagesWithVisibilityOfPictureBoxes();
+                    imageToSave.Save(saveImageFileDialog.FileNames[0]);
                     if(saveImageFileDialog.FileNames[0].LastIndexOf(".") != -1)
                     {
                         int lengthOfSubstring = saveImageFileDialog.FileNames[0].LastIndexOf(".");
@@ -473,8 +488,11 @@ namespace EmbroideryCreator
                 imageAndOperationsData = ImageAndOperationsDataSerialized.DeserializeData(retrieveSavedFileDialog.FileName);
                 mainPictureBox.Image = imageAndOperationsData.ResultingImage;
                 backstitchPictureBox.Image = imageAndOperationsData.BackstitchImage;/*new Bitmap(mainPictureBox.Image.Width, mainPictureBox.Image.Height);*/
+                gridPictureBox.Image = imageAndOperationsData.GridImage;
+                borderPictureBox.Image = imageAndOperationsData.BorderImage;
 
                 FillListsOfColors();
+                ResetOrderOfVisibilityOfPictureBoxes();
             }
         }
 
