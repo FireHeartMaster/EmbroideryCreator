@@ -73,6 +73,8 @@ namespace EmbroideryCreator
             this.threadImageVisibleCheckBox = new System.Windows.Forms.CheckBox();
             this.drawingToolsControl = new EmbroideryCreator.DrawingToolsControl();
             this.threadPictureBox = new System.Windows.Forms.PictureBox();
+            this.symbolsPictureBox = new System.Windows.Forms.PictureBox();
+            this.symbolsVisibleCheckBox = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.widthSizeTrackBar)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numberOfColorsTrackBar)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numberOfIterationsTrackBar)).BeginInit();
@@ -82,6 +84,7 @@ namespace EmbroideryCreator
             ((System.ComponentModel.ISupportInitialize)(this.borderPictureBox)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.baseLayerPictureBox)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.threadPictureBox)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.symbolsPictureBox)).BeginInit();
             this.SuspendLayout();
             // 
             // widthSizeTrackBar
@@ -214,7 +217,7 @@ namespace EmbroideryCreator
             // 
             this.ProcessAtAllChangesCheckBox.AutoSize = true;
             this.ProcessAtAllChangesCheckBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.ProcessAtAllChangesCheckBox.Location = new System.Drawing.Point(13, 345);
+            this.ProcessAtAllChangesCheckBox.Location = new System.Drawing.Point(12, 12);
             this.ProcessAtAllChangesCheckBox.Name = "ProcessAtAllChangesCheckBox";
             this.ProcessAtAllChangesCheckBox.Size = new System.Drawing.Size(212, 21);
             this.ProcessAtAllChangesCheckBox.TabIndex = 13;
@@ -477,7 +480,7 @@ namespace EmbroideryCreator
             this.mainImageVisibleCheckBox.AutoSize = true;
             this.mainImageVisibleCheckBox.Checked = true;
             this.mainImageVisibleCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.mainImageVisibleCheckBox.Location = new System.Drawing.Point(215, 372);
+            this.mainImageVisibleCheckBox.Location = new System.Drawing.Point(215, 349);
             this.mainImageVisibleCheckBox.Name = "mainImageVisibleCheckBox";
             this.mainImageVisibleCheckBox.Size = new System.Drawing.Size(55, 17);
             this.mainImageVisibleCheckBox.TabIndex = 34;
@@ -490,7 +493,7 @@ namespace EmbroideryCreator
             this.threadImageVisibleCheckBox.AutoSize = true;
             this.threadImageVisibleCheckBox.Checked = true;
             this.threadImageVisibleCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.threadImageVisibleCheckBox.Location = new System.Drawing.Point(215, 397);
+            this.threadImageVisibleCheckBox.Location = new System.Drawing.Point(215, 374);
             this.threadImageVisibleCheckBox.Name = "threadImageVisibleCheckBox";
             this.threadImageVisibleCheckBox.Size = new System.Drawing.Size(60, 17);
             this.threadImageVisibleCheckBox.TabIndex = 36;
@@ -518,14 +521,40 @@ namespace EmbroideryCreator
             this.threadPictureBox.TabIndex = 37;
             this.threadPictureBox.TabStop = false;
             // 
+            // symbolsPictureBox
+            // 
+            this.symbolsPictureBox.Enabled = false;
+            this.symbolsPictureBox.InitialImage = global::EmbroideryCreator.Properties.Resources.ChooseImagePicture;
+            this.symbolsPictureBox.Location = new System.Drawing.Point(301, 12);
+            this.symbolsPictureBox.Name = "symbolsPictureBox";
+            this.symbolsPictureBox.Size = new System.Drawing.Size(529, 529);
+            this.symbolsPictureBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.symbolsPictureBox.TabIndex = 38;
+            this.symbolsPictureBox.TabStop = false;
+            // 
+            // symbolsVisibleCheckBox
+            // 
+            this.symbolsVisibleCheckBox.AutoSize = true;
+            this.symbolsVisibleCheckBox.Checked = true;
+            this.symbolsVisibleCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.symbolsVisibleCheckBox.Location = new System.Drawing.Point(215, 397);
+            this.symbolsVisibleCheckBox.Name = "symbolsVisibleCheckBox";
+            this.symbolsVisibleCheckBox.Size = new System.Drawing.Size(65, 17);
+            this.symbolsVisibleCheckBox.TabIndex = 39;
+            this.symbolsVisibleCheckBox.Text = "Symbols";
+            this.symbolsVisibleCheckBox.UseVisualStyleBackColor = true;
+            this.symbolsVisibleCheckBox.CheckedChanged += new System.EventHandler(this.symbolsVisibleCheckBox_CheckedChanged);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1153, 579);
+            this.Controls.Add(this.symbolsVisibleCheckBox);
             this.Controls.Add(this.borderPictureBox);
             this.Controls.Add(this.backstitchPictureBox);
             this.Controls.Add(this.gridPictureBox);
+            this.Controls.Add(this.symbolsPictureBox);
             this.Controls.Add(this.threadPictureBox);
             this.Controls.Add(this.threadImageVisibleCheckBox);
             this.Controls.Add(this.mainImageVisibleCheckBox);
@@ -576,6 +605,7 @@ namespace EmbroideryCreator
             ((System.ComponentModel.ISupportInitialize)(this.borderPictureBox)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.baseLayerPictureBox)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.threadPictureBox)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.symbolsPictureBox)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -627,6 +657,8 @@ namespace EmbroideryCreator
         private System.Windows.Forms.CheckBox mainImageVisibleCheckBox;
         private System.Windows.Forms.CheckBox threadImageVisibleCheckBox;
         private System.Windows.Forms.PictureBox threadPictureBox;
+        private System.Windows.Forms.PictureBox symbolsPictureBox;
+        private System.Windows.Forms.CheckBox symbolsVisibleCheckBox;
     }
 }
 
