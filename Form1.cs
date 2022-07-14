@@ -71,6 +71,10 @@ namespace EmbroideryCreator
             //ResetOrderOfVisibilityOfPictureBoxes();
 
             ResetOrderOfVisibilityOfPictureBoxes();
+
+
+            PdfManager pdfManager = new PdfManager();
+            pdfManager.CreatePdf();
         }
 
         private void SetTransparentPictureBox(PictureBox transparentPictureBox, PictureBox solidPictureBox)
