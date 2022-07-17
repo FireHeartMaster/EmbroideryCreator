@@ -73,8 +73,8 @@ namespace EmbroideryCreator
             ResetOrderOfVisibilityOfPictureBoxes();
 
 
-            PdfManager pdfManager = new PdfManager();
-            pdfManager.CreatePdf();
+            //PdfManager pdfManager = new PdfManager();
+            //pdfManager.CreatePdf();
         }
 
         private void SetTransparentPictureBox(PictureBox transparentPictureBox, PictureBox solidPictureBox)
@@ -106,14 +106,14 @@ namespace EmbroideryCreator
             }
         }
 
-        private Bitmap CombineImagesWithVisibilityOfPictureBoxes()
+        private Bitmap CombineImagesWithVisibilityOfPictureBoxes(List<PictureBox> pictureBoxesToCombine)
         {
-            Bitmap imagesCombined = new Bitmap(pictureBoxesByVisibilityOrder[0].Image);
-            for (int i = 1; i < pictureBoxesByVisibilityOrder.Count; i++)
+            Bitmap imagesCombined = new Bitmap(pictureBoxesToCombine[0].Image);
+            for (int i = 1; i < pictureBoxesToCombine.Count; i++)
             {
-                if (pictureBoxesByVisibilityOrder[i].Visible)
+                if (pictureBoxesToCombine[i].Visible)
                 {
-                    imagesCombined = ImageTransformations.CombineImages(imagesCombined, new Bitmap(pictureBoxesByVisibilityOrder[i].Image));
+                    imagesCombined = ImageTransformations.CombineImages(imagesCombined, new Bitmap(pictureBoxesToCombine[i].Image));
                 }
             }
 
@@ -485,18 +485,52 @@ namespace EmbroideryCreator
 
                 if (saveImageFileDialog.ShowDialog() == DialogResult.OK)
                 {
-                    Bitmap imageToSave = CombineImagesWithVisibilityOfPictureBoxes();
+                    Bitmap imageToSave = CombineImagesWithVisibilityOfPictureBoxes(pictureBoxesByVisibilityOrder);
                     imageToSave.Save(saveImageFileDialog.FileNames[0]);
                     if(saveImageFileDialog.FileNames[0].LastIndexOf(".") != -1)
                     {
                         int lengthOfSubstring = saveImageFileDialog.FileNames[0].LastIndexOf(".");
                         string filePathWithoutExtension = saveImageFileDialog.FileNames[0].Substring(0, lengthOfSubstring);
                         imageAndOperationsData.SerializeData(filePathWithoutExtension + ".edu");
+
+                        //PdfManager pdfManager = new PdfManager();
+                        //pdfManager.CreatePdf(PrepareImagesForPdf(), filePathWithoutExtension + ".pdf", imageAndOperationsData.ma);
+                        imageAndOperationsData.SavePdf(filePathWithoutExtension + ".pdf");
                     }
                 }
 
                 imageAndOperationsData.CreateMachinePath();
             }
+        }
+
+        private List<Bitmap> PrepareImagesForPdf()
+        {
+            List<PictureBox> firstImageIntoPdfListOfPictureBoxes = new List<PictureBox>();
+            firstImageIntoPdfListOfPictureBoxes.Add(baseLayerPictureBox);
+            firstImageIntoPdfListOfPictureBoxes.Add(mainPictureBox);
+            firstImageIntoPdfListOfPictureBoxes.Add(threadPictureBox);
+            firstImageIntoPdfListOfPictureBoxes.Add(symbolsPictureBox);
+            firstImageIntoPdfListOfPictureBoxes.Add(gridPictureBox);
+            firstImageIntoPdfListOfPictureBoxes.Add(borderPictureBox);
+            firstImageIntoPdfListOfPictureBoxes.Add(backstitchPictureBox);
+
+            Bitmap firstImageIntoPdf = CombineImagesWithVisibilityOfPictureBoxes(firstImageIntoPdfListOfPictureBoxes);
+
+            List<PictureBox> secondImageIntoPdfListOfPictureBoxes = new List<PictureBox>();
+            secondImageIntoPdfListOfPictureBoxes.Add(baseLayerPictureBox);
+            secondImageIntoPdfListOfPictureBoxes.Add(mainPictureBox);
+            secondImageIntoPdfListOfPictureBoxes.Add(threadPictureBox);
+            secondImageIntoPdfListOfPictureBoxes.Add(symbolsPictureBox);
+            secondImageIntoPdfListOfPictureBoxes.Add(gridPictureBox);
+            secondImageIntoPdfListOfPictureBoxes.Add(borderPictureBox);
+            secondImageIntoPdfListOfPictureBoxes.Add(backstitchPictureBox);
+
+            Bitmap secondImageIntoPdf = CombineImagesWithVisibilityOfPictureBoxes(secondImageIntoPdfListOfPictureBoxes);
+
+            List<Bitmap> imagesToGoIntoPdf = new List<Bitmap>();
+            imagesToGoIntoPdf.Add(firstImageIntoPdf);
+            imagesToGoIntoPdf.Add(secondImageIntoPdf);
+            return imagesToGoIntoPdf;
         }
 
         private void RetrieveSavedFileButton_Click(object sender, EventArgs e)

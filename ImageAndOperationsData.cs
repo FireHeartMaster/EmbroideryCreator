@@ -870,6 +870,12 @@ namespace EmbroideryCreator
             }
         }
 
+        public void SavePdf(string pathToSave)
+        {
+            PdfManager pdfManager = new PdfManager();
+            pdfManager.CreatePdfStitches(pathToSave, matrixOfNewColors, colorMeans);
+        }
+
         public void CreateMachinePath()
         {
             MachineEmbroidery machineEmbroidery = new MachineEmbroidery();
