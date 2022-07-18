@@ -495,7 +495,9 @@ namespace EmbroideryCreator
 
                         //PdfManager pdfManager = new PdfManager();
                         //pdfManager.CreatePdf(PrepareImagesForPdf(), filePathWithoutExtension + ".pdf", imageAndOperationsData.ma);
-                        imageAndOperationsData.SavePdf(filePathWithoutExtension + ".pdf");
+                        lengthOfSubstring = filePathWithoutExtension.LastIndexOf(Path.DirectorySeparatorChar);
+                        string title = filePathWithoutExtension.Substring(lengthOfSubstring + 1, filePathWithoutExtension.Length - lengthOfSubstring - 1);
+                        imageAndOperationsData.SavePdf(filePathWithoutExtension + ".pdf", title, "", "", "Octavius", "Octavius", "Visit our shop at octavius.shop");
                     }
                 }
 

@@ -30,7 +30,7 @@ namespace EmbroideryCreator
 
 
 
-        private XPoint startingPointForDrawings = new XPoint(50, 100);
+        private XPoint startingPointForDrawings = new XPoint(50, 120);
         private double sizeOfEachSquare = 8;
 
         private readonly int maxHorizontalNumberOfSquares = 56;
@@ -41,6 +41,19 @@ namespace EmbroideryCreator
 
         public PdfManager()
         {
+            gridPen.LineCap = XLineCap.Round;
+            thickGridPen.LineCap = XLineCap.Round;
+        }
+
+        public PdfManager(string title, string secondTitle, string subtitle, string leftText, string rightText, string footerText)
+        {
+            this.title = title;
+            this.secondTitle = secondTitle;
+            this.subtitle = subtitle;
+            this.leftText = leftText;
+            this.rightText = rightText;
+            this.footerText = footerText;
+
             gridPen.LineCap = XLineCap.Round;
             thickGridPen.LineCap = XLineCap.Round;
         }
@@ -90,6 +103,8 @@ namespace EmbroideryCreator
 
             document.Info.Title = "Eduardo testando PDF";
 
+            CreateFirstPage(document, matrixOfNewColors, colorMeans);
+
             CreateAllDrawingPages(document, matrixOfNewColors, colorMeans);
 
             try
@@ -105,6 +120,54 @@ namespace EmbroideryCreator
             {
                 Console.WriteLine("Exception");
                 Console.WriteLine(exception.Message);
+            }
+        }
+
+        private void CreateFirstPage(PdfDocument document, int[,] matrixOfNewColors, List<Color> colorMeans)
+        {
+
+            PdfPage currentPage = document.AddPage();
+
+            XGraphics pageGraphics = XGraphics.FromPdfPage(currentPage);
+            PreparePage(currentPage, pageGraphics);
+
+            double maxWidth = maxHorizontalNumberOfSquares * sizeOfEachSquare;
+            double maxHeight = maxVerticalNumberOfSquares * sizeOfEachSquare;
+
+            ImageTransformations.RescaleImage(matrixOfNewColors.GetLength(0), matrixOfNewColors.GetLength(1), maxWidth, maxHeight, out double newWidth, out double newHeight);
+
+            double firstPageSizeOfEachSquare = newWidth / matrixOfNewColors.GetLength(0);
+
+            XPoint startingPoint = new XPoint((currentPage.Width - newWidth) * 0.5, startingPointForDrawings.Y);
+
+            for (int y = 0; y < matrixOfNewColors.GetLength(1); y++)
+            {
+                for (int x = 0; x < matrixOfNewColors.GetLength(0); x++)
+                {
+                    DrawStitchAtPosition(pageGraphics, matrixOfNewColors, colorMeans, x, y, x, y, startingPoint, firstPageSizeOfEachSquare);
+
+                    if (y == matrixOfNewColors.GetLength(1) - 1)
+                    {
+                        //Drawing current vertical line
+                        DrawVerticalGridLine(pageGraphics, matrixOfNewColors, x, y, x, x, startingPoint, firstPageSizeOfEachSquare);
+                    }
+                }
+                //Drawing current horizontal line
+                DrawHorizontalGridLine(pageGraphics, matrixOfNewColors, y, y, matrixOfNewColors.GetLength(0), startingPoint, firstPageSizeOfEachSquare);
+            }
+
+
+            //drawing thick grid lines
+            for (int y = 0; y <= matrixOfNewColors.GetLength(1); y += 10)
+            {
+                //Drawing current horizontal line
+                DrawHorizontalGridLine(pageGraphics, matrixOfNewColors, y, y, matrixOfNewColors.GetLength(0), startingPoint, firstPageSizeOfEachSquare);
+            }
+
+            for (int x = 0; x <= matrixOfNewColors.GetLength(0); x += 10)
+            {
+                //Drawing current vertical line
+                DrawVerticalGridLine(pageGraphics, matrixOfNewColors, x, matrixOfNewColors.GetLength(1) - 1, x, x, startingPoint, firstPageSizeOfEachSquare);
             }
         }
 
@@ -173,19 +236,19 @@ namespace EmbroideryCreator
                     if (i >= matrixOfNewColors.GetLength(0)) break;
                     
                     //Drawing stitch
-                    DrawStitchAtPosition(pageGraphics, matrixOfNewColors, colorMeans, relativeIndexI, relativeIndexJ, i, j);
+                    DrawStitchAtPosition(pageGraphics, matrixOfNewColors, colorMeans, relativeIndexI, relativeIndexJ, i, j, startingPointForDrawings, sizeOfEachSquare);
 
                     if (relativeIndexJ == maxVerticalNumberOfSquares - 1 || j == matrixOfNewColors.GetLength(1) - 1)
                     {
                         //Drawing current vertical line
-                        DrawVerticalGridLine(pageGraphics, matrixOfNewColors, x, relativeIndexJ, relativeIndexI, i);
+                        DrawVerticalGridLine(pageGraphics, matrixOfNewColors, x, relativeIndexJ, relativeIndexI, i, startingPointForDrawings, sizeOfEachSquare);
                     }
 
                     relativeIndexI++;
                 }
 
                 //Drawing current horizontal line
-                DrawHorizontalGridLine(pageGraphics, matrixOfNewColors, relativeIndexJ, j, relativeIndexI);
+                DrawHorizontalGridLine(pageGraphics, matrixOfNewColors, relativeIndexJ, j, relativeIndexI, startingPointForDrawings, sizeOfEachSquare);
 
                 lastRelativeIndexJ = relativeIndexJ;
                 relativeIndexJ++;
@@ -202,7 +265,7 @@ namespace EmbroideryCreator
             {
                 if (j >= matrixOfNewColors.GetLength(1)) break;
 
-                DrawHorizontalGridLine(pageGraphics, matrixOfNewColors, relativeIndexJ, j, relativeIndexI);
+                DrawHorizontalGridLine(pageGraphics, matrixOfNewColors, relativeIndexJ, j, relativeIndexI, startingPointForDrawings, sizeOfEachSquare);
                 relativeIndexJ += 10;
             }
 
@@ -223,71 +286,74 @@ namespace EmbroideryCreator
                     //Also draw last vertical thick line of the current page if we didn't reach yet the end of the page
                     if(relativeIndexI < maxHorizontalNumberOfSquares)
                     {
-                        DrawVerticalGridLine(pageGraphics, matrixOfNewColors, x, relativeIndexJ, relativeIndexI, i);
+                        DrawVerticalGridLine(pageGraphics, matrixOfNewColors, x, relativeIndexJ, relativeIndexI, i, startingPointForDrawings, sizeOfEachSquare);
                     }
                     break;
                 }
 
-                DrawVerticalGridLine(pageGraphics, matrixOfNewColors, x, relativeIndexJ, relativeIndexI, i);
+                DrawVerticalGridLine(pageGraphics, matrixOfNewColors, x, relativeIndexJ, relativeIndexI, i, startingPointForDrawings, sizeOfEachSquare);
                 //if (i >= matrixOfNewColors.GetLength(0)) break;
 
                 relativeIndexI += 10;
             }
         }
 
-        private void DrawStitchAtPosition(XGraphics pageGraphics, int[,] matrixOfNewColors, List<Color> colorMeans, int relativeIndexI, int relativeIndexJ, int i, int j)
+        private void DrawStitchAtPosition(XGraphics pageGraphics, int[,] matrixOfNewColors, List<Color> colorMeans, int relativeIndexI, int relativeIndexJ, int i, int j,
+                                            XPoint startingPoint, double squareSize)
         {
             Color currentPositionColor = colorMeans[matrixOfNewColors[i, j]];
             XSolidBrush brush = new XSolidBrush(XColor.FromArgb(currentPositionColor.R, currentPositionColor.G, currentPositionColor.B));
 
-            XRect positionToDrawRect = new XRect(   startingPointForDrawings.X + relativeIndexI * sizeOfEachSquare,
-                                                    startingPointForDrawings.Y + relativeIndexJ * sizeOfEachSquare,
-                                                    sizeOfEachSquare,
-                                                    sizeOfEachSquare);
+            XRect positionToDrawRect = new XRect(   startingPoint.X + relativeIndexI * squareSize,
+                                                    startingPoint.Y + relativeIndexJ * squareSize,
+                                                    squareSize,
+                                                    squareSize);
 
             pageGraphics.DrawRectangle(brush, positionToDrawRect);
         }
 
-        private void DrawHorizontalGridLine(XGraphics pageGraphics, int[,] matrixOfNewColors, int relativeIndexJ, int j, int relativeIndexI)
+        private void DrawHorizontalGridLine(XGraphics pageGraphics, int[,] matrixOfNewColors, int relativeIndexJ, int j, int relativeIndexI,
+                                            XPoint startingPoint, double squareSize)
         {
             XPen penToUse = j % 10 == 0 ? thickGridPen : gridPen;
             pageGraphics.DrawLine(penToUse,
-                                    startingPointForDrawings.X,
-                                    startingPointForDrawings.Y + relativeIndexJ * sizeOfEachSquare,
-                                    startingPointForDrawings.X + relativeIndexI * sizeOfEachSquare,
-                                    startingPointForDrawings.Y + relativeIndexJ * sizeOfEachSquare);
+                                    startingPoint.X,
+                                    startingPoint.Y + relativeIndexJ * squareSize,
+                                    startingPoint.X + relativeIndexI * squareSize,
+                                    startingPoint.Y + relativeIndexJ * squareSize);
 
             //Also draw last horizontal line of the current page
             if (relativeIndexJ == maxVerticalNumberOfSquares - 1 || j == matrixOfNewColors.GetLength(1) - 1)
             {
                 penToUse = (j + 1) % 10 == 0 ? thickGridPen : gridPen;
                 pageGraphics.DrawLine(penToUse,
-                                        startingPointForDrawings.X,
-                                        startingPointForDrawings.Y + (relativeIndexJ + 1) * sizeOfEachSquare,
-                                        startingPointForDrawings.X + relativeIndexI * sizeOfEachSquare,
-                                        startingPointForDrawings.Y + (relativeIndexJ + 1) * sizeOfEachSquare);
+                                        startingPoint.X,
+                                        startingPoint.Y + (relativeIndexJ + 1) * squareSize,
+                                        startingPoint.X + relativeIndexI * squareSize,
+                                        startingPoint.Y + (relativeIndexJ + 1) * squareSize);
             }
         }
 
-        private void DrawVerticalGridLine(XGraphics pageGraphics, int[,] matrixOfNewColors, int x, int relativeIndexJ, int relativeIndexI, int i)
+        private void DrawVerticalGridLine(XGraphics pageGraphics, int[,] matrixOfNewColors, int x, int relativeIndexJ, int relativeIndexI, int i,
+                                            XPoint startingPoint, double squareSize)
         {
             XPen penToUse = i % 10 == 0 ? thickGridPen : gridPen;
             //penToUse = gridPen;
             pageGraphics.DrawLine(penToUse,
-                                    startingPointForDrawings.X + relativeIndexI * sizeOfEachSquare,
-                                    startingPointForDrawings.Y,
-                                    startingPointForDrawings.X + relativeIndexI * sizeOfEachSquare,
-                                    startingPointForDrawings.Y + (relativeIndexJ + 1) * sizeOfEachSquare);
+                                    startingPoint.X + relativeIndexI * squareSize,
+                                    startingPoint.Y,
+                                    startingPoint.X + relativeIndexI * squareSize,
+                                    startingPoint.Y + (relativeIndexJ + 1) * squareSize);
 
             if (relativeIndexI == (x + 1) * maxHorizontalNumberOfSquares - 1 || i == matrixOfNewColors.GetLength(0) - 1)
             {
                 penToUse = (i + 1) % 10 == 0 ? thickGridPen : gridPen;
                 //penToUse = gridPen;
                 pageGraphics.DrawLine(penToUse,
-                                        startingPointForDrawings.X + (relativeIndexI + 1) * sizeOfEachSquare,
-                                        startingPointForDrawings.Y,
-                                        startingPointForDrawings.X + (relativeIndexI + 1) * sizeOfEachSquare,
-                                        startingPointForDrawings.Y + (relativeIndexJ + 1) * sizeOfEachSquare);
+                                        startingPoint.X + (relativeIndexI + 1) * squareSize,
+                                        startingPoint.Y,
+                                        startingPoint.X + (relativeIndexI + 1) * squareSize,
+                                        startingPoint.Y + (relativeIndexJ + 1) * squareSize);
             }
         }
     }

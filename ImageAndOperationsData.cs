@@ -870,9 +870,9 @@ namespace EmbroideryCreator
             }
         }
 
-        public void SavePdf(string pathToSave)
+        public void SavePdf(string pathToSave, string title, string secondTitle, string subtitle, string leftText, string rightText, string footerText)
         {
-            PdfManager pdfManager = new PdfManager();
+            PdfManager pdfManager = new PdfManager(title, secondTitle, subtitle, leftText, rightText, footerText);
             pdfManager.CreatePdfStitches(pathToSave, matrixOfNewColors, colorMeans);
         }
 
