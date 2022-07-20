@@ -36,13 +36,21 @@ namespace EmbroideryCreator
         private readonly int maxHorizontalNumberOfSquares = 56;
         private readonly int maxVerticalNumberOfSquares = 85;
 
-        private readonly XPen gridPen = new XPen(XColors.Gray, 0.5);
-        private readonly XPen thickGridPen = new XPen(XColors.Black, 1);
+        //private readonly XPen gridPen = new XPen(XColors.Gray, 0.5);
+        //private readonly XPen thickGridPen = new XPen(XColors.Black, 1);
+
+        private readonly Color gridPenColor = Color.Gray;
+        private readonly Color thickGridPenColor = Color.Black;
+
+        private readonly double gridPenThickness = 0.5;
+        private readonly double thickGridPenThickness = 2;
+
+        private readonly double backstitchLineThickness = 2;
 
         public PdfManager()
         {
-            gridPen.LineCap = XLineCap.Round;
-            thickGridPen.LineCap = XLineCap.Round;
+            //gridPen.LineCap = XLineCap.Round;
+            //thickGridPen.LineCap = XLineCap.Round;
         }
 
         public PdfManager(string title, string secondTitle, string subtitle, string leftText, string rightText, string footerText)
@@ -54,8 +62,8 @@ namespace EmbroideryCreator
             this.rightText = rightText;
             this.footerText = footerText;
 
-            gridPen.LineCap = XLineCap.Round;
-            thickGridPen.LineCap = XLineCap.Round;
+            //gridPen.LineCap = XLineCap.Round;
+            //thickGridPen.LineCap = XLineCap.Round;
         }
 
         public void CreatePdf(List<Bitmap> images, string pathToSave)
@@ -97,15 +105,15 @@ namespace EmbroideryCreator
             }
         }
 
-        public void CreatePdfStitches(string pathToSave, int[,] matrixOfNewColors, List<Color> colorMeans)
+        public void CreatePdfStitches(string pathToSave, int[,] matrixOfNewColors, List<Color> colorMeans, Dictionary<int, HashSet<BackstitchLine>> backstitchLines, Dictionary<int, Color> backstitchColors)
         {
             PdfDocument document = new PdfDocument();
 
             document.Info.Title = "Eduardo testando PDF";
 
-            CreateFirstPage(document, matrixOfNewColors, colorMeans);
+            CreateFirstPage(document, matrixOfNewColors, colorMeans, backstitchLines, backstitchColors);
 
-            CreateAllDrawingPages(document, matrixOfNewColors, colorMeans);
+            CreateAllDrawingPages(document, matrixOfNewColors, colorMeans, backstitchLines, backstitchColors);
 
             try
             {
@@ -123,7 +131,7 @@ namespace EmbroideryCreator
             }
         }
 
-        private void CreateFirstPage(PdfDocument document, int[,] matrixOfNewColors, List<Color> colorMeans)
+        private void CreateFirstPage(PdfDocument document, int[,] matrixOfNewColors, List<Color> colorMeans, Dictionary<int, HashSet<BackstitchLine>> backstitchLines, Dictionary<int, Color> backstitchColors)
         {
 
             PdfPage currentPage = document.AddPage();
@@ -149,11 +157,11 @@ namespace EmbroideryCreator
                     if (y == matrixOfNewColors.GetLength(1) - 1)
                     {
                         //Drawing current vertical line
-                        DrawVerticalGridLine(pageGraphics, matrixOfNewColors, x, y, x, x, startingPoint, firstPageSizeOfEachSquare);
+                        DrawVerticalGridLine(pageGraphics, matrixOfNewColors, x, y, x, x, startingPoint, firstPageSizeOfEachSquare, firstPageSizeOfEachSquare / sizeOfEachSquare);
                     }
                 }
                 //Drawing current horizontal line
-                DrawHorizontalGridLine(pageGraphics, matrixOfNewColors, y, y, matrixOfNewColors.GetLength(0), startingPoint, firstPageSizeOfEachSquare);
+                DrawHorizontalGridLine(pageGraphics, matrixOfNewColors, y, y, matrixOfNewColors.GetLength(0), startingPoint, firstPageSizeOfEachSquare, firstPageSizeOfEachSquare / sizeOfEachSquare);
             }
 
 
@@ -161,13 +169,28 @@ namespace EmbroideryCreator
             for (int y = 0; y <= matrixOfNewColors.GetLength(1); y += 10)
             {
                 //Drawing current horizontal line
-                DrawHorizontalGridLine(pageGraphics, matrixOfNewColors, y, y, matrixOfNewColors.GetLength(0), startingPoint, firstPageSizeOfEachSquare);
+                DrawHorizontalGridLine(pageGraphics, matrixOfNewColors, y, y, matrixOfNewColors.GetLength(0), startingPoint, firstPageSizeOfEachSquare, firstPageSizeOfEachSquare / sizeOfEachSquare);
             }
 
             for (int x = 0; x <= matrixOfNewColors.GetLength(0); x += 10)
             {
                 //Drawing current vertical line
-                DrawVerticalGridLine(pageGraphics, matrixOfNewColors, x, matrixOfNewColors.GetLength(1) - 1, x, x, startingPoint, firstPageSizeOfEachSquare);
+                DrawVerticalGridLine(pageGraphics, matrixOfNewColors, x, matrixOfNewColors.GetLength(1) - 1, x, x, startingPoint, firstPageSizeOfEachSquare, firstPageSizeOfEachSquare / sizeOfEachSquare);
+            }
+
+            //Drawing backstitch lines
+            foreach (int backstitchLineIndex in backstitchLines.Keys)
+            {
+                foreach (BackstitchLine backstitch in backstitchLines[backstitchLineIndex])
+                {
+                    double firstPageBackstitchThickness = backstitchLineThickness * (firstPageSizeOfEachSquare / sizeOfEachSquare);
+                    XPen backstitchPen = GetRoundedPenFromColorAndThickness(backstitchColors[backstitchLineIndex], firstPageBackstitchThickness);
+                    pageGraphics.DrawLine(backstitchPen,
+                                    startingPoint.X + backstitch.startingPosition.Item1 * firstPageSizeOfEachSquare,
+                                    startingPoint.Y + backstitch.startingPosition.Item2 * firstPageSizeOfEachSquare,
+                                    startingPoint.X + backstitch.endingPosition.Item1 * firstPageSizeOfEachSquare,
+                                    startingPoint.Y + backstitch.endingPosition.Item2 * firstPageSizeOfEachSquare);
+                }
             }
         }
 
@@ -198,7 +221,7 @@ namespace EmbroideryCreator
             pageGraphics.RotateAtTransform(-90, new XPoint(page.Width * 0.5f, page.Height * 0.5f));
         }
 
-        private void CreateAllDrawingPages(PdfDocument document, int[,] matrixOfNewColors, List<Color> colorMeans)
+        private void CreateAllDrawingPages(PdfDocument document, int[,] matrixOfNewColors, List<Color> colorMeans, Dictionary<int, HashSet<BackstitchLine>> backstitchLines, Dictionary<int, Color> backstitchColors)
         {
             int horizontalNumberOfTimes = matrixOfNewColors.GetLength(0) / maxHorizontalNumberOfSquares + 1;
             int verticalNumberOfTimes = matrixOfNewColors.GetLength(1) / maxVerticalNumberOfSquares + 1;
@@ -214,12 +237,12 @@ namespace EmbroideryCreator
 
                     startingPointForDrawings.X = (currentPage.Width - (sizeOfEachSquare * maxHorizontalNumberOfSquares)) * 0.5f;
 
-                    DrawStitchesOnPage(currentPage, pageGraphics, matrixOfNewColors, colorMeans, x, y);
+                    DrawStitchesOnPage(currentPage, pageGraphics, matrixOfNewColors, colorMeans, x, y, backstitchLines, backstitchColors);
                 }
             }
         }
 
-        private void DrawStitchesOnPage(PdfPage currentPage, XGraphics pageGraphics, int[,] matrixOfNewColors, List<Color> colorMeans, int x, int y)
+        private void DrawStitchesOnPage(PdfPage currentPage, XGraphics pageGraphics, int[,] matrixOfNewColors, List<Color> colorMeans, int x, int y, Dictionary<int, HashSet<BackstitchLine>> backstitchLines, Dictionary<int, Color> backstitchColors)
         {
             int relativeIndexI = 0;
             int relativeIndexJ = 0;
@@ -296,6 +319,29 @@ namespace EmbroideryCreator
 
                 relativeIndexI += 10;
             }
+
+            //Drawing backstitch lines
+            foreach (int backstitchLineIndex in backstitchLines.Keys)
+            {
+                foreach (BackstitchLine backstitch in backstitchLines[backstitchLineIndex])
+                {
+                    XPen backstitchPen = GetRoundedPenFromColorAndThickness(backstitchColors[backstitchLineIndex], backstitchLineThickness);
+
+                    List<Tuple<double, double>> currentBackstitchPoints = ImageTransformations.FindIntersectionsOfLineAndSquare(
+                                                                                                        backstitch.startingPosition.Item1, backstitch.startingPosition.Item2,
+                                                                                                        backstitch.endingPosition.Item1, backstitch.endingPosition.Item2,
+                                                                                                        x * maxHorizontalNumberOfSquares, y * maxVerticalNumberOfSquares,
+                                                                                                        maxHorizontalNumberOfSquares, maxVerticalNumberOfSquares);
+                    if(currentBackstitchPoints.Count == 2)
+                    {
+                        pageGraphics.DrawLine(backstitchPen,
+                                    startingPointForDrawings.X + (currentBackstitchPoints[0].Item1 - x * maxHorizontalNumberOfSquares) * sizeOfEachSquare,
+                                    startingPointForDrawings.Y + (currentBackstitchPoints[0].Item2 - y * maxVerticalNumberOfSquares) * sizeOfEachSquare,
+                                    startingPointForDrawings.X + (currentBackstitchPoints[1].Item1 - x * maxHorizontalNumberOfSquares) * sizeOfEachSquare,
+                                    startingPointForDrawings.Y + (currentBackstitchPoints[1].Item2 - y * maxVerticalNumberOfSquares) * sizeOfEachSquare);
+                    }
+                }
+            }
         }
 
         private void DrawStitchAtPosition(XGraphics pageGraphics, int[,] matrixOfNewColors, List<Color> colorMeans, int relativeIndexI, int relativeIndexJ, int i, int j,
@@ -313,9 +359,9 @@ namespace EmbroideryCreator
         }
 
         private void DrawHorizontalGridLine(XGraphics pageGraphics, int[,] matrixOfNewColors, int relativeIndexJ, int j, int relativeIndexI,
-                                            XPoint startingPoint, double squareSize)
+                                            XPoint startingPoint, double squareSize, double thicknessMultiplicationFactor = 1.0)
         {
-            XPen penToUse = j % 10 == 0 ? thickGridPen : gridPen;
+            XPen penToUse = GetPenBasedOnPosition(j, thicknessMultiplicationFactor);
             pageGraphics.DrawLine(penToUse,
                                     startingPoint.X,
                                     startingPoint.Y + relativeIndexJ * squareSize,
@@ -325,7 +371,7 @@ namespace EmbroideryCreator
             //Also draw last horizontal line of the current page
             if (relativeIndexJ == maxVerticalNumberOfSquares - 1 || j == matrixOfNewColors.GetLength(1) - 1)
             {
-                penToUse = (j + 1) % 10 == 0 ? thickGridPen : gridPen;
+                penToUse = GetPenBasedOnPosition(j + 1, thicknessMultiplicationFactor);
                 pageGraphics.DrawLine(penToUse,
                                         startingPoint.X,
                                         startingPoint.Y + (relativeIndexJ + 1) * squareSize,
@@ -335,9 +381,9 @@ namespace EmbroideryCreator
         }
 
         private void DrawVerticalGridLine(XGraphics pageGraphics, int[,] matrixOfNewColors, int x, int relativeIndexJ, int relativeIndexI, int i,
-                                            XPoint startingPoint, double squareSize)
+                                            XPoint startingPoint, double squareSize, double thicknessMultiplicationFactor = 1.0)
         {
-            XPen penToUse = i % 10 == 0 ? thickGridPen : gridPen;
+            XPen penToUse = GetPenBasedOnPosition(i, thicknessMultiplicationFactor);
             //penToUse = gridPen;
             pageGraphics.DrawLine(penToUse,
                                     startingPoint.X + relativeIndexI * squareSize,
@@ -347,7 +393,7 @@ namespace EmbroideryCreator
 
             if (relativeIndexI == (x + 1) * maxHorizontalNumberOfSquares - 1 || i == matrixOfNewColors.GetLength(0) - 1)
             {
-                penToUse = (i + 1) % 10 == 0 ? thickGridPen : gridPen;
+                penToUse = GetPenBasedOnPosition(i + 1, thicknessMultiplicationFactor);
                 //penToUse = gridPen;
                 pageGraphics.DrawLine(penToUse,
                                         startingPoint.X + (relativeIndexI + 1) * squareSize,
@@ -355,6 +401,24 @@ namespace EmbroideryCreator
                                         startingPoint.X + (relativeIndexI + 1) * squareSize,
                                         startingPoint.Y + (relativeIndexJ + 1) * squareSize);
             }
+        }
+
+        private XPen GetPenBasedOnPosition(int number, double multiplicationFactor = 1.0)
+        {
+            Color colorToUse = number % 10 == 0 ? thickGridPenColor : gridPenColor;
+            double thicknessToUse = (number % 10 == 0 ? thickGridPenThickness : gridPenThickness) * multiplicationFactor;
+
+            XPen penToUse = GetRoundedPenFromColorAndThickness(colorToUse, thicknessToUse);
+            return penToUse;
+        }
+
+        private XPen GetRoundedPenFromColorAndThickness(Color color, double thickness)
+        {
+            XColor xColor = XColor.FromArgb(color.R, color.G, color.B);
+            XPen pen = new XPen(xColor, thickness);
+            pen.LineCap = XLineCap.Round;
+
+            return pen;
         }
     }
 }

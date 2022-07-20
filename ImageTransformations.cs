@@ -403,5 +403,239 @@ namespace EmbroideryCreator
                 newHeight = maxRescaledHeight;
             }
         }
+
+        public static bool IsPointInsideRectangle(Tuple<double, double> pointToCheck, Tuple<double, double> rectangleTopLeftCorner, double width, double height)
+        {
+            return pointToCheck.Item1 >= rectangleTopLeftCorner.Item1 &&
+                    pointToCheck.Item1 <= rectangleTopLeftCorner.Item1 + width &&
+                    pointToCheck.Item2 >= rectangleTopLeftCorner.Item2 &&
+                    pointToCheck.Item2 <= rectangleTopLeftCorner.Item2 + height;
+        }
+
+        //This function doesn't check the slope and alignment of the points
+        public static bool IsPointBetweenTwoOthers(Tuple<double, double> pointToCheck, Tuple<double, double> pointA, Tuple<double, double> pointB)
+        {
+            bool xIsBetweenPoints = ((pointB.Item1 >= pointA.Item1) && (pointToCheck.Item1 >= pointA.Item1 && pointToCheck.Item1 <= pointB.Item1)) ||
+                        ((pointA.Item1 >= pointB.Item1) && (pointToCheck.Item1 >= pointB.Item1 && pointToCheck.Item1 <= pointA.Item1));
+
+            bool yIsBetweenPoints = ((pointB.Item2 >= pointA.Item2) && (pointToCheck.Item2 >= pointA.Item2 && pointToCheck.Item2 <= pointB.Item2)) ||
+                        ((pointA.Item2 >= pointB.Item2) && (pointToCheck.Item2 >= pointB.Item2 && pointToCheck.Item2 <= pointA.Item2));
+
+            return xIsBetweenPoints && yIsBetweenPoints;
+        }
+
+        public static List<Tuple<double, double>> ComputeIntersectionsOfLineAndRectangle(double xA, double yA, double xB, double yB, double xO, double yO, double width, double height)
+        {
+            double commonTerm = (yB - yA) * xA - (xB - xA) * yA;
+
+            List<Tuple<double, double>> intersections = new List<Tuple<double, double>>();
+
+            double x, y;
+
+            //first intersection
+            x = xO;
+            y = (commonTerm - (yB - yA) * xO) / (xA - xB);
+            intersections.Add(new Tuple<double, double>(x, y));
+
+            //second intersection
+            x = xO + width;
+            y = (commonTerm - (yB - yA) * (xO + width)) / (xA - xB);
+            intersections.Add(new Tuple<double, double>(x, y));
+
+            //third intersection
+            y = yO;
+            x = (commonTerm + (xB - xA) * yO) / (yB - yA);
+            intersections.Add(new Tuple<double, double>(x, y));
+
+            //forth intersection
+            y = yO + height;
+            x = (commonTerm + (xB - xA) * (yO + height)) / (yB - yA);
+            intersections.Add(new Tuple<double, double>(x, y));
+
+            return intersections;
+        }
+
+        public static List<Tuple<double, double>> FindIntersectionsOfLineAndSquare(double xA, double yA, double xB, double yB, double xO, double yO, double width, double height)
+        {
+            List<Tuple<double, double>> pointsInsideSquare = new List<Tuple<double, double>>();
+
+            bool aIsInside = IsPointInsideRectangle(new Tuple<double, double>(xA, yA), new Tuple<double, double>(xO, yO), width, height);
+            bool bIsInside = IsPointInsideRectangle(new Tuple<double, double>(xB, yB), new Tuple<double, double>(xO, yO), width, height);
+
+
+            if (aIsInside && bIsInside)
+            {
+                //both points inside the rectangle
+                pointsInsideSquare.Add(new Tuple<double, double>(xA, yA));
+                pointsInsideSquare.Add(new Tuple<double, double>(xB, yB));
+
+                return pointsInsideSquare;
+            }
+            else if((aIsInside && !bIsInside) || (!aIsInside && bIsInside))
+            {
+                //only one point inside the rectangle
+                Tuple<double, double> pointInside;
+                Tuple<double, double> pointOutside;
+
+                if (aIsInside && !bIsInside)
+                {
+                    pointInside = new Tuple<double, double>(xA, yA);
+                    pointOutside = new Tuple<double, double>(xB, yB);
+                }
+                else
+                {
+                    pointInside = new Tuple<double, double>(xB, yB);
+                    pointOutside = new Tuple<double, double>(xA, yA);
+                }
+
+                //verifying if we're dealing with horizontal or vertical lines, for which the intersection formula doesn't work the same way
+                if(xA == xB)
+                {
+                    List<Tuple<double, double>> verticalPointsInsideRectangle = new List<Tuple<double, double>>();
+                    verticalPointsInsideRectangle.Add(pointInside);
+                    if (pointOutside.Item2 > pointInside.Item2)
+                    {
+                        verticalPointsInsideRectangle.Add(new Tuple<double, double>(pointInside.Item1, yO + height));
+                    }
+                    else
+                    {
+                        verticalPointsInsideRectangle.Add(new Tuple<double, double>(pointInside.Item1, yO));
+                    }
+
+                    return verticalPointsInsideRectangle;
+                }
+
+                if(yA == yB)
+                {
+                    List<Tuple<double, double>> horizontalPointsInsideRectangle = new List<Tuple<double, double>>();
+                    horizontalPointsInsideRectangle.Add(pointInside);
+                    if(pointOutside.Item1 > pointInside.Item1)
+                    {
+                        horizontalPointsInsideRectangle.Add(new Tuple<double, double>(xO + width, pointInside.Item2));
+                    }
+                    else
+                    {
+                        horizontalPointsInsideRectangle.Add(new Tuple<double, double>(xO, pointInside.Item2));
+                    }
+
+                    return horizontalPointsInsideRectangle;
+                }
+
+                List<Tuple<double, double>> intersectionsInside = GetIntersectionsWithRectangleInsideOfIt(xA, yA, xB, yB, xO, yO, width, height);
+                bool direction = pointOutside.Item1 - pointInside.Item1 > 0;
+
+                bool firstIntersectionDirection = intersectionsInside[0].Item1 - pointInside.Item1 > 0;
+
+                List<Tuple<double, double>> result = new List<Tuple<double, double>>();
+                result.Add(pointInside);
+
+                if ((firstIntersectionDirection && direction) || (!firstIntersectionDirection && !direction))
+                {
+                    //first intersection is in the same direction as the point outside, so it should be the correct one
+                    result.Add(intersectionsInside[0]);
+                }
+                else
+                {
+                    //first intersection is not in the same direction as the point outside, so the second point should be the correct one
+                    result.Add(intersectionsInside[1]);
+                }
+
+                return result;
+            }
+            else
+            {
+                //no point inside the rectangle
+
+                //verifying if we're dealing with horizontal or vertical lines, for which the intersection formula doesn't work the same way
+                if (xA == xB)
+                {
+                    if (xA >= xO && xA <= xO + width)
+                    {
+                        List<Tuple<double, double>> verticalIntersections = new List<Tuple<double, double>>();
+                        verticalIntersections.Add(new Tuple<double, double>(xA, yO));
+                        verticalIntersections.Add(new Tuple<double, double>(xA, yO + height));
+
+                        foreach (Tuple<double, double> intersection in verticalIntersections)
+                        {
+                            if(!IsPointBetweenTwoOthers(intersection, new Tuple<double, double>(xA, yA), new Tuple<double, double>(xB, yB)))
+                            {
+                                return new List<Tuple<double, double>>();
+                            }
+                        }
+
+                        return verticalIntersections;
+                    }
+                    else
+                    {
+                        return new List<Tuple<double, double>>();
+                    }
+                }
+
+                if (yA == yB)
+                {
+                    if (yA >= yO && yA <= yO + height)
+                    {
+                        List<Tuple<double, double>> horizontalIntersections = new List<Tuple<double, double>>();
+                        horizontalIntersections.Add(new Tuple<double, double>(xO, yA));
+                        horizontalIntersections.Add(new Tuple<double, double>(xO + width, yA));
+
+                        foreach (Tuple<double, double> intersection in horizontalIntersections)
+                        {
+                            if (!IsPointBetweenTwoOthers(intersection, new Tuple<double, double>(xA, yA), new Tuple<double, double>(xB, yB)))
+                            {
+                                return new List<Tuple<double, double>>();
+                            }
+                        }
+
+                        return horizontalIntersections;
+                    }
+                    else
+                    {
+                        return new List<Tuple<double, double>>();
+                    }
+                }
+
+                //At this point we know that the points A and B aren't inside the rectangle and don't form an horizontal or vertical line
+                List<Tuple<double, double>> pointsInside = GetIntersectionsWithRectangleInsideOfIt(xA, yA, xB, yB, xO, yO, width, height);
+
+                if (pointsInside.Count >= 2)
+                {
+                    foreach (Tuple<double, double> intersection in pointsInside)
+                    {
+                        if (!IsPointBetweenTwoOthers(intersection, new Tuple<double, double>(xA, yA), new Tuple<double, double>(xB, yB)))
+                        {
+                            return new List<Tuple<double, double>>();
+                        }
+                    }
+
+                    return pointsInside;
+                }
+                else
+                {
+                    return new List<Tuple<double, double>>();
+                }
+
+            }
+        }
+
+        private static List<Tuple<double, double>> GetIntersectionsWithRectangleInsideOfIt(double xA, double yA, double xB, double yB, double xO, double yO, double a, double b)
+        {
+            List<Tuple<double, double>> intersections = ComputeIntersectionsOfLineAndRectangle(xA, yA, xB, yB, xO, yO, a, b);
+
+            List<Tuple<double, double>> pointsInside = new List<Tuple<double, double>>();
+
+            foreach (Tuple<double, double> intersectionPoint in intersections)
+            {
+                if (IsPointInsideRectangle(new Tuple<double, double>(intersectionPoint.Item1, intersectionPoint.Item2), new Tuple<double, double>(xO, yO), a, b))
+                {
+                    if (!pointsInside.Contains(intersectionPoint))
+                    {
+                        pointsInside.Add(intersectionPoint);
+                    }
+                }
+            }
+
+            return pointsInside;
+        }
     }
 }
