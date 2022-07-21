@@ -585,7 +585,7 @@ namespace EmbroideryCreator
         public void UpdateBackstitchColorByIndex(int index, Color newColor)
         {
             imageAndOperationsData.UpdateBackstitchColorByIndex(index, newColor);
-            //TODO: Update the image in the main picture box with the new one after the update of color
+            backstitchPictureBox.Image = imageAndOperationsData.BackstitchImage;
         }
 
         private void mergeColorsButton_Click(object sender, EventArgs e)

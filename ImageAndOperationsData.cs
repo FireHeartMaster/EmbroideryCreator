@@ -118,9 +118,6 @@ namespace EmbroideryCreator
         {
             using (var graphics = Graphics.FromImage(crossStitchResultingImage))
             {
-                graphics.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.NearestNeighbor;
-                graphics.PixelOffsetMode = System.Drawing.Drawing2D.PixelOffsetMode.HighQuality;
-
                 FillCrossAtCoordinate(color, graphics, position);
             }
         }
@@ -180,7 +177,9 @@ namespace EmbroideryCreator
 
         private void FillCrossAtCoordinate(Color color, Graphics graphics, Tuple<int, int> position)
         {
-            //throw new NotImplementedException();
+            graphics.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.NearestNeighbor;
+            graphics.PixelOffsetMode = System.Drawing.Drawing2D.PixelOffsetMode.HighQuality;
+
             Bitmap crossOfSelectedColor;
             if (!dictionaryOfColoredCrossByColor.ContainsKey(color))
             {
@@ -866,7 +865,11 @@ namespace EmbroideryCreator
             if(indexToUpdate >= 0 && indexToUpdate < backstitchColors.Count)
             {
                 backstitchColors[indexToUpdate] = newColor;
-                //TODO: Repaint image for the backstitch lines associated with this color/index
+
+                foreach (BackstitchLine backstitchLineOfSelectedColor in backstitchLines[indexToUpdate])
+                {
+                    PaintBackstitchLine(backstitchColors[indexToUpdate], backstitchLineOfSelectedColor);
+                }
             }
         }
 
