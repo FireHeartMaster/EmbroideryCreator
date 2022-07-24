@@ -13,6 +13,7 @@ namespace EmbroideryCreator
     public class PdfManager
     {
         private XSolidBrush pageSetupBrush = XBrushes.DarkBlue;
+        private XSolidBrush arrowBrush = XBrushes.DarkBlue;
 
         private string title = "Title";
         private string secondTitle = "Second Title";
@@ -154,6 +155,42 @@ namespace EmbroideryCreator
                 {
                     DrawStitchAtPosition(pageGraphics, matrixOfNewColors, colorMeans, x, y, x, y, startingPoint, firstPageSizeOfEachSquare);
 
+                    if(y == 0 && x == (int)(matrixOfNewColors.GetLength(0) * 0.5))
+                    {                                                
+                        DrawArrowAtPositionWithScale(   pageGraphics, 
+                                                        x % 2 == 0 ? 0 : (0.5 * firstPageSizeOfEachSquare),
+                                                        0, 
+                                                        0, 
+                                                        startingPoint.X + x * firstPageSizeOfEachSquare, 
+                                                        startingPoint.Y - firstPageSizeOfEachSquare, 
+                                                        firstPageSizeOfEachSquare / sizeOfEachSquare);
+                        DrawArrowAtPositionWithScale(   pageGraphics, 
+                                                        x % 2 == 0 ? 0 : (0.5 * firstPageSizeOfEachSquare), 
+                                                        0, 
+                                                        180, 
+                                                        startingPoint.X + x * firstPageSizeOfEachSquare, 
+                                                        startingPoint.Y + firstPageSizeOfEachSquare + matrixOfNewColors.GetLength(1) * firstPageSizeOfEachSquare, 
+                                                        firstPageSizeOfEachSquare / sizeOfEachSquare);
+                    }
+
+                    if (y == (int)(matrixOfNewColors.GetLength(1) * 0.5) && x == 0)
+                    {
+                        DrawArrowAtPositionWithScale(   pageGraphics,
+                                                        0,
+                                                        y % 2 == 0 ? 0 : (0.5 * firstPageSizeOfEachSquare),
+                                                        -90,
+                                                        startingPoint.X - firstPageSizeOfEachSquare,
+                                                        startingPoint.Y + y * firstPageSizeOfEachSquare,
+                                                        firstPageSizeOfEachSquare / sizeOfEachSquare);
+                        DrawArrowAtPositionWithScale(   pageGraphics,
+                                                        0,
+                                                        y % 2 == 0 ? 0 : (0.5 * firstPageSizeOfEachSquare),
+                                                        90,
+                                                        startingPoint.X + firstPageSizeOfEachSquare + matrixOfNewColors.GetLength(0) * firstPageSizeOfEachSquare,
+                                                        startingPoint.Y + y * firstPageSizeOfEachSquare,
+                                                        firstPageSizeOfEachSquare / sizeOfEachSquare);
+                    }
+
                     if (y == matrixOfNewColors.GetLength(1) - 1)
                     {
                         //Drawing current vertical line
@@ -192,7 +229,7 @@ namespace EmbroideryCreator
                                     startingPoint.Y + backstitch.endingPosition.Item2 * firstPageSizeOfEachSquare);
                 }
             }
-        }
+        }      
 
         private void PreparePage(PdfPage page, XGraphics pageGraphics)
         {
@@ -403,6 +440,32 @@ namespace EmbroideryCreator
             }
         }
 
+        //Draws an arrow pointing down
+        private void DrawArrow(XGraphics pageGraphics, XPoint pointOfTheArrow, double sizeMultiplicationFactor = 1)
+        {
+            XPoint baseOfTheArrow = new XPoint(pointOfTheArrow.X, pointOfTheArrow.Y - sizeOfEachSquare * 1.5 * sizeMultiplicationFactor);
+            XPoint leftCorner = new XPoint(baseOfTheArrow.X - sizeOfEachSquare * 0.5 * sizeMultiplicationFactor, baseOfTheArrow.Y);
+            XPoint rightCorner = new XPoint(baseOfTheArrow.X + sizeOfEachSquare * 0.5 * sizeMultiplicationFactor, baseOfTheArrow.Y);
+
+            XPoint[] trianglePoints = { pointOfTheArrow, leftCorner, rightCorner };
+
+            pageGraphics.DrawPolygon(arrowBrush, trianglePoints, XFillMode.Alternate);
+
+            XPoint arrowLineBase = new XPoint(baseOfTheArrow.X, baseOfTheArrow.Y - sizeOfEachSquare * 0.7 * sizeMultiplicationFactor);
+            XPen pen = GetRoundedPenFromColorAndThickness(arrowBrush.Color, gridPenThickness * 2 * sizeMultiplicationFactor);
+            pen.LineCap = XLineCap.Flat;
+            pageGraphics.DrawLine(pen, baseOfTheArrow, arrowLineBase);
+        }
+
+        private void DrawArrowAtPositionWithScale(XGraphics pageGraphics, double xOffset, double yOffset, double angle, double xPosition, double yPosition, double multiplicationFactor = 1)
+        {
+            XPoint pointOfTheArrow = new XPoint(xPosition + xOffset,
+                                                yPosition + yOffset);
+            pageGraphics.RotateAtTransform(angle, pointOfTheArrow);
+            DrawArrow(pageGraphics, pointOfTheArrow, multiplicationFactor);
+            pageGraphics.RotateAtTransform(-angle, pointOfTheArrow);
+        }
+
         private XPen GetPenBasedOnPosition(int number, double multiplicationFactor = 1.0)
         {
             Color colorToUse = number % 10 == 0 ? thickGridPenColor : gridPenColor;
@@ -415,6 +478,14 @@ namespace EmbroideryCreator
         private XPen GetRoundedPenFromColorAndThickness(Color color, double thickness)
         {
             XColor xColor = XColor.FromArgb(color.R, color.G, color.B);
+            XPen pen = new XPen(xColor, thickness);
+            pen.LineCap = XLineCap.Round;
+
+            return pen;
+        }
+
+        private XPen GetRoundedPenFromColorAndThickness(XColor xColor, double thickness)
+        {
             XPen pen = new XPen(xColor, thickness);
             pen.LineCap = XLineCap.Round;
 
