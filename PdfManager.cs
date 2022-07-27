@@ -106,15 +106,22 @@ namespace EmbroideryCreator
             }
         }
 
-        public void CreatePdfStitches(string pathToSave, int[,] matrixOfNewColors, List<Color> colorMeans, Dictionary<int, HashSet<BackstitchLine>> backstitchLines, Dictionary<int, Color> backstitchColors)
+        public void CreatePdfStitches(string pathToSave, int[,] matrixOfNewColors, List<Color> colorMeans, Dictionary<int, HashSet<BackstitchLine>> backstitchLines, Dictionary<int, Color> backstitchColors, Dictionary<int, Bitmap> dictionaryOfSymbolByColor)
         {
             PdfDocument document = new PdfDocument();
 
             document.Info.Title = "Eduardo testando PDF";
 
-            CreateFirstPage(document, matrixOfNewColors, colorMeans, backstitchLines, backstitchColors);
+            Dictionary<int, XImage> dictionaryOfXimageByIndex = new Dictionary<int, XImage>();
 
-            CreateAllDrawingPages(document, matrixOfNewColors, colorMeans, backstitchLines, backstitchColors);
+            foreach (KeyValuePair<int, Bitmap> pair in dictionaryOfSymbolByColor)
+            {
+                dictionaryOfXimageByIndex.Add(pair.Key, ConvertBitmapToXimage(pair.Value));
+            }
+
+            CreateFirstPage(document, matrixOfNewColors, colorMeans, backstitchLines, backstitchColors, dictionaryOfXimageByIndex);
+
+            CreateAllDrawingPages(document, matrixOfNewColors, colorMeans, backstitchLines, backstitchColors, dictionaryOfXimageByIndex);
 
             try
             {
@@ -132,7 +139,7 @@ namespace EmbroideryCreator
             }
         }
 
-        private void CreateFirstPage(PdfDocument document, int[,] matrixOfNewColors, List<Color> colorMeans, Dictionary<int, HashSet<BackstitchLine>> backstitchLines, Dictionary<int, Color> backstitchColors)
+        private void CreateFirstPage(PdfDocument document, int[,] matrixOfNewColors, List<Color> colorMeans, Dictionary<int, HashSet<BackstitchLine>> backstitchLines, Dictionary<int, Color> backstitchColors, Dictionary<int, XImage> dictionaryOfXimageByIndex)
         {
 
             PdfPage currentPage = document.AddPage();
@@ -153,7 +160,7 @@ namespace EmbroideryCreator
             {
                 for (int x = 0; x < matrixOfNewColors.GetLength(0); x++)
                 {
-                    DrawStitchAtPosition(pageGraphics, matrixOfNewColors, colorMeans, x, y, x, y, startingPoint, firstPageSizeOfEachSquare);
+                    DrawStitchAtPosition(pageGraphics, matrixOfNewColors, colorMeans, x, y, x, y, startingPoint, firstPageSizeOfEachSquare, dictionaryOfXimageByIndex, true);
 
                     //top numbers
                     if(y == 0 && x % 10 == 0 && x != 0)
@@ -302,7 +309,7 @@ namespace EmbroideryCreator
             pageGraphics.RotateAtTransform(-90, new XPoint(page.Width * 0.5f, page.Height * 0.5f));
         }
 
-        private void CreateAllDrawingPages(PdfDocument document, int[,] matrixOfNewColors, List<Color> colorMeans, Dictionary<int, HashSet<BackstitchLine>> backstitchLines, Dictionary<int, Color> backstitchColors)
+        private void CreateAllDrawingPages(PdfDocument document, int[,] matrixOfNewColors, List<Color> colorMeans, Dictionary<int, HashSet<BackstitchLine>> backstitchLines, Dictionary<int, Color> backstitchColors, Dictionary<int, XImage> dictionaryOfXimageByIndex)
         {
             int horizontalNumberOfTimes = matrixOfNewColors.GetLength(0) / maxHorizontalNumberOfSquares + 1;
             int verticalNumberOfTimes = matrixOfNewColors.GetLength(1) / maxVerticalNumberOfSquares + 1;
@@ -318,12 +325,12 @@ namespace EmbroideryCreator
 
                     startingPointForDrawings.X = (currentPage.Width - (sizeOfEachSquare * maxHorizontalNumberOfSquares)) * 0.5f;
 
-                    DrawStitchesOnPage(currentPage, pageGraphics, matrixOfNewColors, colorMeans, x, y, backstitchLines, backstitchColors);
+                    DrawStitchesOnPage(currentPage, pageGraphics, matrixOfNewColors, colorMeans, x, y, backstitchLines, backstitchColors, dictionaryOfXimageByIndex);
                 }
             }
         }
 
-        private void DrawStitchesOnPage(PdfPage currentPage, XGraphics pageGraphics, int[,] matrixOfNewColors, List<Color> colorMeans, int x, int y, Dictionary<int, HashSet<BackstitchLine>> backstitchLines, Dictionary<int, Color> backstitchColors)
+        private void DrawStitchesOnPage(PdfPage currentPage, XGraphics pageGraphics, int[,] matrixOfNewColors, List<Color> colorMeans, int x, int y, Dictionary<int, HashSet<BackstitchLine>> backstitchLines, Dictionary<int, Color> backstitchColors, Dictionary<int, XImage> dictionaryOfXimageByIndex)
         {
             int relativeIndexI = 0;
             int relativeIndexJ = 0;
@@ -340,7 +347,7 @@ namespace EmbroideryCreator
                     if (i >= matrixOfNewColors.GetLength(0)) break;
                     
                     //Drawing stitch
-                    DrawStitchAtPosition(pageGraphics, matrixOfNewColors, colorMeans, relativeIndexI, relativeIndexJ, i, j, startingPointForDrawings, sizeOfEachSquare);
+                    DrawStitchAtPosition(pageGraphics, matrixOfNewColors, colorMeans, relativeIndexI, relativeIndexJ, i, j, startingPointForDrawings, sizeOfEachSquare, dictionaryOfXimageByIndex, false);
                     
                     //top numbers
                     if (j == y * maxVerticalNumberOfSquares && i % 10 == 0 && i != x * maxHorizontalNumberOfSquares)
@@ -496,7 +503,7 @@ namespace EmbroideryCreator
         }
 
         private void DrawStitchAtPosition(XGraphics pageGraphics, int[,] matrixOfNewColors, List<Color> colorMeans, int relativeIndexI, int relativeIndexJ, int i, int j,
-                                            XPoint startingPoint, double squareSize)
+                                            XPoint startingPoint, double squareSize, Dictionary<int, XImage> dictionaryOfXimageByIndex, bool drawColor = true, bool drawSymbol = true)
         {
             Color currentPositionColor = colorMeans[matrixOfNewColors[i, j]];
             XSolidBrush brush = new XSolidBrush(XColor.FromArgb(currentPositionColor.R, currentPositionColor.G, currentPositionColor.B));
@@ -505,8 +512,25 @@ namespace EmbroideryCreator
                                                     startingPoint.Y + relativeIndexJ * squareSize,
                                                     squareSize,
                                                     squareSize);
+            if (drawColor)
+            {
+                pageGraphics.DrawRectangle(brush, positionToDrawRect);
+            }
 
-            pageGraphics.DrawRectangle(brush, positionToDrawRect);
+            if (drawSymbol)
+            {
+                //Bitmap iconImage = new Bitmap(dictionaryOfSymbolByColor[matrixOfNewColors[i, j]], 16, 16);
+                //XImage xImageIcon = ConvertBitmapToXimage(iconImage);
+                //pageGraphics.DrawImage(xImageIcon, positionToDrawRect); 
+                pageGraphics.DrawImage(dictionaryOfXimageByIndex[matrixOfNewColors[i, j]], positionToDrawRect);
+            }
+        }
+
+        private static XImage ConvertBitmapToXimage(Bitmap iconImage)
+        {
+            MemoryStream stream = new MemoryStream();
+            iconImage.Save(stream, System.Drawing.Imaging.ImageFormat.Png);
+            return XImage.FromStream(stream);
         }
 
         private void DrawHorizontalGridLine(XGraphics pageGraphics, int[,] matrixOfNewColors, int relativeIndexJ, int j, int relativeIndexI,

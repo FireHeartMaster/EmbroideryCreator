@@ -58,6 +58,8 @@
     <Compile Include="BackstitchColorControl.Designer.cs">
       <DependentUpon>BackstitchColorControl.cs</DependentUpon>
     </Compile>
+    <Compile Include="ColorsConverter.cs" />
+    <Compile Include="DmcColor.cs" />
     <Compile Include="DrawingToolsControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -70,6 +72,7 @@
     <Compile Include="Form1.Designer.cs">
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
+    <Compile Include="IconImagesManager.cs" />
     <Compile Include="ImageAndOperationsData.cs" />
     <Compile Include="ImageAndOperationsDataSerialized.cs" />
     <Compile Include="ImageTransformations.cs" />
@@ -77,6 +80,11 @@
     <Compile Include="PdfManager.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
     <Compile Include="ReducedColorControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -95,14 +103,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <Compile Include="Properties\Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Resources.resx</DependentUpon>
-      <DesignTime>True</DesignTime>
-    </Compile>
     <EmbeddedResource Include="ReducedColorControl.resx">
       <DependentUpon>ReducedColorControl.cs</DependentUpon>
     </EmbeddedResource>
@@ -121,6 +124,111 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Resources\Icons\001.png" />
+    <Content Include="Resources\Icons\002.png" />
+    <Content Include="Resources\Icons\003.png" />
+    <Content Include="Resources\Icons\004.png" />
+    <Content Include="Resources\Icons\005.png" />
+    <Content Include="Resources\Icons\006.png" />
+    <Content Include="Resources\Icons\007.png" />
+    <Content Include="Resources\Icons\008.png" />
+    <Content Include="Resources\Icons\009.png" />
+    <Content Include="Resources\Icons\010.png" />
+    <Content Include="Resources\Icons\011.png" />
+    <Content Include="Resources\Icons\012.png" />
+    <Content Include="Resources\Icons\013.png" />
+    <Content Include="Resources\Icons\014.png" />
+    <Content Include="Resources\Icons\015.png" />
+    <Content Include="Resources\Icons\016.png" />
+    <Content Include="Resources\Icons\017.png" />
+    <Content Include="Resources\Icons\018.png" />
+    <Content Include="Resources\Icons\019.png" />
+    <Content Include="Resources\Icons\020.png" />
+    <Content Include="Resources\Icons\021.png" />
+    <Content Include="Resources\Icons\022.png" />
+    <Content Include="Resources\Icons\023.png" />
+    <Content Include="Resources\Icons\024.png" />
+    <Content Include="Resources\Icons\025.png" />
+    <Content Include="Resources\Icons\026.png" />
+    <Content Include="Resources\Icons\027.png" />
+    <Content Include="Resources\Icons\028.png" />
+    <Content Include="Resources\Icons\029.png" />
+    <Content Include="Resources\Icons\030.png" />
+    <Content Include="Resources\Icons\031.png" />
+    <Content Include="Resources\Icons\032.png" />
+    <Content Include="Resources\Icons\033.png" />
+    <Content Include="Resources\Icons\034.png" />
+    <Content Include="Resources\Icons\035.png" />
+    <Content Include="Resources\Icons\036.png" />
+    <Content Include="Resources\Icons\037.png" />
+    <Content Include="Resources\Icons\038.png" />
+    <Content Include="Resources\Icons\039.png" />
+    <Content Include="Resources\Icons\040.png" />
+    <Content Include="Resources\Icons\041.png" />
+    <Content Include="Resources\Icons\042.png" />
+    <Content Include="Resources\Icons\043.png" />
+    <Content Include="Resources\Icons\044.png" />
+    <Content Include="Resources\Icons\045.png" />
+    <Content Include="Resources\Icons\046.png" />
+    <Content Include="Resources\Icons\047.png" />
+    <Content Include="Resources\Icons\048.png" />
+    <Content Include="Resources\Icons\049.png" />
+    <Content Include="Resources\Icons\050.png" />
+    <Content Include="Resources\Icons\051.png" />
+    <Content Include="Resources\Icons\052.png" />
+    <Content Include="Resources\Icons\053.png" />
+    <Content Include="Resources\Icons\054.png" />
+    <Content Include="Resources\Icons\055.png" />
+    <Content Include="Resources\Icons\056.png" />
+    <Content Include="Resources\Icons\057.png" />
+    <Content Include="Resources\Icons\058.png" />
+    <Content Include="Resources\Icons\059.png" />
+    <Content Include="Resources\Icons\060.png" />
+    <Content Include="Resources\Icons\061.png" />
+    <Content Include="Resources\Icons\062.png" />
+    <Content Include="Resources\Icons\063.png" />
+    <Content Include="Resources\Icons\064.png" />
+    <Content Include="Resources\Icons\065.png" />
+    <Content Include="Resources\Icons\066.png" />
+    <Content Include="Resources\Icons\067.png" />
+    <Content Include="Resources\Icons\068.png" />
+    <Content Include="Resources\Icons\069.png" />
+    <Content Include="Resources\Icons\070.png" />
+    <Content Include="Resources\Icons\071.png" />
+    <Content Include="Resources\Icons\072.png" />
+    <Content Include="Resources\Icons\073.png" />
+    <Content Include="Resources\Icons\074.png" />
+    <Content Include="Resources\Icons\075.png" />
+    <Content Include="Resources\Icons\076.png" />
+    <Content Include="Resources\Icons\077.png" />
+    <Content Include="Resources\Icons\078.png" />
+    <Content Include="Resources\Icons\079.png" />
+    <Content Include="Resources\Icons\080.png" />
+    <Content Include="Resources\Icons\081.png" />
+    <Content Include="Resources\Icons\082.png" />
+    <Content Include="Resources\Icons\083.png" />
+    <Content Include="Resources\Icons\084.png" />
+    <Content Include="Resources\Icons\085.png" />
+    <Content Include="Resources\Icons\086.png" />
+    <Content Include="Resources\Icons\087.png" />
+    <Content Include="Resources\Icons\088.png" />
+    <Content Include="Resources\Icons\089.png" />
+    <Content Include="Resources\Icons\090.png" />
+    <Content Include="Resources\Icons\091.png" />
+    <Content Include="Resources\Icons\092.png" />
+    <Content Include="Resources\Icons\093.png" />
+    <Content Include="Resources\Icons\094.png" />
+    <Content Include="Resources\Icons\095.png" />
+    <Content Include="Resources\Icons\096.png" />
+    <Content Include="Resources\Icons\097.png" />
+    <Content Include="Resources\Icons\098.png" />
+    <Content Include="Resources\Icons\099.png" />
+    <Content Include="Resources\Icons\100.png" />
+    <Content Include="Resources\Icons\101.png" />
+    <Content Include="Resources\Icons\102.png" />
+    <Content Include="Resources\Icons\103.png" />
+    <Content Include="Resources\Icons\104.png" />
+    <None Include="Resources\DmcTable.csv" />
     <None Include="Resources\ThreadCross.png" />
     <None Include="Resources\EraserIcon.png" />
     <None Include="Resources\SelectedToolIcon.png" />
