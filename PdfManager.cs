@@ -30,6 +30,9 @@ namespace EmbroideryCreator
         private XFont pageNumberFont = new XFont("Verdana", 12, XFontStyle.Regular);
 
 
+        private XFont listOfColorsFont = new XFont("Verdana", 10, XFontStyle.Regular);
+
+
 
         private XPoint startingPointForDrawings = new XPoint(50, 120);
         private double sizeOfEachSquare = 8;
@@ -122,6 +125,9 @@ namespace EmbroideryCreator
             CreateFirstPage(document, matrixOfNewColors, colorMeans, backstitchLines, backstitchColors, dictionaryOfXimageByIndex);
 
             CreateAllDrawingPages(document, matrixOfNewColors, colorMeans, backstitchLines, backstitchColors, dictionaryOfXimageByIndex);
+
+            //CreatePagesWithListsOfColors(document, colorMeans, backstitchColors, dictionaryOfXimageByIndex);
+            CreatePagesWithListsOfColors(document, colorMeans, backstitchColors, dictionaryOfXimageByIndex, true);
 
             try
             {
@@ -330,6 +336,145 @@ namespace EmbroideryCreator
             }
         }
 
+        private void CreatePagesWithListsOfColors(PdfDocument document, List<Color> colorMeans, Dictionary<int, Color> backstitchColors, Dictionary<int, XImage> dictionaryOfXimageByIndex, bool convertToDmcColors = true)
+        {
+            //throw new NotImplementedException();
+
+            DrawListOfCrossStitchColors(document, colorMeans, dictionaryOfXimageByIndex, convertToDmcColors);
+        }
+
+        private void DrawListOfCrossStitchColors(PdfDocument document, List<Color> colorMeans, Dictionary<int, XImage> dictionaryOfXimageByIndex, bool convertToDmcColors = true)
+        {
+            //throw new NotImplementedException();
+
+
+            double crossStitchListTitleHeight = 40;
+            double crossStitchListHeaderHeight = 20;
+            double crossStitchListRowHeight = 15;
+
+            double heightToStartList = startingPointForDrawings.Y + crossStitchListTitleHeight;
+            double maxHeightToEndList = startingPointForDrawings.Y + maxVerticalNumberOfSquares * sizeOfEachSquare;
+            double listWidth = maxHorizontalNumberOfSquares * sizeOfEachSquare;
+
+            int numberOfColumns = 2;
+            double widthOfEachColumn = listWidth / numberOfColumns;
+            bool convertToDmcColor = true;
+
+            int indexOfTheFirstColorOfTheCurrentPage = 0;
+
+            while(indexOfTheFirstColorOfTheCurrentPage < colorMeans.Count)
+            {
+                PdfPage currentPage = document.AddPage();
+
+                XGraphics pageGraphics = XGraphics.FromPdfPage(currentPage);
+                PreparePage(currentPage, pageGraphics);
+
+                heightToStartList += crossStitchListHeaderHeight;
+
+                int amountOfColorsInTheCurrentPage;
+                if(((colorMeans.Count - indexOfTheFirstColorOfTheCurrentPage) / numberOfColumns) * crossStitchListRowHeight > (maxHeightToEndList - heightToStartList))
+                {
+                    //not all remaining colors fit in the current page
+                    amountOfColorsInTheCurrentPage = (int)(((maxHeightToEndList - heightToStartList) / crossStitchListRowHeight) * numberOfColumns);
+                }
+                else
+                {
+                    //all remaining colors fit in the current page
+                    amountOfColorsInTheCurrentPage = colorMeans.Count - indexOfTheFirstColorOfTheCurrentPage;
+                }
+
+
+                for (int column = 0; column < numberOfColumns; column++)
+                {
+                    //draw column header
+                    string[] headerStrings;
+
+                    if (convertToDmcColors)
+                    {
+                        headerStrings = new string[]{ "Symbol", "Dmc Color", "Name" };
+                    }
+                    else
+                    {
+                        headerStrings = new string[] { "Symbol", "Color"};
+                    }
+                    DrawListOfColorsRow(pageGraphics, headerStrings, startingPointForDrawings.X + column * widthOfEachColumn, heightToStartList - crossStitchListHeaderHeight, widthOfEachColumn, crossStitchListRowHeight, Color.Empty, false);
+
+                    int amountOfColorsPerColumn = (int)Math.Ceiling(((double)amountOfColorsInTheCurrentPage) / numberOfColumns);
+                    int startingIndex = indexOfTheFirstColorOfTheCurrentPage + amountOfColorsPerColumn * column;
+                    for (int i = startingIndex; i - startingIndex < amountOfColorsPerColumn && i < colorMeans.Count; i++)
+                    {
+                        //draw row
+                        string[] rowStrings;
+
+                        //get color
+                        Color currentColor = colorMeans[i];
+                        if (convertToDmcColors)
+                        {
+                            DmcColor dmcColor = ColorsConverter.ConvertColorToDmc(currentColor);
+                            rowStrings = new string[] { dmcColor.Number, dmcColor.Name };
+                        }
+                        else
+                        {
+                            string hexColor = "#" + currentColor.R.ToString("X2") + currentColor.G.ToString("X2") + currentColor.B.ToString("X2");
+                            rowStrings = new string[] { hexColor };
+                        }
+                        DrawListOfColorsRow(pageGraphics, rowStrings, startingPointForDrawings.X + column * widthOfEachColumn, heightToStartList + (i - startingIndex) * crossStitchListRowHeight, widthOfEachColumn, crossStitchListRowHeight, currentColor, true, dictionaryOfXimageByIndex[i]);
+                    }
+                }
+
+                indexOfTheFirstColorOfTheCurrentPage += amountOfColorsInTheCurrentPage;
+            }
+        }
+
+        private void DrawListOfColorsRow(XGraphics pageGraphics, string[] rowStrings, double rowPositionX, double rowPositionY, double columnWidth, double columnHeight, Color color, bool drawSymbol = true, XImage symbol = null)
+        {
+            //throw new NotImplementedException();
+
+            int additionalFieldValue = (drawSymbol ? 1 : 0);
+
+            int numberOfFields = rowStrings.Length + additionalFieldValue;
+
+            double fieldWidth = columnWidth / numberOfFields;
+
+            if (drawSymbol)
+            {
+                XSolidBrush brush = new XSolidBrush(XColor.FromArgb(color.R, color.G, color.B));
+
+                double xSquarePosition = rowPositionX + 0.5 * (fieldWidth - sizeOfEachSquare);
+                double ySquarePosition = rowPositionY + 0.5 * (columnHeight - sizeOfEachSquare);
+
+                pageGraphics.DrawRectangle(brush, xSquarePosition, ySquarePosition, sizeOfEachSquare, sizeOfEachSquare);
+
+                DrawSquareWithLines(pageGraphics, xSquarePosition, ySquarePosition, sizeOfEachSquare);
+
+                pageGraphics.DrawImage(symbol, rowPositionX + 0.5 * (fieldWidth - sizeOfEachSquare), rowPositionY + 0.5 * (columnHeight - sizeOfEachSquare), sizeOfEachSquare, sizeOfEachSquare);
+            }
+
+            for (int i = additionalFieldValue; i < numberOfFields; i++)
+            {
+                double fieldPositionX = rowPositionX + i * fieldWidth;
+                XRect rect = new XRect(fieldPositionX, rowPositionY, fieldWidth, columnHeight);
+
+
+                pageGraphics.DrawString(rowStrings[i - additionalFieldValue], listOfColorsFont, pageSetupBrush, rect, XStringFormats.Center);
+            }
+
+        }
+
+        private void DrawSquareWithLines(XGraphics pageGraphics, double xPosition, double yPosition, double squareSize)
+        {
+            XPen pen = GetRoundedPenFromColorAndThickness(thickGridPenColor, gridPenThickness);
+
+            //top line
+            pageGraphics.DrawLine(pen, xPosition, yPosition, xPosition + squareSize, yPosition);
+            //bottom line
+            pageGraphics.DrawLine(pen, xPosition, yPosition + squareSize, xPosition + squareSize, yPosition + squareSize);
+            //left line
+            pageGraphics.DrawLine(pen, xPosition, yPosition, xPosition, yPosition + squareSize);
+            //right line
+            pageGraphics.DrawLine(pen, xPosition + squareSize, yPosition, xPosition + squareSize, yPosition + squareSize);
+        }
+
         private void DrawStitchesOnPage(PdfPage currentPage, XGraphics pageGraphics, int[,] matrixOfNewColors, List<Color> colorMeans, int x, int y, Dictionary<int, HashSet<BackstitchLine>> backstitchLines, Dictionary<int, Color> backstitchColors, Dictionary<int, XImage> dictionaryOfXimageByIndex)
         {
             int relativeIndexI = 0;
@@ -347,7 +492,7 @@ namespace EmbroideryCreator
                     if (i >= matrixOfNewColors.GetLength(0)) break;
                     
                     //Drawing stitch
-                    DrawStitchAtPosition(pageGraphics, matrixOfNewColors, colorMeans, relativeIndexI, relativeIndexJ, i, j, startingPointForDrawings, sizeOfEachSquare, dictionaryOfXimageByIndex, false);
+                    DrawStitchAtPosition(pageGraphics, matrixOfNewColors, colorMeans, relativeIndexI, relativeIndexJ, i, j, startingPointForDrawings, sizeOfEachSquare, dictionaryOfXimageByIndex, true);
                     
                     //top numbers
                     if (j == y * maxVerticalNumberOfSquares && i % 10 == 0 && i != x * maxHorizontalNumberOfSquares)

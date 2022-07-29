@@ -167,10 +167,8 @@ namespace EmbroideryCreator
             return Color.FromArgb(red, green, blue);
         }
 
-        private static int FindNewNearestMean(List<Color> means, Color color)
+        public static int FindNewNearestMean(List<Color> means, Color color)
         {
-            //throw new NotImplementedException();
-
             int minDistanceSquared = int.MaxValue;
             int minIndex = -1;
             for (int i = 0; i < means.Count; i++)

@@ -1121,6 +1121,29 @@ namespace EmbroideryCreator.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to number;name;r;g;b;hex
+        ///3713;Salmon Very Light;255;226;226;ffe2e2
+        ///761;Salmon Light;255;201;201;ffc9c9
+        ///760;Salmon;245;173;173;f5adad
+        ///3712;Salmon Medium;241;135;135;f18787
+        ///3328;Salmon Dark;227;109;109;e36d6d
+        ///347;Salmon Very Dark;191;45;45;bf2d2d
+        ///353;Peach;254;215;204;fed7cc
+        ///352;Coral Light;253;156;151;fd9c97
+        ///351;Coral;233;106;103;e96a67
+        ///350;Coral Medium;224;72;72;e04848
+        ///349;Coral Dark;210;16;53;d21035
+        ///817;Coral Red Very Dark;187;5;31;bb051f
+        ///3708;Melon Light;255;203;213;ffcbd5
+        ///3706;Melon Medium;255 [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string DmcTable {
+            get {
+                return ResourceManager.GetString("DmcTable", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
         internal static System.Drawing.Bitmap EraserIcon {

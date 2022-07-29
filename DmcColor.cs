@@ -8,21 +8,21 @@ namespace EmbroideryCreator
 {
     public class DmcColor
     {
-        string number;
-        string name;
-        int r;
-        int g;
-        int b;
-        string hex;
+        public string Number { get; private set; }
+        public string Name {get; private set;}
+        public int R {get; private set;}
+        public int G {get; private set;}
+        public int B {get; private set;}
+        public string Hex {get; private set;}
 
         public DmcColor(string number, string name, int r, int g, int b, string hex)
         {
-            this.number = number;
-            this.name = name;
-            this.r = r;
-            this.g = g;
-            this.b = b;
-            this.hex = hex;
+            this.Number = number;
+            this.Name = name;
+            this.R = r;
+            this.G = g;
+            this.B = b;
+            this.Hex = hex;
         }
     }
 }
