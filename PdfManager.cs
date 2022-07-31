@@ -190,16 +190,16 @@ namespace EmbroideryCreator
                     if(y == 0 && x == (int)(matrixOfNewColors.GetLength(0) * 0.5))
                     {                   
                         //top arrow
-                        DrawArrowAtPositionWithScale(   pageGraphics, 
-                                                        x % 2 == 0 ? 0 : (0.5 * firstPageSizeOfEachSquare),
+                        DrawArrowAtPositionWithScale(   pageGraphics,
+                                                        matrixOfNewColors.GetLength(0) % 2 == 0 ? 0 : (0.5 * firstPageSizeOfEachSquare),
                                                         0, 
                                                         0, 
                                                         startingPoint.X + x * firstPageSizeOfEachSquare, 
                                                         startingPoint.Y - distanceFactorFromGrid * firstPageSizeOfEachSquare, 
                                                         firstPageSizeOfEachSquare / sizeOfEachSquare);
                         //bottom arrow
-                        DrawArrowAtPositionWithScale(   pageGraphics, 
-                                                        x % 2 == 0 ? 0 : (0.5 * firstPageSizeOfEachSquare), 
+                        DrawArrowAtPositionWithScale(   pageGraphics,
+                                                        matrixOfNewColors.GetLength(0) % 2 == 0 ? 0 : (0.5 * firstPageSizeOfEachSquare), 
                                                         0, 
                                                         180, 
                                                         startingPoint.X + x * firstPageSizeOfEachSquare, 
@@ -212,7 +212,7 @@ namespace EmbroideryCreator
                         //left arrow
                         DrawArrowAtPositionWithScale(   pageGraphics,
                                                         0,
-                                                        y % 2 == 0 ? 0 : (0.5 * firstPageSizeOfEachSquare),
+                                                        matrixOfNewColors.GetLength(1) % 2 == 0 ? 0 : (0.5 * firstPageSizeOfEachSquare),
                                                         -90,
                                                         startingPoint.X - distanceFactorFromGrid * firstPageSizeOfEachSquare,
                                                         startingPoint.Y + y * firstPageSizeOfEachSquare,
@@ -220,7 +220,7 @@ namespace EmbroideryCreator
                         //right arrow
                         DrawArrowAtPositionWithScale(   pageGraphics,
                                                         0,
-                                                        y % 2 == 0 ? 0 : (0.5 * firstPageSizeOfEachSquare),
+                                                        matrixOfNewColors.GetLength(1) % 2 == 0 ? 0 : (0.5 * firstPageSizeOfEachSquare),
                                                         90,
                                                         startingPoint.X + distanceFactorFromGrid * firstPageSizeOfEachSquare + matrixOfNewColors.GetLength(0) * firstPageSizeOfEachSquare,
                                                         startingPoint.Y + y * firstPageSizeOfEachSquare,
@@ -364,6 +364,8 @@ namespace EmbroideryCreator
 
             int indexOfTheFirstColorOfTheCurrentPage = 0;
 
+            if (totalAmountOfColors == 0) return;
+
             while(indexOfTheFirstColorOfTheCurrentPage < totalAmountOfColors)
             {
                 //if starting at a position too down in the page, create a new one and start from there
@@ -425,6 +427,16 @@ namespace EmbroideryCreator
                             string hexColor = "#" + currentColor.R.ToString("X2") + currentColor.G.ToString("X2") + currentColor.B.ToString("X2");
                             rowStrings = new string[] { hexColor };
                         }
+
+                        try
+                        {
+                            var xImage = dictionaryOfXimageByIndex[i];
+                        }
+                        catch (Exception e)
+                        {
+
+                        }
+
                         DrawListOfColorsRow(pageGraphics, rowStrings, startingPointForDrawings.X + column * widthOfEachColumn, heightToStartList + (i - startingIndex) * crossStitchListRowHeight, widthOfEachColumn, crossStitchListRowHeight, currentColor, true, isCrossStitchAndNotBackstitch ? dictionaryOfXimageByIndex[i] : null, isCrossStitchAndNotBackstitch);
                     }
                 }
@@ -471,14 +483,16 @@ namespace EmbroideryCreator
                 {
                     XSolidBrush brush = new XSolidBrush(XColor.FromArgb(color.R, color.G, color.B));
 
-                    double xSquarePosition = rowPositionX + 0.5 * (fieldWidth - sizeOfEachSquare);
+                    pageGraphics.DrawImage(symbol, rowPositionX + 0.5 * (fieldWidth - sizeOfEachSquare) - 0.8 * sizeOfEachSquare, rowPositionY + 0.5 * (columnHeight - sizeOfEachSquare), sizeOfEachSquare, sizeOfEachSquare);
+
+                    double xSquarePosition = rowPositionX + 0.5 * (fieldWidth - sizeOfEachSquare) + 0.8 * sizeOfEachSquare;
                     double ySquarePosition = rowPositionY + 0.5 * (columnHeight - sizeOfEachSquare);
 
                     pageGraphics.DrawRectangle(brush, xSquarePosition, ySquarePosition, sizeOfEachSquare, sizeOfEachSquare);
 
                     DrawRectangleWithLines(pageGraphics, xSquarePosition, ySquarePosition, sizeOfEachSquare, sizeOfEachSquare, gridPenThickness, thickGridPenColor);
 
-                    pageGraphics.DrawImage(symbol, rowPositionX + 0.5 * (fieldWidth - sizeOfEachSquare), rowPositionY + 0.5 * (columnHeight - sizeOfEachSquare), sizeOfEachSquare, sizeOfEachSquare);
+                    pageGraphics.DrawImage(symbol, rowPositionX + 0.5 * (fieldWidth - sizeOfEachSquare) + 0.8 * sizeOfEachSquare, rowPositionY + 0.5 * (columnHeight - sizeOfEachSquare), sizeOfEachSquare, sizeOfEachSquare);
                 }
                 else
                 {
@@ -560,10 +574,10 @@ namespace EmbroideryCreator
                     if (j == y * maxVerticalNumberOfSquares && i == (int)(matrixOfNewColors.GetLength(0) * 0.5))
                     {
                         DrawArrowAtPositionWithScale(pageGraphics,
-                                                        i % 2 == 0 ? 0 : (0.5 * sizeOfEachSquare),
+                                                        matrixOfNewColors.GetLength(0) % 2 == 0 ? 0 : (0.5 * sizeOfEachSquare),
                                                         0,
                                                         0,
-                                                        startingPointForDrawings.X + i * sizeOfEachSquare,
+                                                        startingPointForDrawings.X + (i - x * maxHorizontalNumberOfSquares) * sizeOfEachSquare,
                                                         startingPointForDrawings.Y - distanceFactorFromGrid * sizeOfEachSquare,
                                                         1);
                     }
@@ -572,10 +586,10 @@ namespace EmbroideryCreator
                     if ((j == (y + 1) * maxVerticalNumberOfSquares - 1 || j == matrixOfNewColors.GetLength(1) - 1) && i == (int)(matrixOfNewColors.GetLength(0) * 0.5))
                     {
                         DrawArrowAtPositionWithScale(pageGraphics,
-                                                        i % 2 == 0 ? 0 : (0.5 * sizeOfEachSquare),
+                                                        matrixOfNewColors.GetLength(0) % 2 == 0 ? 0 : (0.5 * sizeOfEachSquare),
                                                         0,
                                                         180,
-                                                        startingPointForDrawings.X + i * sizeOfEachSquare,
+                                                        startingPointForDrawings.X + (i - x * maxHorizontalNumberOfSquares) * sizeOfEachSquare,
                                                         startingPointForDrawings.Y + distanceFactorFromGrid * sizeOfEachSquare + (j + 1 - y * maxVerticalNumberOfSquares) * sizeOfEachSquare,
                                                         1);
                     }
@@ -585,10 +599,10 @@ namespace EmbroideryCreator
                     {
                         DrawArrowAtPositionWithScale(pageGraphics,
                                                         0,
-                                                        j % 2 == 0 ? 0 : (0.5 * sizeOfEachSquare),
+                                                        matrixOfNewColors.GetLength(1) % 2 == 0 ? 0 : (0.5 * sizeOfEachSquare),
                                                         -90,
                                                         startingPointForDrawings.X - distanceFactorFromGrid * sizeOfEachSquare,
-                                                        startingPointForDrawings.Y + j * sizeOfEachSquare,
+                                                        startingPointForDrawings.Y + (j - y * maxVerticalNumberOfSquares) * sizeOfEachSquare,
                                                         1);
                     }
 
@@ -597,10 +611,10 @@ namespace EmbroideryCreator
                     {
                         DrawArrowAtPositionWithScale(pageGraphics,
                                                         0,
-                                                        j % 2 == 0 ? 0 : (0.5 * sizeOfEachSquare),
+                                                        matrixOfNewColors.GetLength(1) % 2 == 0 ? 0 : (0.5 * sizeOfEachSquare),
                                                         90,
                                                         startingPointForDrawings.X + distanceFactorFromGrid * sizeOfEachSquare + (i + 1 - x * maxHorizontalNumberOfSquares) * sizeOfEachSquare,
-                                                        startingPointForDrawings.Y + j * sizeOfEachSquare,
+                                                        startingPointForDrawings.Y + (j - y * maxVerticalNumberOfSquares) * sizeOfEachSquare,
                                                         1);
                     }
 
@@ -650,7 +664,7 @@ namespace EmbroideryCreator
                 if (i >= matrixOfNewColors.GetLength(0))
                 {
                     //Also draw last vertical thick line of the current page if we didn't reach yet the end of the page
-                    if(relativeIndexI < maxHorizontalNumberOfSquares)
+                    if(i == matrixOfNewColors.GetLength(0) && relativeIndexI < maxHorizontalNumberOfSquares)
                     {
                         DrawVerticalGridLine(pageGraphics, matrixOfNewColors, x, relativeIndexJ, relativeIndexI, i, startingPointForDrawings, sizeOfEachSquare);
                     }

@@ -217,11 +217,11 @@ namespace EmbroideryCreator
         {
             if (dictionaryOfSymbolByIndex.Count > 0) return;
 
-            foreach (int index in positionsOfEachColor.Keys)
+            for (int i = 0; i < colorMeans.Count; i++)
             {
-                if (!dictionaryOfSymbolByIndex.ContainsKey(index))
+                if (!dictionaryOfSymbolByIndex.ContainsKey(i))
                 {
-                    dictionaryOfSymbolByIndex.Add(index, GetNextSymbol());
+                    dictionaryOfSymbolByIndex.Add(i, GetNextSymbol());
                 }
             }
         }
@@ -700,6 +700,16 @@ namespace EmbroideryCreator
         {
             positionsOfEachColor.Add(colorMeans.Count, new List<Tuple<int, int>>());
             colorMeans.Add(newColor);
+
+            if (!dictionaryOfSymbolByIndex.ContainsKey(colorMeans.Count))
+            {
+                dictionaryOfSymbolByIndex.Add(colorMeans.Count, GetNextSymbol());
+            }
+
+            if (!dictionaryOfColoredCrossByIndex.ContainsKey(colorMeans.Count))
+            {
+                dictionaryOfColoredCrossByIndex.Add(colorMeans.Count, GenerateCrossOfSelectedColor(colorMeans[colorMeans.Count]));
+            }
         }
 
         public void FillRegionWithColorByPosition(Tuple<int, int> generalPosition, int colorIndexToPaint)
