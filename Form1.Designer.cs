@@ -71,10 +71,10 @@ namespace EmbroideryCreator
             this.baseLayerPictureBox = new System.Windows.Forms.PictureBox();
             this.mainImageVisibleCheckBox = new System.Windows.Forms.CheckBox();
             this.threadImageVisibleCheckBox = new System.Windows.Forms.CheckBox();
-            this.drawingToolsControl = new EmbroideryCreator.DrawingToolsControl();
             this.threadPictureBox = new System.Windows.Forms.PictureBox();
             this.symbolsPictureBox = new System.Windows.Forms.PictureBox();
             this.symbolsVisibleCheckBox = new System.Windows.Forms.CheckBox();
+            this.drawingToolsControl = new EmbroideryCreator.DrawingToolsControl();
             ((System.ComponentModel.ISupportInitialize)(this.widthSizeTrackBar)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numberOfColorsTrackBar)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numberOfIterationsTrackBar)).BeginInit();
@@ -501,15 +501,6 @@ namespace EmbroideryCreator
             this.threadImageVisibleCheckBox.UseVisualStyleBackColor = true;
             this.threadImageVisibleCheckBox.CheckedChanged += new System.EventHandler(this.threadImageVisibleCheckBox_CheckedChanged);
             // 
-            // drawingToolsControl
-            // 
-            this.drawingToolsControl.BackColor = System.Drawing.SystemColors.ActiveBorder;
-            this.drawingToolsControl.Location = new System.Drawing.Point(848, 13);
-            this.drawingToolsControl.Name = "drawingToolsControl";
-            this.drawingToolsControl.Padding = new System.Windows.Forms.Padding(3);
-            this.drawingToolsControl.Size = new System.Drawing.Size(135, 45);
-            this.drawingToolsControl.TabIndex = 18;
-            // 
             // threadPictureBox
             // 
             this.threadPictureBox.Enabled = false;
@@ -544,6 +535,15 @@ namespace EmbroideryCreator
             this.symbolsVisibleCheckBox.Text = "Symbols";
             this.symbolsVisibleCheckBox.UseVisualStyleBackColor = true;
             this.symbolsVisibleCheckBox.CheckedChanged += new System.EventHandler(this.symbolsVisibleCheckBox_CheckedChanged);
+            // 
+            // drawingToolsControl
+            // 
+            this.drawingToolsControl.BackColor = System.Drawing.SystemColors.ActiveBorder;
+            this.drawingToolsControl.Location = new System.Drawing.Point(848, 13);
+            this.drawingToolsControl.Name = "drawingToolsControl";
+            this.drawingToolsControl.Padding = new System.Windows.Forms.Padding(3);
+            this.drawingToolsControl.Size = new System.Drawing.Size(135, 45);
+            this.drawingToolsControl.TabIndex = 18;
             // 
             // MainForm
             // 
@@ -592,10 +592,11 @@ namespace EmbroideryCreator
             this.Controls.Add(this.widthSizeTrackBar);
             this.Controls.Add(this.mainPictureBox);
             this.Controls.Add(this.baseLayerPictureBox);
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.Name = "MainForm";
             this.Text = "EmbroideryCreator";
             this.Deactivate += new System.EventHandler(this.MainForm_Deactivate);
+            this.Load += new System.EventHandler(this.MainForm_Load);
+            this.Resize += new System.EventHandler(this.MainForm_Resize);
             ((System.ComponentModel.ISupportInitialize)(this.widthSizeTrackBar)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numberOfColorsTrackBar)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numberOfIterationsTrackBar)).EndInit();

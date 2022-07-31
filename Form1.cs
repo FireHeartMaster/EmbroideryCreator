@@ -45,6 +45,8 @@ namespace EmbroideryCreator
 
         private List<PictureBox> pictureBoxesByVisibilityOrder = new List<PictureBox>();
 
+        private Size oldFormSize;
+
         public MainForm()
         {
             InitializeComponent();
@@ -805,6 +807,40 @@ namespace EmbroideryCreator
             pictureBoxToChangeVisibility.Visible = checkBoxOfPictureBoxToChangeVisibility.Checked;
 
             ResetOrderOfVisibilityOfPictureBoxes();
+        }
+
+        private void MainForm_Resize(object sender, EventArgs e)
+        {
+            foreach (Control control in this.Controls)
+            {
+                var parent = control.Parent;
+                ResizeControl(control, base.Size, oldFormSize);
+            }
+
+            oldFormSize = base.Size;
+        }
+
+        private void MainForm_Load(object sender, EventArgs e)
+        {
+            oldFormSize = base.Size;
+        }
+
+        private void ResizeControl(Control control, Size newSize, Size oldSize)
+        {
+            Size oldControlSize = control.Size;
+
+            control.Left += (newSize.Width - oldSize.Width) * control.Left / oldSize.Width;
+            control.Width += (newSize.Width - oldSize.Width) * control.Width / oldSize.Width;
+            //int a = (newSize.Width - oldFormSize.Width) * control.Width / oldFormSize.Width;
+            //control.Width = a;
+
+            control.Top += (newSize.Height - oldSize.Height) * control.Top / oldSize.Height;
+            control.Height += (newSize.Height - oldSize.Height) * control.Height / oldSize.Height;
+
+            foreach (Control childControl in control.Controls)
+            {
+                ResizeControl(childControl, control.Size, oldControlSize);
+            }
         }
     }
 
