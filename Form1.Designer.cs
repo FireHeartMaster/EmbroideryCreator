@@ -75,6 +75,7 @@ namespace EmbroideryCreator
             this.symbolsPictureBox = new System.Windows.Forms.PictureBox();
             this.symbolsVisibleCheckBox = new System.Windows.Forms.CheckBox();
             this.drawingToolsControl = new EmbroideryCreator.DrawingToolsControl();
+            this.imagesContainerPanel = new System.Windows.Forms.Panel();
             ((System.ComponentModel.ISupportInitialize)(this.widthSizeTrackBar)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numberOfColorsTrackBar)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numberOfIterationsTrackBar)).BeginInit();
@@ -85,6 +86,7 @@ namespace EmbroideryCreator
             ((System.ComponentModel.ISupportInitialize)(this.baseLayerPictureBox)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.threadPictureBox)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.symbolsPictureBox)).BeginInit();
+            this.imagesContainerPanel.SuspendLayout();
             this.SuspendLayout();
             // 
             // widthSizeTrackBar
@@ -265,7 +267,7 @@ namespace EmbroideryCreator
             // mainPictureBox
             // 
             this.mainPictureBox.InitialImage = global::EmbroideryCreator.Properties.Resources.ChooseImagePicture;
-            this.mainPictureBox.Location = new System.Drawing.Point(301, 12);
+            this.mainPictureBox.Location = new System.Drawing.Point(0, 0);
             this.mainPictureBox.Name = "mainPictureBox";
             this.mainPictureBox.Size = new System.Drawing.Size(529, 529);
             this.mainPictureBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
@@ -396,7 +398,7 @@ namespace EmbroideryCreator
             // 
             this.backstitchPictureBox.Enabled = false;
             this.backstitchPictureBox.InitialImage = global::EmbroideryCreator.Properties.Resources.ChooseImagePicture;
-            this.backstitchPictureBox.Location = new System.Drawing.Point(301, 12);
+            this.backstitchPictureBox.Location = new System.Drawing.Point(0, 0);
             this.backstitchPictureBox.Name = "backstitchPictureBox";
             this.backstitchPictureBox.Size = new System.Drawing.Size(529, 529);
             this.backstitchPictureBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
@@ -407,7 +409,7 @@ namespace EmbroideryCreator
             // 
             this.gridPictureBox.Enabled = false;
             this.gridPictureBox.InitialImage = global::EmbroideryCreator.Properties.Resources.ChooseImagePicture;
-            this.gridPictureBox.Location = new System.Drawing.Point(301, 12);
+            this.gridPictureBox.Location = new System.Drawing.Point(0, 0);
             this.gridPictureBox.Name = "gridPictureBox";
             this.gridPictureBox.Size = new System.Drawing.Size(529, 529);
             this.gridPictureBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
@@ -418,7 +420,7 @@ namespace EmbroideryCreator
             // 
             this.borderPictureBox.Enabled = false;
             this.borderPictureBox.InitialImage = global::EmbroideryCreator.Properties.Resources.ChooseImagePicture;
-            this.borderPictureBox.Location = new System.Drawing.Point(301, 12);
+            this.borderPictureBox.Location = new System.Drawing.Point(0, 0);
             this.borderPictureBox.Name = "borderPictureBox";
             this.borderPictureBox.Size = new System.Drawing.Size(529, 529);
             this.borderPictureBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
@@ -468,7 +470,7 @@ namespace EmbroideryCreator
             // 
             this.baseLayerPictureBox.Image = global::EmbroideryCreator.Properties.Resources.ChooseImagePicture;
             this.baseLayerPictureBox.InitialImage = global::EmbroideryCreator.Properties.Resources.ChooseImagePicture;
-            this.baseLayerPictureBox.Location = new System.Drawing.Point(301, 12);
+            this.baseLayerPictureBox.Location = new System.Drawing.Point(0, 0);
             this.baseLayerPictureBox.Name = "baseLayerPictureBox";
             this.baseLayerPictureBox.Size = new System.Drawing.Size(529, 529);
             this.baseLayerPictureBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
@@ -505,7 +507,7 @@ namespace EmbroideryCreator
             // 
             this.threadPictureBox.Enabled = false;
             this.threadPictureBox.InitialImage = global::EmbroideryCreator.Properties.Resources.ChooseImagePicture;
-            this.threadPictureBox.Location = new System.Drawing.Point(301, 12);
+            this.threadPictureBox.Location = new System.Drawing.Point(0, 0);
             this.threadPictureBox.Name = "threadPictureBox";
             this.threadPictureBox.Size = new System.Drawing.Size(529, 529);
             this.threadPictureBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
@@ -516,7 +518,7 @@ namespace EmbroideryCreator
             // 
             this.symbolsPictureBox.Enabled = false;
             this.symbolsPictureBox.InitialImage = global::EmbroideryCreator.Properties.Resources.ChooseImagePicture;
-            this.symbolsPictureBox.Location = new System.Drawing.Point(301, 12);
+            this.symbolsPictureBox.Location = new System.Drawing.Point(0, 0);
             this.symbolsPictureBox.Name = "symbolsPictureBox";
             this.symbolsPictureBox.Size = new System.Drawing.Size(529, 529);
             this.symbolsPictureBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
@@ -545,17 +547,26 @@ namespace EmbroideryCreator
             this.drawingToolsControl.Size = new System.Drawing.Size(135, 45);
             this.drawingToolsControl.TabIndex = 18;
             // 
+            // imagesContainerPanel
+            // 
+            this.imagesContainerPanel.Controls.Add(this.borderPictureBox);
+            this.imagesContainerPanel.Controls.Add(this.backstitchPictureBox);
+            this.imagesContainerPanel.Controls.Add(this.gridPictureBox);
+            this.imagesContainerPanel.Controls.Add(this.symbolsPictureBox);
+            this.imagesContainerPanel.Controls.Add(this.threadPictureBox);
+            this.imagesContainerPanel.Controls.Add(this.mainPictureBox);
+            this.imagesContainerPanel.Controls.Add(this.baseLayerPictureBox);
+            this.imagesContainerPanel.Location = new System.Drawing.Point(301, 12);
+            this.imagesContainerPanel.Name = "imagesContainerPanel";
+            this.imagesContainerPanel.Size = new System.Drawing.Size(529, 529);
+            this.imagesContainerPanel.TabIndex = 40;
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1153, 579);
             this.Controls.Add(this.symbolsVisibleCheckBox);
-            this.Controls.Add(this.borderPictureBox);
-            this.Controls.Add(this.backstitchPictureBox);
-            this.Controls.Add(this.gridPictureBox);
-            this.Controls.Add(this.symbolsPictureBox);
-            this.Controls.Add(this.threadPictureBox);
             this.Controls.Add(this.threadImageVisibleCheckBox);
             this.Controls.Add(this.mainImageVisibleCheckBox);
             this.Controls.Add(this.backstitchVisibleCheckBox);
@@ -590,8 +601,7 @@ namespace EmbroideryCreator
             this.Controls.Add(this.chooseNewImageButton);
             this.Controls.Add(this.numberOfColorsTrackBar);
             this.Controls.Add(this.widthSizeTrackBar);
-            this.Controls.Add(this.mainPictureBox);
-            this.Controls.Add(this.baseLayerPictureBox);
+            this.Controls.Add(this.imagesContainerPanel);
             this.Name = "MainForm";
             this.Text = "EmbroideryCreator";
             this.Deactivate += new System.EventHandler(this.MainForm_Deactivate);
@@ -607,6 +617,7 @@ namespace EmbroideryCreator
             ((System.ComponentModel.ISupportInitialize)(this.baseLayerPictureBox)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.threadPictureBox)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.symbolsPictureBox)).EndInit();
+            this.imagesContainerPanel.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -660,6 +671,7 @@ namespace EmbroideryCreator
         private System.Windows.Forms.PictureBox threadPictureBox;
         private System.Windows.Forms.PictureBox symbolsPictureBox;
         private System.Windows.Forms.CheckBox symbolsVisibleCheckBox;
+        private System.Windows.Forms.Panel imagesContainerPanel;
     }
 }
 

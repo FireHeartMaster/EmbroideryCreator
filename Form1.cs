@@ -46,6 +46,8 @@ namespace EmbroideryCreator
         private List<PictureBox> pictureBoxesByVisibilityOrder = new List<PictureBox>();
 
         private Size oldFormSize;
+        private Size pictureBoxUnscaledSize;
+        private int currentScrollAmount = 0;
 
         public MainForm()
         {
@@ -66,17 +68,14 @@ namespace EmbroideryCreator
             pictureBoxesByVisibilityOrder.Add(borderPictureBox);
             pictureBoxesByVisibilityOrder.Add(backstitchPictureBox);
 
-
-            //SetTransparentPictureBox(gridPictureBox, mainPictureBox);
-            //SetTransparentPictureBox(borderPictureBox, gridPictureBox);
-            //SetTransparentPictureBox(backstitchPictureBox, borderPictureBox);
-            //ResetOrderOfVisibilityOfPictureBoxes();
+            if(pictureBoxesByVisibilityOrder.Count != 0)
+            {
+                pictureBoxUnscaledSize = pictureBoxesByVisibilityOrder[0].Size;
+            }
 
             ResetOrderOfVisibilityOfPictureBoxes();
 
-
-            //PdfManager pdfManager = new PdfManager();
-            //pdfManager.CreatePdf();
+            imagesContainerPanel.MouseWheel += new MouseEventHandler(imagesContainerPanel_MouseWheel);
         }
 
         private void SetTransparentPictureBox(PictureBox transparentPictureBox, PictureBox solidPictureBox)
@@ -196,6 +195,51 @@ namespace EmbroideryCreator
                         }
                         break;
                 }
+            }
+        }
+
+        private void imagesContainerPanel_MouseWheel(object sender, MouseEventArgs e)
+        {
+            if (imageAndOperationsData == null || imageAndOperationsData.ResultingImage == null) return;
+            
+            ResizeImagesOnMouseWheel(e);
+        }
+
+        private void ResizeImagesOnMouseWheel(MouseEventArgs e)
+        {
+            if (pictureBoxesByVisibilityOrder.Count == 0) return;
+
+            int rescaledDelta = e.Delta * SystemInformation.MouseWheelScrollLines / SystemInformation.MouseWheelScrollDelta;
+
+            int amountPerScroll = 5;
+
+            int newWidth = (int)((pictureBoxUnscaledSize.Width * (100 + currentScrollAmount)) / 100);
+            int newHeight = (int)((pictureBoxUnscaledSize.Height * (100 + currentScrollAmount)) / 100);
+
+            int newHorizontalPosition = (int)((((double)newWidth) / pictureBoxesByVisibilityOrder[0].Width) * (pictureBoxesByVisibilityOrder[0].Left - e.Location.X) + e.Location.X);
+            int newVerticalPosition = (int)((((double)newHeight) / pictureBoxesByVisibilityOrder[0].Height) * (pictureBoxesByVisibilityOrder[0].Top - e.Location.Y) + e.Location.Y);
+
+            currentScrollAmount += amountPerScroll * rescaledDelta;
+            bool resetPosition = false;
+            if (currentScrollAmount < 0)
+            {
+                currentScrollAmount = 0;
+                resetPosition = true;
+            }
+
+            foreach (PictureBox pictureBox in pictureBoxesByVisibilityOrder)
+            {
+                pictureBox.Width = newWidth;
+                pictureBox.Height = newHeight;
+            }
+
+            if (resetPosition)
+            {
+                pictureBoxesByVisibilityOrder[0].Location = new Point(0, 0);
+            }
+            else
+            {
+                pictureBoxesByVisibilityOrder[0].Location = new Point(newHorizontalPosition, newVerticalPosition);
             }
         }
 
@@ -818,6 +862,11 @@ namespace EmbroideryCreator
             }
 
             oldFormSize = base.Size;
+
+            if (pictureBoxesByVisibilityOrder.Count != 0)
+            {
+                pictureBoxUnscaledSize = pictureBoxesByVisibilityOrder[0].Size;
+            }
         }
 
         private void MainForm_Load(object sender, EventArgs e)
