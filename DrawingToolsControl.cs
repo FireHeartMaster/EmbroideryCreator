@@ -38,6 +38,11 @@ namespace EmbroideryCreator
             EnableNewTool(DrawingToolInUse.Eraser);
         }
 
+        private void movePictureBox_Click(object sender, EventArgs e)
+        {
+            EnableNewTool(DrawingToolInUse.Move);
+        }
+
         private void EnableNewTool(DrawingToolInUse newSelectedDrawingTool)
         {
             //ResetCurrentToolsImage();
@@ -56,6 +61,10 @@ namespace EmbroideryCreator
                 case DrawingToolInUse.Eraser:
                     currentDrawingTool = DrawingToolInUse.Eraser;
                     currentActiveToolPictureBox = eraserPictureBox;
+                    break;
+                case DrawingToolInUse.Move:
+                    currentDrawingTool = DrawingToolInUse.Move;
+                    currentActiveToolPictureBox = movePictureBox;
                     break;
 
 
@@ -86,6 +95,7 @@ namespace EmbroideryCreator
     {
         Pencil,
         Bucket,
-        Eraser
+        Eraser,
+        Move
     }
 }

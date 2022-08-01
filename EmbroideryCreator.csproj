@@ -228,6 +228,7 @@
     <Content Include="Resources\Icons\102.png" />
     <Content Include="Resources\Icons\103.png" />
     <Content Include="Resources\Icons\104.png" />
+    <None Include="Resources\MoveIcon.png" />
     <None Include="Resources\DmcTable.csv" />
     <None Include="Resources\ThreadCross.png" />
     <None Include="Resources\EraserIcon.png" />

@@ -74,8 +74,8 @@ namespace EmbroideryCreator
             this.threadPictureBox = new System.Windows.Forms.PictureBox();
             this.symbolsPictureBox = new System.Windows.Forms.PictureBox();
             this.symbolsVisibleCheckBox = new System.Windows.Forms.CheckBox();
-            this.drawingToolsControl = new EmbroideryCreator.DrawingToolsControl();
             this.imagesContainerPanel = new System.Windows.Forms.Panel();
+            this.drawingToolsControl = new EmbroideryCreator.DrawingToolsControl();
             ((System.ComponentModel.ISupportInitialize)(this.widthSizeTrackBar)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numberOfColorsTrackBar)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numberOfIterationsTrackBar)).BeginInit();
@@ -538,15 +538,6 @@ namespace EmbroideryCreator
             this.symbolsVisibleCheckBox.UseVisualStyleBackColor = true;
             this.symbolsVisibleCheckBox.CheckedChanged += new System.EventHandler(this.symbolsVisibleCheckBox_CheckedChanged);
             // 
-            // drawingToolsControl
-            // 
-            this.drawingToolsControl.BackColor = System.Drawing.SystemColors.ActiveBorder;
-            this.drawingToolsControl.Location = new System.Drawing.Point(848, 13);
-            this.drawingToolsControl.Name = "drawingToolsControl";
-            this.drawingToolsControl.Padding = new System.Windows.Forms.Padding(3);
-            this.drawingToolsControl.Size = new System.Drawing.Size(135, 45);
-            this.drawingToolsControl.TabIndex = 18;
-            // 
             // imagesContainerPanel
             // 
             this.imagesContainerPanel.Controls.Add(this.borderPictureBox);
@@ -560,6 +551,15 @@ namespace EmbroideryCreator
             this.imagesContainerPanel.Name = "imagesContainerPanel";
             this.imagesContainerPanel.Size = new System.Drawing.Size(529, 529);
             this.imagesContainerPanel.TabIndex = 40;
+            // 
+            // drawingToolsControl
+            // 
+            this.drawingToolsControl.BackColor = System.Drawing.SystemColors.ActiveBorder;
+            this.drawingToolsControl.Location = new System.Drawing.Point(848, 13);
+            this.drawingToolsControl.Name = "drawingToolsControl";
+            this.drawingToolsControl.Padding = new System.Windows.Forms.Padding(3);
+            this.drawingToolsControl.Size = new System.Drawing.Size(171, 45);
+            this.drawingToolsControl.TabIndex = 18;
             // 
             // MainForm
             // 

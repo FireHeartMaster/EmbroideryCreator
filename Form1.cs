@@ -29,9 +29,10 @@ namespace EmbroideryCreator
         private Point pointMouseDown = new Point(0, 0);
         private Point pointMouseUp = new Point(0, 0);
         private Image imageBeforeDrawing = null;
-        //private PaintEventHandler backstitchPaintEventHandler = null;
-        //private bool backstitchEventHandlerAlreadySubscribed = false;
+        
         private Point lastBackstitchPointMouseUp = new Point(0, 0);
+        private Point firstMoveToolPoint = new Point(0, 0);
+        private Point originalPositionMoveTool = new Point(0, 0);   
 
         private Tuple<int, int> realImagePositionMouseDown = new Tuple<int, int>(0, 0);
         private Tuple<int, int> realImagePositionMouseUp = new Tuple<int, int>(0, 0);
@@ -129,12 +130,11 @@ namespace EmbroideryCreator
         private void mainPictureBox_Click(object sender, EventArgs e)
         {
             //SelectNewImageFile();
-            //Console.WriteLine("Simple Click");
         }
 
         private void mainPictureBox_DoubleClick(object sender, EventArgs e)
         {
-            //Console.WriteLine("Double Click");
+            
         }
 
         internal void UpdateIfShouldPaintReducedColorBackground(int reducedColorIndex, bool isBackground)
@@ -147,7 +147,6 @@ namespace EmbroideryCreator
 
         private void mainPictureBox_MouseDown(object sender, MouseEventArgs e)
         {
-            //Console.WriteLine("Mouse Down");
             isDrawing = true;
 
             Point pointOnImage = e.Location;
@@ -157,10 +156,8 @@ namespace EmbroideryCreator
 
         private void mainPictureBox_MouseUp(object sender, MouseEventArgs e)
         {
-            //Console.WriteLine("Mouse Up");
             isDrawing = false;
             SetBackstitchDrawMouseUp();
-            //Console.WriteLine(mainPictureBox.Size.Width + " " + mainPictureBox.Size.Height);
         }
         
         private void mainPictureBox_MouseMove(object sender, MouseEventArgs e)
@@ -170,15 +167,21 @@ namespace EmbroideryCreator
                 switch (currentDrawingMode)
                 {
                     case DrawingMode.CrossStitch:
-                        //Console.WriteLine(line + ": Drawing"); line++;
-                        DrawOnPictureBox(e.Location);
+                        switch (drawingToolsControl.currentDrawingTool)
+                        {
+                            case DrawingToolInUse.Pencil:
+                                DrawOnPictureBox(e.Location);
+                                break;
+                            case DrawingToolInUse.Move:
+                                MoveTool(e.Location);
+                                break;
+
+                            default:
+                                break;
+                        }
                         break;
 
                     case DrawingMode.Backstitch:
-                        //if (backstitchEventHandlerAlreadySubscribed)
-                        //{
-                        //    pointMouseUp = e.Location;
-                        //}
                         pointMouseUp = e.Location;
                         switch (drawingToolsControl.currentDrawingTool)
                         {
@@ -189,6 +192,9 @@ namespace EmbroideryCreator
                             case DrawingToolInUse.Eraser:
                                 TryToEraseBackstitchLineAtGeneralPosition(pointMouseUp);
                                 break;
+                            case DrawingToolInUse.Move:
+                                MoveTool(e.Location);
+                                break;
 
                             default:
                                 break;
@@ -196,6 +202,41 @@ namespace EmbroideryCreator
                         break;
                 }
             }
+        }
+
+        private void MoveTool(Point secondMoveToolPoint)
+        {
+            if (pictureBoxesByVisibilityOrder.Count == 0 || currentScrollAmount == 0) return;
+
+            PictureBox parentPictureBox = pictureBoxesByVisibilityOrder[0];
+
+            int xMoveAmount = secondMoveToolPoint.X - firstMoveToolPoint.X;
+            int yMoveAmount = secondMoveToolPoint.Y - firstMoveToolPoint.Y;            
+
+            int xNewPosition = originalPositionMoveTool.X + xMoveAmount;
+            int yNewPosition = originalPositionMoveTool.Y + yMoveAmount;
+
+            CheckPictureBoxBordersAppearing(parentPictureBox, ref xNewPosition, ref yNewPosition);
+
+            int xCurrentMove = xNewPosition - parentPictureBox.Left;
+            int yCurrentMove = yNewPosition - parentPictureBox.Top;
+
+            if (parentPictureBox.Left == xNewPosition && parentPictureBox.Top == yNewPosition) return;
+
+            parentPictureBox.Left = xNewPosition;
+            parentPictureBox.Top = yNewPosition;
+            
+            firstMoveToolPoint.X -= xCurrentMove;
+            firstMoveToolPoint.Y -= yCurrentMove;
+        }
+
+        private void CheckPictureBoxBordersAppearing(PictureBox parentPictureBox, ref int xNewPosition, ref int yNewPosition)
+        {
+            if (xNewPosition > 0) xNewPosition = 0;
+            if (xNewPosition < imagesContainerPanel.Width - parentPictureBox.Width) xNewPosition = imagesContainerPanel.Width - parentPictureBox.Width;
+
+            if (yNewPosition > 0) yNewPosition = 0;
+            if (yNewPosition < imagesContainerPanel.Height - parentPictureBox.Height) yNewPosition = imagesContainerPanel.Height - parentPictureBox.Height;
         }
 
         private void imagesContainerPanel_MouseWheel(object sender, MouseEventArgs e)
@@ -216,8 +257,10 @@ namespace EmbroideryCreator
             int newWidth = (int)((pictureBoxUnscaledSize.Width * (100 + currentScrollAmount)) / 100);
             int newHeight = (int)((pictureBoxUnscaledSize.Height * (100 + currentScrollAmount)) / 100);
 
-            int newHorizontalPosition = (int)((((double)newWidth) / pictureBoxesByVisibilityOrder[0].Width) * (pictureBoxesByVisibilityOrder[0].Left - e.Location.X) + e.Location.X);
-            int newVerticalPosition = (int)((((double)newHeight) / pictureBoxesByVisibilityOrder[0].Height) * (pictureBoxesByVisibilityOrder[0].Top - e.Location.Y) + e.Location.Y);
+            PictureBox parentPictureBox = pictureBoxesByVisibilityOrder[0];
+
+            int newHorizontalPosition = (int)((((double)newWidth) / parentPictureBox.Width) * (parentPictureBox.Left - e.Location.X) + e.Location.X);
+            int newVerticalPosition = (int)((((double)newHeight) / parentPictureBox.Height) * (parentPictureBox.Top - e.Location.Y) + e.Location.Y);
 
             currentScrollAmount += amountPerScroll * rescaledDelta;
             bool resetPosition = false;
@@ -235,11 +278,12 @@ namespace EmbroideryCreator
 
             if (resetPosition)
             {
-                pictureBoxesByVisibilityOrder[0].Location = new Point(0, 0);
+                parentPictureBox.Location = new Point(0, 0);
             }
             else
             {
-                pictureBoxesByVisibilityOrder[0].Location = new Point(newHorizontalPosition, newVerticalPosition);
+                CheckPictureBoxBordersAppearing(parentPictureBox, ref newHorizontalPosition, ref newVerticalPosition);
+                parentPictureBox.Location = new Point(newHorizontalPosition, newVerticalPosition);
             }
         }
 
@@ -277,6 +321,13 @@ namespace EmbroideryCreator
 
                 case DrawingToolInUse.Eraser:
                     TryToEraseBackstitchLineAtGeneralPosition(pointOnImage);
+                    break;
+                case DrawingToolInUse.Move:
+                    firstMoveToolPoint = pointOnImage;
+                    if (pictureBoxesByVisibilityOrder.Count > 0)
+                    {
+                        originalPositionMoveTool = pictureBoxesByVisibilityOrder[0].Location;
+                    }
                     break;
 
                 default:
@@ -367,6 +418,13 @@ namespace EmbroideryCreator
                     imageAndOperationsData.FillRegionWithColorByPosition(realImagePosition, colorIndexToPaint);
                     isDrawing = false;
                     //SetBackstitchDrawMouseUp();
+                    break;
+                case DrawingToolInUse.Move:
+                    firstMoveToolPoint = positionOnImage;
+                    if (pictureBoxesByVisibilityOrder.Count > 0)
+                    {
+                        originalPositionMoveTool = pictureBoxesByVisibilityOrder[0].Location;
+                    }
                     break;
                 default:
                     break;
@@ -474,9 +532,7 @@ namespace EmbroideryCreator
             for (int i = 0; i < crossStitchColorMeans.Count; i++)
             {
                 ReducedColorControl crossStitchColorControl = new ReducedColorControl();
-                //Bitmap colorImage = new Bitmap(1, 1);
-                //colorImage.SetPixel(0, 0, Color.Red);
-                crossStitchColorControl.InitializeReducedColorControl(crossStitchColorMeans[i], i, /*crossStitchColorControl,*/ this);
+                crossStitchColorControl.InitializeReducedColorControl(crossStitchColorMeans[i], i, this);
                 flowLayoutPanelListOfCrossStitchColors.Controls.Add(crossStitchColorControl);
                 imageAndOperationsData.colorIsBackgroundList.Add(false);
             }
@@ -539,8 +595,6 @@ namespace EmbroideryCreator
                         string filePathWithoutExtension = saveImageFileDialog.FileNames[0].Substring(0, lengthOfSubstring);
                         imageAndOperationsData.SerializeData(filePathWithoutExtension + ".edu");
 
-                        //PdfManager pdfManager = new PdfManager();
-                        //pdfManager.CreatePdf(PrepareImagesForPdf(), filePathWithoutExtension + ".pdf", imageAndOperationsData.ma);
                         lengthOfSubstring = filePathWithoutExtension.LastIndexOf(Path.DirectorySeparatorChar);
                         string title = filePathWithoutExtension.Substring(lengthOfSubstring + 1, filePathWithoutExtension.Length - lengthOfSubstring - 1);
                         imageAndOperationsData.SavePdf(filePathWithoutExtension + ".pdf", title, "", "", "Octavius", "Octavius", "Visit our shop at octavius.shop");
@@ -591,7 +645,7 @@ namespace EmbroideryCreator
                 mainPictureBox.Image = imageAndOperationsData.ResultingImage;
                 threadPictureBox.Image = imageAndOperationsData.ThreadImage;
                 symbolsPictureBox.Image = imageAndOperationsData.SymbolsImage;
-                backstitchPictureBox.Image = imageAndOperationsData.BackstitchImage;/*new Bitmap(mainPictureBox.Image.Width, mainPictureBox.Image.Height);*/
+                backstitchPictureBox.Image = imageAndOperationsData.BackstitchImage;
                 gridPictureBox.Image = imageAndOperationsData.GridImage;
                 borderPictureBox.Image = imageAndOperationsData.BorderImage;
 
@@ -857,7 +911,6 @@ namespace EmbroideryCreator
         {
             foreach (Control control in this.Controls)
             {
-                var parent = control.Parent;
                 ResizeControl(control, base.Size, oldFormSize);
             }
 
@@ -880,8 +933,6 @@ namespace EmbroideryCreator
 
             control.Left += (newSize.Width - oldSize.Width) * control.Left / oldSize.Width;
             control.Width += (newSize.Width - oldSize.Width) * control.Width / oldSize.Width;
-            //int a = (newSize.Width - oldFormSize.Width) * control.Width / oldFormSize.Width;
-            //control.Width = a;
 
             control.Top += (newSize.Height - oldSize.Height) * control.Top / oldSize.Height;
             control.Height += (newSize.Height - oldSize.Height) * control.Height / oldSize.Height;
