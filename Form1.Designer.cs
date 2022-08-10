@@ -76,8 +76,9 @@ namespace EmbroideryCreator
             this.symbolsVisibleCheckBox = new System.Windows.Forms.CheckBox();
             this.imagesContainerPanel = new System.Windows.Forms.Panel();
             this.removeAlonePixelsButton = new System.Windows.Forms.Button();
-            this.drawingToolsControl = new EmbroideryCreator.DrawingToolsControl();
             this.removeAlonePixelsTrackBar = new System.Windows.Forms.TrackBar();
+            this.drawingToolsControl = new EmbroideryCreator.DrawingToolsControl();
+            this.removeAlonePixelsLabel = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.widthSizeTrackBar)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numberOfColorsTrackBar)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numberOfIterationsTrackBar)).BeginInit();
@@ -565,6 +566,16 @@ namespace EmbroideryCreator
             this.removeAlonePixelsButton.UseVisualStyleBackColor = true;
             this.removeAlonePixelsButton.Click += new System.EventHandler(this.removeAlonePixelsButton_Click);
             // 
+            // removeAlonePixelsTrackBar
+            // 
+            this.removeAlonePixelsTrackBar.Location = new System.Drawing.Point(17, 397);
+            this.removeAlonePixelsTrackBar.Maximum = 9;
+            this.removeAlonePixelsTrackBar.Name = "removeAlonePixelsTrackBar";
+            this.removeAlonePixelsTrackBar.Size = new System.Drawing.Size(135, 45);
+            this.removeAlonePixelsTrackBar.TabIndex = 42;
+            this.removeAlonePixelsTrackBar.Value = 1;
+            this.removeAlonePixelsTrackBar.Scroll += new System.EventHandler(this.removeAlonePixelsTrackBar_Scroll);
+            // 
             // drawingToolsControl
             // 
             this.drawingToolsControl.BackColor = System.Drawing.SystemColors.ActiveBorder;
@@ -574,20 +585,22 @@ namespace EmbroideryCreator
             this.drawingToolsControl.Size = new System.Drawing.Size(171, 45);
             this.drawingToolsControl.TabIndex = 18;
             // 
-            // removeAlonePixelsTrackBar
+            // removeAlonePixelsLabel
             // 
-            this.removeAlonePixelsTrackBar.Location = new System.Drawing.Point(17, 397);
-            this.removeAlonePixelsTrackBar.Maximum = 9;
-            this.removeAlonePixelsTrackBar.Name = "removeAlonePixelsTrackBar";
-            this.removeAlonePixelsTrackBar.Size = new System.Drawing.Size(135, 45);
-            this.removeAlonePixelsTrackBar.TabIndex = 42;
-            this.removeAlonePixelsTrackBar.Value = 1;
+            this.removeAlonePixelsLabel.AutoSize = true;
+            this.removeAlonePixelsLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 13F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.removeAlonePixelsLabel.Location = new System.Drawing.Point(153, 363);
+            this.removeAlonePixelsLabel.Name = "removeAlonePixelsLabel";
+            this.removeAlonePixelsLabel.Size = new System.Drawing.Size(20, 22);
+            this.removeAlonePixelsLabel.TabIndex = 43;
+            this.removeAlonePixelsLabel.Text = "1";
             // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1153, 579);
+            this.Controls.Add(this.removeAlonePixelsLabel);
             this.Controls.Add(this.removeAlonePixelsTrackBar);
             this.Controls.Add(this.removeAlonePixelsButton);
             this.Controls.Add(this.symbolsVisibleCheckBox);
@@ -699,6 +712,7 @@ namespace EmbroideryCreator
         private System.Windows.Forms.Panel imagesContainerPanel;
         private System.Windows.Forms.Button removeAlonePixelsButton;
         private System.Windows.Forms.TrackBar removeAlonePixelsTrackBar;
+        private System.Windows.Forms.Label removeAlonePixelsLabel;
     }
 }
 

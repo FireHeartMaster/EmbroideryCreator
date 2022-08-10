@@ -689,6 +689,12 @@ namespace EmbroideryCreator
             TryToProcessImage();
         }
 
+        private void removeAlonePixelsTrackBar_Scroll(object sender, EventArgs e)
+        {
+            removeAlonePixelsLabel.Text = removeAlonePixelsTrackBar.Value.ToString();
+            TryToProcessImage();
+        }
+
         public void UpdateReducedColorByIndex(int index, Color newColor)
         {
             imageAndOperationsData.ChangeColorByIndex(index, newColor);
@@ -956,7 +962,7 @@ namespace EmbroideryCreator
             {
                 ResizeControl(childControl, control.Size, oldControlSize);
             }
-        }        
+        }
     }
 
     public enum DrawingMode
