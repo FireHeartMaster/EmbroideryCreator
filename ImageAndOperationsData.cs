@@ -609,7 +609,8 @@ namespace EmbroideryCreator
 
         private void RepaintMainImage(bool paintColors = true, bool paintCrosses = true, bool paintSymbols = true)
         {
-            ImageTransformations.GetNewSize(originalImage.Width, originalImage.Height, newPixelSize, out int resultingImageWidth, out int resultingImageHeight);
+            float aspectRatio = ((float)originalImage.Height) / originalImage.Width;
+            ImageTransformations.GetNewSize(newWidth, (int)(newWidth * aspectRatio), newPixelSize, out int resultingImageWidth, out int resultingImageHeight);
             if (paintColors)
             {
                 ResultingImage = AddPaddingToImage(new Bitmap(resultingImageWidth, resultingImageHeight));
@@ -659,6 +660,58 @@ namespace EmbroideryCreator
             PaintPixelInPositionWithColorOfIndex(coordinates, colorIndexToPaint);
         }
 
+        public void RemoveAlonePixels(int minAmountAround = 2)
+        {
+            for (int i = 0; i < matrixOfNewColors.GetLength(0); i++)
+            {
+                for (int j = 0; j < matrixOfNewColors.GetLength(1); j++)
+                {
+                    Tuple<int, int> coordinates = new Tuple<int, int>(i, j);
+
+                    Dictionary<int, int> amountAroundPerIndex = new Dictionary<int, int>();
+
+                    int indexWithHighestAmount = -1;
+                    for (int x = i - 1; x <= i + 1; x++)
+                    {
+                        for (int y = j - 1; y <= j + 1; y++)
+                        {
+                            if (x == i && y == j) continue;
+                            if (x < 0 || x >= matrixOfNewColors.GetLength(0) || y < 0 || y >= matrixOfNewColors.GetLength(1)) continue;
+
+                            //amountAroundPerIndex[matrixOfNewColors[i,j]]
+                            if(!amountAroundPerIndex.ContainsKey(matrixOfNewColors[x, y]))
+                            {
+                                amountAroundPerIndex.Add(matrixOfNewColors[x, y], 1);
+                            }
+                            else
+                            {
+                                amountAroundPerIndex[matrixOfNewColors[x, y]]++;
+                            }
+
+                            if(indexWithHighestAmount == -1)
+                            {
+                                indexWithHighestAmount = matrixOfNewColors[x, y];
+                            }
+                            else
+                            {
+                                if (amountAroundPerIndex[matrixOfNewColors[x, y]] > amountAroundPerIndex[indexWithHighestAmount])
+                                {
+                                    indexWithHighestAmount = matrixOfNewColors[x, y];
+                                }
+                            }
+                        }
+                    }
+
+                    if(!amountAroundPerIndex.ContainsKey(matrixOfNewColors[i, j]) || amountAroundPerIndex[matrixOfNewColors[i, j]] < minAmountAround)
+                    {
+                        matrixOfNewColors[i, j] = indexWithHighestAmount;
+                    }
+                }
+            }
+
+            RepaintMainImage(true, true, true);
+        }
+
         private Tuple<int, int> ConvertFromGeneralPositionOnImageToCoordinates(Tuple<int, int> generalPosition)
         {
             int x = (int)(((float)(generalPosition.Item1 - BorderThicknessInNumberOfPixels)) / newPixelSize);
@@ -698,17 +751,18 @@ namespace EmbroideryCreator
 
         public void AddNewColor(Color newColor)
         {
-            positionsOfEachColor.Add(colorMeans.Count, new List<Tuple<int, int>>());
+            int newColorIndex = colorMeans.Count;
+            positionsOfEachColor.Add(newColorIndex, new List<Tuple<int, int>>());
             colorMeans.Add(newColor);
 
-            if (!dictionaryOfSymbolByIndex.ContainsKey(colorMeans.Count))
+            if (!dictionaryOfSymbolByIndex.ContainsKey(newColorIndex))
             {
-                dictionaryOfSymbolByIndex.Add(colorMeans.Count, GetNextSymbol());
+                dictionaryOfSymbolByIndex.Add(newColorIndex, GetNextSymbol());
             }
 
-            if (!dictionaryOfColoredCrossByIndex.ContainsKey(colorMeans.Count))
+            if (!dictionaryOfColoredCrossByIndex.ContainsKey(newColorIndex))
             {
-                dictionaryOfColoredCrossByIndex.Add(colorMeans.Count, GenerateCrossOfSelectedColor(colorMeans[colorMeans.Count]));
+                dictionaryOfColoredCrossByIndex.Add(newColorIndex, GenerateCrossOfSelectedColor(colorMeans[newColorIndex]));
             }
         }
 

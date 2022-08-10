@@ -436,6 +436,21 @@ namespace EmbroideryCreator
             symbolsPictureBox.Image = imageAndOperationsData.SymbolsImage;
         }
 
+        private void RemoveAlonePixels()
+        {
+            imageAndOperationsData.RemoveAlonePixels(removeAlonePixelsTrackBar.Value);
+
+            //reload picture box
+            mainPictureBox.Image = imageAndOperationsData.ResultingImage;
+            threadPictureBox.Image = imageAndOperationsData.ThreadImage;
+            symbolsPictureBox.Image = imageAndOperationsData.SymbolsImage;
+        }
+
+        private void removeAlonePixelsButton_Click(object sender, EventArgs e)
+        {
+            RemoveAlonePixels();
+        }
+
         private void SelectNewImageFile()
         {
             using (openNewImageFileDialog = new OpenFileDialog())
@@ -941,7 +956,7 @@ namespace EmbroideryCreator
             {
                 ResizeControl(childControl, control.Size, oldControlSize);
             }
-        }
+        }        
     }
 
     public enum DrawingMode

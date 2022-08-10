@@ -75,7 +75,9 @@ namespace EmbroideryCreator
             this.symbolsPictureBox = new System.Windows.Forms.PictureBox();
             this.symbolsVisibleCheckBox = new System.Windows.Forms.CheckBox();
             this.imagesContainerPanel = new System.Windows.Forms.Panel();
+            this.removeAlonePixelsButton = new System.Windows.Forms.Button();
             this.drawingToolsControl = new EmbroideryCreator.DrawingToolsControl();
+            this.removeAlonePixelsTrackBar = new System.Windows.Forms.TrackBar();
             ((System.ComponentModel.ISupportInitialize)(this.widthSizeTrackBar)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numberOfColorsTrackBar)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numberOfIterationsTrackBar)).BeginInit();
@@ -87,6 +89,7 @@ namespace EmbroideryCreator
             ((System.ComponentModel.ISupportInitialize)(this.threadPictureBox)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.symbolsPictureBox)).BeginInit();
             this.imagesContainerPanel.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.removeAlonePixelsTrackBar)).BeginInit();
             this.SuspendLayout();
             // 
             // widthSizeTrackBar
@@ -552,6 +555,16 @@ namespace EmbroideryCreator
             this.imagesContainerPanel.Size = new System.Drawing.Size(529, 529);
             this.imagesContainerPanel.TabIndex = 40;
             // 
+            // removeAlonePixelsButton
+            // 
+            this.removeAlonePixelsButton.Location = new System.Drawing.Point(13, 363);
+            this.removeAlonePixelsButton.Name = "removeAlonePixelsButton";
+            this.removeAlonePixelsButton.Size = new System.Drawing.Size(139, 23);
+            this.removeAlonePixelsButton.TabIndex = 41;
+            this.removeAlonePixelsButton.Text = "Remove alone pixels";
+            this.removeAlonePixelsButton.UseVisualStyleBackColor = true;
+            this.removeAlonePixelsButton.Click += new System.EventHandler(this.removeAlonePixelsButton_Click);
+            // 
             // drawingToolsControl
             // 
             this.drawingToolsControl.BackColor = System.Drawing.SystemColors.ActiveBorder;
@@ -561,11 +574,22 @@ namespace EmbroideryCreator
             this.drawingToolsControl.Size = new System.Drawing.Size(171, 45);
             this.drawingToolsControl.TabIndex = 18;
             // 
+            // removeAlonePixelsTrackBar
+            // 
+            this.removeAlonePixelsTrackBar.Location = new System.Drawing.Point(17, 397);
+            this.removeAlonePixelsTrackBar.Maximum = 9;
+            this.removeAlonePixelsTrackBar.Name = "removeAlonePixelsTrackBar";
+            this.removeAlonePixelsTrackBar.Size = new System.Drawing.Size(135, 45);
+            this.removeAlonePixelsTrackBar.TabIndex = 42;
+            this.removeAlonePixelsTrackBar.Value = 1;
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1153, 579);
+            this.Controls.Add(this.removeAlonePixelsTrackBar);
+            this.Controls.Add(this.removeAlonePixelsButton);
             this.Controls.Add(this.symbolsVisibleCheckBox);
             this.Controls.Add(this.threadImageVisibleCheckBox);
             this.Controls.Add(this.mainImageVisibleCheckBox);
@@ -618,6 +642,7 @@ namespace EmbroideryCreator
             ((System.ComponentModel.ISupportInitialize)(this.threadPictureBox)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.symbolsPictureBox)).EndInit();
             this.imagesContainerPanel.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.removeAlonePixelsTrackBar)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -672,6 +697,8 @@ namespace EmbroideryCreator
         private System.Windows.Forms.PictureBox symbolsPictureBox;
         private System.Windows.Forms.CheckBox symbolsVisibleCheckBox;
         private System.Windows.Forms.Panel imagesContainerPanel;
+        private System.Windows.Forms.Button removeAlonePixelsButton;
+        private System.Windows.Forms.TrackBar removeAlonePixelsTrackBar;
     }
 }
 
