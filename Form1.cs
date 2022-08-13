@@ -506,7 +506,7 @@ namespace EmbroideryCreator
             imageAndOperationsData.numberOfIterations = numberOfIterationsTrackBar.Value;
 
             //imageAndOperationsData.ProcessImage();
-            imageAndOperationsData.ProcessImageInSeparateLayers();
+            imageAndOperationsData.ProcessImageInSeparateLayers(processImageExactToSourceCheckBox.Checked);
             //int newImageWidth = imageAndOperationsData.ResultingImage.Width;
             //int newImageHeight = imageAndOperationsData.ResultingImage.Height;
             mainPictureBox.Image = imageAndOperationsData.ResultingImage;/*ImageTransformations.ResizeBitmap(imageAndOperationsData.resultingImage, mainPictureBox.Width * 10);*/

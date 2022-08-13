@@ -19,6 +19,24 @@ namespace EmbroideryCreator
             return pixelatedImage;
         }
 
+        public static Bitmap PixelateExactlyAccordingToOriginal(Bitmap originalImage, int newWidthSize)
+        {
+            float aspectRatio = ((float)originalImage.Height) / originalImage.Width;
+            Bitmap pixelatedImage = new Bitmap(newWidthSize, (int)(newWidthSize * aspectRatio));
+
+            int step = originalImage.Width / newWidthSize;
+
+            for (int x = 0; x < newWidthSize; x++)
+            {
+                for (int y = 0; y < pixelatedImage.Height; y++)
+                {
+                    pixelatedImage.SetPixel(x, y, originalImage.GetPixel(x * step, y * step));
+                }
+            }
+
+            return pixelatedImage;
+        }
+
         public static Bitmap PixelateAlternateOrder(Bitmap originalImage, int newWidthSize, 
             ref List<Color> means, ref Dictionary<int, List<Tuple<int, int>>> clustersOfColors)
         {
@@ -142,6 +160,36 @@ namespace EmbroideryCreator
             }
 
             return imageToReduceColors; //do I need to really return this image since the reference is already being modified here
+        }
+
+        public static Bitmap SetColorsWithoutReducingNumberOfColors(Bitmap imageToReduceColors, out List<Color> means,
+            out Dictionary<int, List<Tuple<int, int>>> clustersOfColors, out int[,] matrixOfNewColors)
+        {
+            matrixOfNewColors = new int[imageToReduceColors.Width, imageToReduceColors.Height];
+            means = new List<Color>();
+            clustersOfColors = new Dictionary<int, List<Tuple<int, int>>>();
+
+            Dictionary<Color, int> dictionaryOfColorsAndIndexes = new Dictionary<Color, int>();
+
+            for (int x = 0; x < imageToReduceColors.Width; x++)
+            {
+                for (int y = 0; y < imageToReduceColors.Height; y++)
+                {
+                    Color currentColor = imageToReduceColors.GetPixel(x, y);
+
+                    if (!dictionaryOfColorsAndIndexes.ContainsKey(currentColor))
+                    {
+                        int newIndex = dictionaryOfColorsAndIndexes.Count;
+                        dictionaryOfColorsAndIndexes.Add(currentColor, newIndex);
+                        means.Add(currentColor);
+                        clustersOfColors.Add(newIndex, new List<Tuple<int, int>>());
+                    }
+                    matrixOfNewColors[x, y] = dictionaryOfColorsAndIndexes[currentColor];
+                    clustersOfColors[dictionaryOfColorsAndIndexes[currentColor]].Add(new Tuple<int, int>(x, y));
+                }
+            }
+
+            return imageToReduceColors;
         }
 
         private static Color GetMeanColorOfCluster(List<Tuple<int, int>> listOfPixelCoordinatesOnThisCluster, Bitmap imageToReduceColors)

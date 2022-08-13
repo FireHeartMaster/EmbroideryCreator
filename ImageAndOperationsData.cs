@@ -26,7 +26,7 @@ namespace EmbroideryCreator
         public int numberOfColors = 10;
         public int numberOfIterations = 10;
 
-        private int newPixelSize = 32;
+        private int newPixelSize = 10;
         
         private List<Color> colorMeans;
         private Dictionary<int, List<Tuple<int, int>>> positionsOfEachColor = new Dictionary<int, List<Tuple<int, int>>>();
@@ -339,6 +339,12 @@ namespace EmbroideryCreator
             return pixelatedImage;
         }
 
+        private Bitmap PixelateImageExactlyAccordingToOriginal(Bitmap originalImage)
+        {
+            Bitmap pixelatedImageExactly = ImageTransformations.PixelateExactlyAccordingToOriginal(originalImage, newWidth);
+            return pixelatedImageExactly;
+        }
+
         private Bitmap PixelateImageAlternateOrder(Bitmap originalImage)
         {
             Bitmap pixelatedImage = ImageTransformations.PixelateAlternateOrder(originalImage, newWidth, ref colorMeans, ref positionsOfEachColor);
@@ -349,6 +355,12 @@ namespace EmbroideryCreator
         {
             Bitmap colorReducedImage = ImageTransformations.ReduceNumberOfColors(pixelatedImage, numberOfColors, numberOfIterations, 
                                                                                 out colorMeans, out positionsOfEachColor, out matrixOfNewColors);
+            return colorReducedImage;
+        }
+
+        private Bitmap SetColorsWithoutReducingNumberOfColors(Bitmap pixelatedImage, int numberOfIterations = 10)
+        {
+            Bitmap colorReducedImage = ImageTransformations.SetColorsWithoutReducingNumberOfColors(pixelatedImage, out colorMeans, out positionsOfEachColor, out matrixOfNewColors);
             return colorReducedImage;
         }
 
@@ -528,11 +540,19 @@ namespace EmbroideryCreator
             }
         }
 
-        public void ProcessImageInSeparateLayers()
+        public void ProcessImageInSeparateLayers(bool exactToSource = false)
         {
             Bitmap processedImage = originalImage;
-            processedImage = PixelateImage(processedImage);
-            processedImage = ReduceNumberOfColors(processedImage);
+            if (!exactToSource)
+            {
+                processedImage = PixelateImage(processedImage);
+                processedImage = ReduceNumberOfColors(processedImage);
+            }
+            else
+            {
+                processedImage = PixelateImageExactlyAccordingToOriginal(processedImage);
+                processedImage = SetColorsWithoutReducingNumberOfColors(processedImage);
+            }
             //processedImage = AddGridResizingImage(processedImage);
             //processedImage = AddBorderIncreasingSizeOfOriginalImageByAddingPadding(processedImage);
             int reducedNumberOfColorsWidth = processedImage.Width;

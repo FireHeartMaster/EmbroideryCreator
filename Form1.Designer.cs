@@ -77,8 +77,9 @@ namespace EmbroideryCreator
             this.imagesContainerPanel = new System.Windows.Forms.Panel();
             this.removeAlonePixelsButton = new System.Windows.Forms.Button();
             this.removeAlonePixelsTrackBar = new System.Windows.Forms.TrackBar();
-            this.drawingToolsControl = new EmbroideryCreator.DrawingToolsControl();
             this.removeAlonePixelsLabel = new System.Windows.Forms.Label();
+            this.drawingToolsControl = new EmbroideryCreator.DrawingToolsControl();
+            this.processImageExactToSourceCheckBox = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.widthSizeTrackBar)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numberOfColorsTrackBar)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numberOfIterationsTrackBar)).BeginInit();
@@ -497,8 +498,6 @@ namespace EmbroideryCreator
             // threadImageVisibleCheckBox
             // 
             this.threadImageVisibleCheckBox.AutoSize = true;
-            this.threadImageVisibleCheckBox.Checked = true;
-            this.threadImageVisibleCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
             this.threadImageVisibleCheckBox.Location = new System.Drawing.Point(215, 374);
             this.threadImageVisibleCheckBox.Name = "threadImageVisibleCheckBox";
             this.threadImageVisibleCheckBox.Size = new System.Drawing.Size(60, 17);
@@ -517,6 +516,7 @@ namespace EmbroideryCreator
             this.threadPictureBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.threadPictureBox.TabIndex = 37;
             this.threadPictureBox.TabStop = false;
+            this.threadPictureBox.Visible = false;
             // 
             // symbolsPictureBox
             // 
@@ -528,12 +528,11 @@ namespace EmbroideryCreator
             this.symbolsPictureBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.symbolsPictureBox.TabIndex = 38;
             this.symbolsPictureBox.TabStop = false;
+            this.symbolsPictureBox.Visible = false;
             // 
             // symbolsVisibleCheckBox
             // 
             this.symbolsVisibleCheckBox.AutoSize = true;
-            this.symbolsVisibleCheckBox.Checked = true;
-            this.symbolsVisibleCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
             this.symbolsVisibleCheckBox.Location = new System.Drawing.Point(215, 397);
             this.symbolsVisibleCheckBox.Name = "symbolsVisibleCheckBox";
             this.symbolsVisibleCheckBox.Size = new System.Drawing.Size(65, 17);
@@ -576,15 +575,6 @@ namespace EmbroideryCreator
             this.removeAlonePixelsTrackBar.Value = 1;
             this.removeAlonePixelsTrackBar.Scroll += new System.EventHandler(this.removeAlonePixelsTrackBar_Scroll);
             // 
-            // drawingToolsControl
-            // 
-            this.drawingToolsControl.BackColor = System.Drawing.SystemColors.ActiveBorder;
-            this.drawingToolsControl.Location = new System.Drawing.Point(848, 13);
-            this.drawingToolsControl.Name = "drawingToolsControl";
-            this.drawingToolsControl.Padding = new System.Windows.Forms.Padding(3);
-            this.drawingToolsControl.Size = new System.Drawing.Size(171, 45);
-            this.drawingToolsControl.TabIndex = 18;
-            // 
             // removeAlonePixelsLabel
             // 
             this.removeAlonePixelsLabel.AutoSize = true;
@@ -595,11 +585,31 @@ namespace EmbroideryCreator
             this.removeAlonePixelsLabel.TabIndex = 43;
             this.removeAlonePixelsLabel.Text = "1";
             // 
+            // drawingToolsControl
+            // 
+            this.drawingToolsControl.BackColor = System.Drawing.SystemColors.ActiveBorder;
+            this.drawingToolsControl.Location = new System.Drawing.Point(848, 13);
+            this.drawingToolsControl.Name = "drawingToolsControl";
+            this.drawingToolsControl.Padding = new System.Windows.Forms.Padding(3);
+            this.drawingToolsControl.Size = new System.Drawing.Size(171, 45);
+            this.drawingToolsControl.TabIndex = 18;
+            // 
+            // processImageExactToSourceCheckBox
+            // 
+            this.processImageExactToSourceCheckBox.AutoSize = true;
+            this.processImageExactToSourceCheckBox.Location = new System.Drawing.Point(158, 547);
+            this.processImageExactToSourceCheckBox.Name = "processImageExactToSourceCheckBox";
+            this.processImageExactToSourceCheckBox.Size = new System.Drawing.Size(106, 17);
+            this.processImageExactToSourceCheckBox.TabIndex = 44;
+            this.processImageExactToSourceCheckBox.Text = "Exact To Source";
+            this.processImageExactToSourceCheckBox.UseVisualStyleBackColor = true;
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1153, 579);
+            this.Controls.Add(this.processImageExactToSourceCheckBox);
             this.Controls.Add(this.removeAlonePixelsLabel);
             this.Controls.Add(this.removeAlonePixelsTrackBar);
             this.Controls.Add(this.removeAlonePixelsButton);
@@ -713,6 +723,7 @@ namespace EmbroideryCreator
         private System.Windows.Forms.Button removeAlonePixelsButton;
         private System.Windows.Forms.TrackBar removeAlonePixelsTrackBar;
         private System.Windows.Forms.Label removeAlonePixelsLabel;
+        private System.Windows.Forms.CheckBox processImageExactToSourceCheckBox;
     }
 }
 
