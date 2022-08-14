@@ -612,7 +612,11 @@ namespace EmbroideryCreator
 
                         lengthOfSubstring = filePathWithoutExtension.LastIndexOf(Path.DirectorySeparatorChar);
                         string title = filePathWithoutExtension.Substring(lengthOfSubstring + 1, filePathWithoutExtension.Length - lengthOfSubstring - 1);
-                        imageAndOperationsData.SavePdf(filePathWithoutExtension + ".pdf", title, "", "", "Octavius", "Octavius", "Visit our shop at octavius.shop");
+                        imageAndOperationsData.SavePdf(filePathWithoutExtension + ".pdf", Properties.Resources.PhinaliaLogo, title, "", "COLORED CROSS STITCH", "2022 | Phinalia", "Phinalia Library Collection",
+                            "Visit our website: ", "https://phinalia.com", "Join our community:", 
+                            new string[] { "https://facebook.com", "https://instagram.com", "https://youtube.com", "https://pinterest.com" }, 
+                            new Bitmap[] { Properties.Resources.FacebookLogo, Properties.Resources.InstagramLogo, Properties.Resources.YouTubeLogo, Properties.Resources.PinterestLogo }, 
+                            new string[] { "Facebook", "Instagram", "YouTube", "Pinterest" });
                     }
                 }
 

@@ -1121,6 +1121,16 @@ namespace EmbroideryCreator.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap CrossStitchSymbol {
+            get {
+                object obj = ResourceManager.GetObject("CrossStitchSymbol", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to number;name;r;g;b;hex
         ///3713;Salmon Very Light;255;226;226;ffe2e2
         ///761;Salmon Light;255;201;201;ffc9c9
@@ -1156,6 +1166,26 @@ namespace EmbroideryCreator.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap FacebookLogo {
+            get {
+                object obj = ResourceManager.GetObject("FacebookLogo", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap InstagramLogo {
+            get {
+                object obj = ResourceManager.GetObject("InstagramLogo", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap MoveIcon {
             get {
                 object obj = ResourceManager.GetObject("MoveIcon", resourceCulture);
@@ -1176,6 +1206,26 @@ namespace EmbroideryCreator.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap PhinaliaLogo {
+            get {
+                object obj = ResourceManager.GetObject("PhinaliaLogo", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap PinterestLogo {
+            get {
+                object obj = ResourceManager.GetObject("PinterestLogo", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap SelectedToolIcon {
             get {
                 object obj = ResourceManager.GetObject("SelectedToolIcon", resourceCulture);
@@ -1189,6 +1239,16 @@ namespace EmbroideryCreator.Properties {
         internal static System.Drawing.Bitmap ThreadCross {
             get {
                 object obj = ResourceManager.GetObject("ThreadCross", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap YouTubeLogo {
+            get {
+                object obj = ResourceManager.GetObject("YouTubeLogo", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

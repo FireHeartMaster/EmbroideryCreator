@@ -975,9 +975,9 @@ namespace EmbroideryCreator
             }
         }
 
-        public void SavePdf(string pathToSave, string title, string secondTitle, string subtitle, string leftText, string rightText, string footerText)
+        public void SavePdf(string pathToSave, Bitmap topLogo, string title, string secondTitle, string subtitle, string leftText, string rightText, string footerText, string footerLink, string secondFooterText, string[] socialMediaLinks, Bitmap[] socialMediaImages, string[] socialMediaNames)
         {
-            PdfManager pdfManager = new PdfManager(title, secondTitle, subtitle, leftText, rightText, footerText);
+            PdfManager pdfManager = new PdfManager(topLogo, title, secondTitle, subtitle, leftText, rightText, footerText, footerLink, secondFooterText, socialMediaLinks, socialMediaImages, socialMediaNames);
             pdfManager.CreatePdfStitches(pathToSave, matrixOfNewColors, colorMeans, backstitchLines, backstitchColors, dictionaryOfSymbolByIndex);
         }
 

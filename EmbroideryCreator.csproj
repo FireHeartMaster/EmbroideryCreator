@@ -124,6 +124,7 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Resources\CrossStitchSymbol.png" />
     <Content Include="Resources\Icons\001.png" />
     <Content Include="Resources\Icons\002.png" />
     <Content Include="Resources\Icons\003.png" />
@@ -228,6 +229,11 @@
     <Content Include="Resources\Icons\102.png" />
     <Content Include="Resources\Icons\103.png" />
     <Content Include="Resources\Icons\104.png" />
+    <None Include="Resources\PhinaliaLogo.png" />
+    <None Include="Resources\SocialMedia\YouTubeLogo.png" />
+    <None Include="Resources\SocialMedia\PinterestLogo.png" />
+    <None Include="Resources\SocialMedia\InstagramLogo.png" />
+    <None Include="Resources\SocialMedia\FacebookLogo.png" />
     <None Include="Resources\MoveIcon.png" />
     <None Include="Resources\DmcTable.csv" />
     <None Include="Resources\ThreadCross.png" />

@@ -12,20 +12,28 @@ namespace EmbroideryCreator
 {
     public class PdfManager
     {
-        private XSolidBrush pageSetupBrush = XBrushes.DarkBlue;
+        private XSolidBrush pageSetupBrush = new XSolidBrush(XColor.FromArgb(34, 62, 64));
         private XSolidBrush arrowBrush = XBrushes.DarkBlue;
 
+        private XImage topLogo;
         private string title = "Title";
         private string secondTitle = "Second Title";
         private string subtitle = "Subtitle";
         private string leftText = "Left Text";
         private string rightText = "Right Text";
         private string footerText = "Footer Text";
+        private string footerLink = "https://phinalia.com";
+        private string secondFooterText = "Second Footer Text";
+        private string[] socialMediaLinks;
+        private XImage[] socialMediaImages;
+        private string[] socialMediaNames;
+        private XImage crossStitchSymbol;
 
-        private XFont titleFont = new XFont("Verdana", 20, XFontStyle.Regular);
-        private XFont subtitleFont = new XFont("Verdana", 10, XFontStyle.Regular);
-        private XFont footerFont = new XFont("Verdana", 5, XFontStyle.Regular);
-        private XFont sideTextFont = new XFont("Verdana", 5, XFontStyle.Regular);
+        private XFont titleFont = new XFont("Amicale", 16.6, XFontStyle.Bold);
+        private XFont subtitleFont = new XFont("Amicale", 8.3, XFontStyle.Bold);
+        private XFont footerFont = new XFont("Amicale", 11.4, XFontStyle.Bold);
+        private XFont socialMediaFont = new XFont("Alike", 8.3, XFontStyle.Regular);
+        private XFont sideTextFont = new XFont("Verdana", 6.6, XFontStyle.Regular);
 
         private XFont pageNumberFont = new XFont("Verdana", 12, XFontStyle.Regular);
 
@@ -35,11 +43,11 @@ namespace EmbroideryCreator
 
 
 
-        private XPoint startingPointForDrawings = new XPoint(50, 120);
+        private XPoint startingPointForDrawings = new XPoint(50, 210);
         private double sizeOfEachSquare = 8;
 
         private readonly int maxHorizontalNumberOfSquares = 56;
-        private readonly int maxVerticalNumberOfSquares = 85;
+        private readonly int maxVerticalNumberOfSquares = 61;
 
         //private readonly XPen gridPen = new XPen(XColors.Gray, 0.5);
         //private readonly XPen thickGridPen = new XPen(XColors.Black, 1);
@@ -58,14 +66,26 @@ namespace EmbroideryCreator
             //thickGridPen.LineCap = XLineCap.Round;
         }
 
-        public PdfManager(string title, string secondTitle, string subtitle, string leftText, string rightText, string footerText)
+        public PdfManager(Bitmap topLogo, string title, string secondTitle, string subtitle, string leftText, string rightText, string footerText, string footerLink, string secondFooterText, string[] socialMediaLinks, Bitmap[] socialMediaImages, string[] socialMediaNames)
         {
+            this.topLogo = ConvertBitmapToXimage(topLogo);
+
             this.title = title;
             this.secondTitle = secondTitle;
             this.subtitle = subtitle;
             this.leftText = leftText;
             this.rightText = rightText;
             this.footerText = footerText;
+            this.footerLink = footerLink;
+            this.secondFooterText = secondFooterText;
+            this.socialMediaLinks = socialMediaLinks;
+            this.socialMediaImages = new XImage[socialMediaImages.Length];
+            for (int i = 0; i < socialMediaImages.Length; i++)
+            {                
+                this.socialMediaImages[i] = ConvertBitmapToXimage(socialMediaImages[i]);
+            }
+            this.socialMediaNames = socialMediaNames;
+            this.crossStitchSymbol = ConvertBitmapToXimage(Properties.Resources.CrossStitchSymbol);
 
             //gridPen.LineCap = XLineCap.Round;
             //thickGridPen.LineCap = XLineCap.Round;
@@ -114,13 +134,13 @@ namespace EmbroideryCreator
         {
             PdfDocument document = new PdfDocument();
 
-            document.Info.Title = "Eduardo testando PDF";
+            document.Info.Title = title;
 
             Dictionary<int, XImage> dictionaryOfXimageByIndex = new Dictionary<int, XImage>();
 
             foreach (KeyValuePair<int, Bitmap> pair in dictionaryOfSymbolByColor)
             {
-                dictionaryOfXimageByIndex.Add(pair.Key, ConvertBitmapToXimage(pair.Value));
+                dictionaryOfXimageByIndex.Add(pair.Key, PdfManager.ConvertBitmapToXimage(pair.Value));
             }
 
             CreateFirstPage(document, matrixOfNewColors, colorMeans, backstitchLines, backstitchColors, dictionaryOfXimageByIndex);
@@ -156,6 +176,7 @@ namespace EmbroideryCreator
             ImageTransformations.RescaleImage(matrixOfNewColors.GetLength(0), matrixOfNewColors.GetLength(1), maxWidth, maxHeight, out double newWidth, out double newHeight);
 
             double firstPageSizeOfEachSquare = newWidth / matrixOfNewColors.GetLength(0);
+            //double firstPageSizeOfEachSquare = sizeOfEachSquare;
 
             XPoint startingPoint = new XPoint((currentPage.Width - newWidth) * 0.5, startingPointForDrawings.Y);
 
@@ -163,31 +184,33 @@ namespace EmbroideryCreator
             {
                 for (int x = 0; x < matrixOfNewColors.GetLength(0); x++)
                 {
-                    DrawStitchAtPosition(pageGraphics, matrixOfNewColors, colorMeans, x, y, x, y, startingPoint, firstPageSizeOfEachSquare, dictionaryOfXimageByIndex, true);
+                    DrawStitchAtPosition(pageGraphics, matrixOfNewColors, colorMeans, x, y, x, y, startingPoint, firstPageSizeOfEachSquare, dictionaryOfXimageByIndex, true, false);
 
                     //top numbers
                     if(y == 0 && x % 10 == 0 && x != 0)
                     {
-                        WriteGridNumber(pageGraphics, firstPageSizeOfEachSquare, x, startingPoint.X + x * firstPageSizeOfEachSquare, startingPoint.Y, true, 0);
+                        WriteGridNumber(pageGraphics, /*firstPageSizeOfEachSquare*/sizeOfEachSquare, x, startingPoint.X + x * firstPageSizeOfEachSquare, startingPoint.Y, true, 0);
                     }
                     //bottom numbers
                     if (y == matrixOfNewColors.GetLength(1) - 1 && x % 10 == 0 && x != 0)
                     {
-                        WriteGridNumber(pageGraphics, firstPageSizeOfEachSquare, x, startingPoint.X + x * firstPageSizeOfEachSquare, startingPoint.Y + matrixOfNewColors.GetLength(1) * firstPageSizeOfEachSquare, false, 0);
+                        WriteGridNumber(pageGraphics, /*firstPageSizeOfEachSquare*/sizeOfEachSquare, x, startingPoint.X + x * firstPageSizeOfEachSquare, startingPoint.Y + matrixOfNewColors.GetLength(1) * firstPageSizeOfEachSquare, false, 0);
                     }
                     //left numbers
                     if (x == 0 && y % 10 == 0 && y != 0)
                     {
-                        WriteGridNumber(pageGraphics, firstPageSizeOfEachSquare, y, startingPoint.X, startingPoint.Y + y * firstPageSizeOfEachSquare, true, -90);
+                        WriteGridNumber(pageGraphics, /*firstPageSizeOfEachSquare*/sizeOfEachSquare, y, startingPoint.X, startingPoint.Y + y * firstPageSizeOfEachSquare, true, -90);
                     }
                     //right numbers
                     if (x == matrixOfNewColors.GetLength(0) - 1 && y % 10 == 0 && y != 0)
                     {
-                        WriteGridNumber(pageGraphics, firstPageSizeOfEachSquare, y, startingPoint.X + matrixOfNewColors.GetLength(0) * firstPageSizeOfEachSquare, startingPoint.Y + y * firstPageSizeOfEachSquare, false, -90);
+                        WriteGridNumber(pageGraphics, /*firstPageSizeOfEachSquare*/sizeOfEachSquare, y, startingPoint.X + matrixOfNewColors.GetLength(0) * firstPageSizeOfEachSquare, startingPoint.Y + y * firstPageSizeOfEachSquare, false, -90);
                     }
 
                     double distanceFactorFromGrid = 2;
-                    if(y == 0 && x == (int)(matrixOfNewColors.GetLength(0) * 0.5))
+                    //double sizeFactor = firstPageSizeOfEachSquare / sizeOfEachSquare;
+                    double sizeFactor = 1.0;
+                    if (y == 0 && x == (int)(matrixOfNewColors.GetLength(0) * 0.5))
                     {                   
                         //top arrow
                         DrawArrowAtPositionWithScale(   pageGraphics,
@@ -195,16 +218,16 @@ namespace EmbroideryCreator
                                                         0, 
                                                         0, 
                                                         startingPoint.X + x * firstPageSizeOfEachSquare, 
-                                                        startingPoint.Y - distanceFactorFromGrid * firstPageSizeOfEachSquare, 
-                                                        firstPageSizeOfEachSquare / sizeOfEachSquare);
+                                                        startingPoint.Y - distanceFactorFromGrid * /*firstPageSizeOfEachSquare*/sizeOfEachSquare,
+                                                        sizeFactor);
                         //bottom arrow
                         DrawArrowAtPositionWithScale(   pageGraphics,
                                                         matrixOfNewColors.GetLength(0) % 2 == 0 ? 0 : (0.5 * firstPageSizeOfEachSquare), 
                                                         0, 
                                                         180, 
                                                         startingPoint.X + x * firstPageSizeOfEachSquare, 
-                                                        startingPoint.Y + distanceFactorFromGrid * firstPageSizeOfEachSquare + matrixOfNewColors.GetLength(1) * firstPageSizeOfEachSquare, 
-                                                        firstPageSizeOfEachSquare / sizeOfEachSquare);
+                                                        startingPoint.Y + distanceFactorFromGrid * /*firstPageSizeOfEachSquare*/sizeOfEachSquare + matrixOfNewColors.GetLength(1) * firstPageSizeOfEachSquare,
+                                                        sizeFactor);
                     }
 
                     if (y == (int)(matrixOfNewColors.GetLength(1) * 0.5) && x == 0)
@@ -214,17 +237,17 @@ namespace EmbroideryCreator
                                                         0,
                                                         matrixOfNewColors.GetLength(1) % 2 == 0 ? 0 : (0.5 * firstPageSizeOfEachSquare),
                                                         -90,
-                                                        startingPoint.X - distanceFactorFromGrid * firstPageSizeOfEachSquare,
+                                                        startingPoint.X - distanceFactorFromGrid * /*firstPageSizeOfEachSquare*/sizeOfEachSquare,
                                                         startingPoint.Y + y * firstPageSizeOfEachSquare,
-                                                        firstPageSizeOfEachSquare / sizeOfEachSquare);
+                                                        sizeFactor);
                         //right arrow
                         DrawArrowAtPositionWithScale(   pageGraphics,
                                                         0,
                                                         matrixOfNewColors.GetLength(1) % 2 == 0 ? 0 : (0.5 * firstPageSizeOfEachSquare),
                                                         90,
-                                                        startingPoint.X + distanceFactorFromGrid * firstPageSizeOfEachSquare + matrixOfNewColors.GetLength(0) * firstPageSizeOfEachSquare,
+                                                        startingPoint.X + distanceFactorFromGrid * /*firstPageSizeOfEachSquare*/sizeOfEachSquare + matrixOfNewColors.GetLength(0) * firstPageSizeOfEachSquare,
                                                         startingPoint.Y + y * firstPageSizeOfEachSquare,
-                                                        firstPageSizeOfEachSquare / sizeOfEachSquare);
+                                                        sizeFactor);
                     }
 
                     if (y == matrixOfNewColors.GetLength(1) - 1)
@@ -289,17 +312,23 @@ namespace EmbroideryCreator
         {
             //XGraphics pageGraphics = XGraphics.FromPdfPage(page);
 
+            //Drawing lines
+            XPen pen = GetRoundedPenFromColorAndThickness(pageSetupBrush.Color, 1.0);
+            pageGraphics.DrawLine(pen, page.Width * 0.05, page.Height * 0.13, page.Width * 0.95, page.Height * 0.13);
+            pageGraphics.DrawLine(pen, page.Width * 0.05, page.Height * 0.88, page.Width * 0.95, page.Height * 0.88);
+
+            //Top logo
+            double topLogoSquareSize = 200;
+            XRect topLogoRect = new XRect((page.Width - topLogoSquareSize) * 0.5, page.Height * 0.1f - 0.55 * topLogoSquareSize, topLogoSquareSize, topLogoSquareSize);
+            pageGraphics.DrawImage(topLogo, topLogoRect);
 
             //title
-            pageGraphics.DrawString(title, titleFont, pageSetupBrush, new XRect(0, 0, page.Width, page.Height * 0.1f), XStringFormats.Center);
+            pageGraphics.DrawString(title, titleFont, pageSetupBrush, new XRect(0, page.Height * 0.1557, page.Width, titleFont.Size), XStringFormats.Center);
             //second title
-            pageGraphics.DrawString(secondTitle, titleFont, pageSetupBrush, new XRect(0, 25, page.Width, page.Height * 0.1f), XStringFormats.Center);
+            pageGraphics.DrawString(secondTitle, titleFont, pageSetupBrush, new XRect(0, page.Height * 0.1557 + titleFont.Size, page.Width, titleFont.Size), XStringFormats.Center);
 
             //subtitle
-            pageGraphics.DrawString(subtitle, subtitleFont, pageSetupBrush, new XRect(0, 50, page.Width, page.Height * 0.1f), XStringFormats.Center);
-
-            //bottom
-            pageGraphics.DrawString(footerText, footerFont, pageSetupBrush, new XRect(0, page.Height * 0.95f, page.Width, page.Height * 0.05f), XStringFormats.Center);
+            pageGraphics.DrawString(subtitle, subtitleFont, pageSetupBrush, new XRect(0, page.Height * 0.186, page.Width, subtitleFont.Size), XStringFormats.Center);
 
             //left text
             pageGraphics.RotateAtTransform(-90, new XPoint(page.Width * 0.5f, page.Height * 0.5f));
@@ -310,6 +339,54 @@ namespace EmbroideryCreator
             pageGraphics.RotateAtTransform(90, new XPoint(page.Width * 0.5f, page.Height * 0.5f));
             pageGraphics.DrawString(rightText, sideTextFont, pageSetupBrush, new XRect(0, 0, page.Width, page.Height * 0.33f), XStringFormats.Center);
             pageGraphics.RotateAtTransform(-90, new XPoint(page.Width * 0.5f, page.Height * 0.5f));
+
+            //bottom
+            PrepareFooterOfPage(page, pageGraphics);
+        }
+
+        private void PrepareFooterOfPage(PdfPage page, XGraphics pageGraphics)
+        {
+            //pageGraphics.DrawString(footerText, footerFont, pageSetupBrush, new XRect(0, page.Height * 0.95f, page.Width, page.Height * 0.05f), XStringFormats.Center);
+            double totalFooterWidth = (footerText.Length + footerLink.Length) * footerFont.Size * 0.5;
+
+            double bottomY = page.Height * 0.88f;
+            XRect footerTextRect = new XRect((page.Width - totalFooterWidth) * 0.5, bottomY, page.Width, page.Height * 0.05f);
+            pageGraphics.DrawString(footerText, footerFont, pageSetupBrush, footerTextRect, XStringFormats.CenterLeft);
+
+            XRect footerLinkRect = new XRect((page.Width - totalFooterWidth) * 0.5 + footerText.Length * footerFont.Size * 0.5, footerTextRect.Y, /*page.Width*/footerLink.Length * footerFont.Size * 0.5, page.Height * 0.05f);
+            pageGraphics.DrawString(footerLink, footerFont, pageSetupBrush, footerLinkRect, XStringFormats.CenterLeft);
+
+            PdfRectangle linkRect = new PdfRectangle(pageGraphics.Transformer.WorldToDefaultPage(footerLinkRect));
+            page.AddWebLink(linkRect, footerLink);
+
+            double verticalPadding = footerFont.Size * 0.5;
+            XRect secondFooterRect = new XRect(0, footerTextRect.Y + footerFont.Size + verticalPadding, page.Width, page.Height * 0.05f);
+            pageGraphics.DrawString(secondFooterText, footerFont, pageSetupBrush, secondFooterRect, XStringFormats.Center);
+
+            double socialMediaIconSquareSize = socialMediaFont.Size * 2.4;
+            double socialMediaY = secondFooterRect.Y + secondFooterRect.Height/* + verticalPadding*/ - socialMediaFont.Size * 0.5;
+            double totalLengthOfSocialMediaNames = 0;
+            for (int i = 0; i < socialMediaLinks.Length; i++)
+            {
+                totalLengthOfSocialMediaNames += socialMediaNames[i].Length;
+            }
+            double horizontalPadding = socialMediaFont.Size;
+            double socialMediaX = (page.Width - (socialMediaLinks.Length * socialMediaIconSquareSize + totalLengthOfSocialMediaNames * socialMediaFont.Size * 0.5 + horizontalPadding * (3 * socialMediaLinks.Length - 1))) * 0.5;
+
+            for (int i = 0; i < socialMediaLinks.Length; i++)
+            {
+                XRect socialMediaLogoRect = new XRect(socialMediaX, socialMediaY, socialMediaIconSquareSize, socialMediaIconSquareSize);
+                pageGraphics.DrawImage(socialMediaImages[i], socialMediaLogoRect);
+
+                XRect socialMediaNameRect = new XRect(socialMediaX + socialMediaIconSquareSize + horizontalPadding, socialMediaY, socialMediaNames[i].Length * socialMediaFont.Size * 0.5, socialMediaIconSquareSize);
+                pageGraphics.DrawString(socialMediaNames[i], socialMediaFont, pageSetupBrush, socialMediaNameRect, XStringFormats.Center);
+
+                XRect socialMediaLinkRect = new XRect(socialMediaX, socialMediaY, socialMediaLogoRect.Width + socialMediaNameRect.Width, socialMediaIconSquareSize);
+                PdfRectangle socialMediaLinkPdfRect = new PdfRectangle(pageGraphics.Transformer.WorldToDefaultPage(socialMediaLinkRect));
+                page.AddWebLink(socialMediaLinkPdfRect, socialMediaLinks[i]);
+
+                socialMediaX += socialMediaLogoRect.Width + horizontalPadding + socialMediaNameRect.Width + 2 * horizontalPadding;
+            }
         }
 
         private void CreateAllDrawingPages(PdfDocument document, int[,] matrixOfNewColors, List<Color> colorMeans, Dictionary<int, HashSet<BackstitchLine>> backstitchLines, Dictionary<int, Color> backstitchColors, Dictionary<int, XImage> dictionaryOfXimageByIndex)
@@ -347,8 +424,8 @@ namespace EmbroideryCreator
         {
             //throw new NotImplementedException();
 
-
-            double crossStitchListTitleHeight = 40;
+            double crossStitchListOriginalTitleHeight = 40;
+            double crossStitchListTitleHeight = isCrossStitchAndNotBackstitch ? 135 : crossStitchListOriginalTitleHeight;
             double crossStitchListHeaderHeight = 20;
             double crossStitchListRowHeight = 15;
             int numberOfColumns = 2;
@@ -378,8 +455,20 @@ namespace EmbroideryCreator
 
                 heightToStartList += crossStitchListHeaderHeight;
 
+                XRect titleRect = new XRect(startingPointForDrawings.X, startingHeight, listWidth + 3 * sizeOfEachSquare, isCrossStitchAndNotBackstitch ? crossStitchListOriginalTitleHeight : crossStitchListTitleHeight);
+                pageGraphics.DrawString(isCrossStitchAndNotBackstitch ? "Cross Stitch" : "Backstitch", listOfColorsTitleFont, pageSetupBrush, titleRect, XStringFormats.Center);
+                if (isCrossStitchAndNotBackstitch)
+                {
+                    double listOfColorsBorderThickness = thickGridPenThickness * 0.5;
+                    Color penColor = Color.FromArgb(pageSetupBrush.Color.R, pageSetupBrush.Color.G, pageSetupBrush.Color.B);
+                    XPen pen = GetRoundedPenFromColorAndThickness(penColor, listOfColorsBorderThickness);
+                    pageGraphics.DrawLine(pen, titleRect.X, titleRect.Y + titleRect.Height, titleRect.X + titleRect.Width, titleRect.Y + titleRect.Height);
 
-                pageGraphics.DrawString(isCrossStitchAndNotBackstitch ? "Cross Stitch" : "Backstitch", listOfColorsTitleFont, pageSetupBrush, new XRect(startingPointForDrawings.X, startingHeight, listWidth + 3 * sizeOfEachSquare, crossStitchListTitleHeight), XStringFormats.Center);
+                    double crossStitchSymbolWidth = titleRect.Width * 0.7;
+                    double crossStitchSymbolHeight = crossStitchSymbol.Height * (crossStitchSymbolWidth / crossStitchSymbol.Width);
+                    XRect crossStitchSymbolRect = new XRect(titleRect.X + (titleRect.Width - crossStitchSymbolWidth) * 0.5, titleRect.Y + crossStitchListOriginalTitleHeight + 0.05 * crossStitchSymbolHeight, crossStitchSymbolWidth, crossStitchSymbolHeight);
+                    pageGraphics.DrawImage(crossStitchSymbol, crossStitchSymbolRect);
+                }
 
                 int amountOfColorsInTheCurrentPage;
                 if (((totalAmountOfColors - indexOfTheFirstColorOfTheCurrentPage) / numberOfColumns) * crossStitchListRowHeight > (maxHeightToEndList - heightToStartList))
