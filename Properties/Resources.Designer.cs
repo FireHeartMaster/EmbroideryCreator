@@ -1226,6 +1226,16 @@ namespace EmbroideryCreator.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap RedThreadCross {
+            get {
+                object obj = ResourceManager.GetObject("RedThreadCross", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap SelectedToolIcon {
             get {
                 object obj = ResourceManager.GetObject("SelectedToolIcon", resourceCulture);

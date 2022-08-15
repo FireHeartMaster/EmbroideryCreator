@@ -383,6 +383,98 @@ namespace EmbroideryCreator
             return firstVector.Item1 * secondVector.Item1 + firstVector.Item2 * secondVector.Item2;
         }
 
+        public static float DotProduct(Tuple<float, float, float> firstVector, Tuple<float, float, float> secondVector)
+        {
+            return firstVector.Item1 * secondVector.Item1 + firstVector.Item2 * secondVector.Item2 + firstVector.Item3 * secondVector.Item3;
+        }
+
+        public static Tuple<float, float, float> CrossProduct(Tuple<float, float, float> firstVector, Tuple<float, float, float> secondVector)
+        {
+            float xResult = firstVector.Item2 * secondVector.Item3 - firstVector.Item3 * secondVector.Item2;
+            float yResult = firstVector.Item3 * secondVector.Item1 - firstVector.Item1 * secondVector.Item3;
+            float zResult = firstVector.Item1 * secondVector.Item2 - firstVector.Item2 * secondVector.Item1;
+
+            return new Tuple<float, float, float>(xResult, yResult, zResult);
+        }
+
+        public static float NormOfVector(Tuple<float, float, float> vector)
+        {
+            return (float)Math.Sqrt(vector.Item1 * vector.Item1 + vector.Item2 * vector.Item2 + vector.Item3 * vector.Item3);
+        }
+
+        public static float AngleBetweenVectors(Tuple<float, float, float> firstVector, Tuple<float, float, float> secondVector)
+        {
+            float dotProductResult = DotProduct(firstVector, secondVector);
+            float normFirstVector = NormOfVector(firstVector);
+            float normSecondVector = NormOfVector(secondVector);
+
+            float cosineOfAngle = dotProductResult / (normFirstVector * normSecondVector);
+
+            return (float)Math.Acos(cosineOfAngle);
+        }
+
+        public static Tuple<float, float, float> RotateVectorAroundAxis(Tuple<float, float, float> vectorToRotate, Tuple<float, float, float> referenceAxis, float angleInRadians)
+        {
+            float axisNorm = NormOfVector(referenceAxis);
+            Tuple<float, float, float> axisUnitVector = new Tuple<float, float, float>(referenceAxis.Item1 / axisNorm, referenceAxis.Item2 / axisNorm, referenceAxis.Item3 / axisNorm);
+
+            float cosineOfAngle = (float)Math.Cos(angleInRadians);
+            float sineOfAngle = (float)Math.Sin(angleInRadians);
+
+            float uX = axisUnitVector.Item1;
+            float uY = axisUnitVector.Item2;
+            float uZ = axisUnitVector.Item3;
+
+            float xResult = (cosineOfAngle + uX * uX * (1 - cosineOfAngle))     * vectorToRotate.Item1 +
+                            (uX * uY * (1 - cosineOfAngle) - uZ * sineOfAngle)  * vectorToRotate.Item2 +
+                            (uX * uZ * (1 - cosineOfAngle) + uY * sineOfAngle)  * vectorToRotate.Item3;
+
+            float yResult = (uY * uX * (1 - cosineOfAngle) + uZ * sineOfAngle)  * vectorToRotate.Item1 +
+                            (cosineOfAngle + uY * uY * (1 - cosineOfAngle))     * vectorToRotate.Item2 +
+                            (uY * uZ * (1 - cosineOfAngle) - uX * sineOfAngle)  * vectorToRotate.Item3;
+
+            float zResult = (uZ * uX * (1 - cosineOfAngle) - uY * sineOfAngle)  * vectorToRotate.Item1 +
+                            (uZ * uY * (1 - cosineOfAngle) + uX * sineOfAngle)  * vectorToRotate.Item2 +
+                            (cosineOfAngle + uZ * uZ * (1 - cosineOfAngle))     * vectorToRotate.Item3;
+
+            return new Tuple<float, float, float>(xResult, yResult, zResult);
+        }
+
+        public static Color TransformColor(Color baseColor, Color targetColor, Color colorToTransform)
+        {
+            Tuple<float, float, float> differenceVector = new Tuple<float, float, float>(colorToTransform.R - baseColor.R,
+                                                                                            colorToTransform.G - baseColor.G,
+                                                                                            colorToTransform.B - baseColor.B);
+            Tuple<float, float, float> baseVector = new Tuple<float, float, float>(baseColor.R, baseColor.G, baseColor.B);
+            Tuple<float, float, float> targetVector = new Tuple<float, float, float>(targetColor.R, targetColor.G, targetColor.B);
+
+            Tuple<float, float, float> axis = CrossProduct(baseVector, targetVector);
+
+            float angleBetweenBaseAndTarget = AngleBetweenVectors(baseVector, targetVector);
+
+            Tuple<float, float, float> rotatedDifferenceVector = RotateVectorAroundAxis(differenceVector, axis, angleBetweenBaseAndTarget);
+
+            Tuple<float, float, float> newVector = new Tuple<float, float, float>(targetVector.Item1 + rotatedDifferenceVector.Item1,
+                                                            targetVector.Item2 + rotatedDifferenceVector.Item2,
+                                                            targetVector.Item3 + rotatedDifferenceVector.Item3);
+            float newR = newVector.Item1;
+            float newG = newVector.Item2;
+            float newB = newVector.Item3;
+            
+            newR = NormalizeValueForColorLimits(newR);
+            newG = NormalizeValueForColorLimits(newG);
+            newB = NormalizeValueForColorLimits(newB);
+
+            return Color.FromArgb((int)newR, (int)newG, (int)newB);
+        }
+
+        private static float NormalizeValueForColorLimits(float newR)
+        {
+            if (newR < 0) newR = 0;
+            if (newR > 255) newR = 255;
+            return newR;
+        }
+
         public static bool TwoVectorsAreFacingSameDirection(Tuple<float, float> firstVector, Tuple<float, float> secondVector)
         {
             return DotProduct(firstVector, secondVector) >= 0;

@@ -14,16 +14,18 @@ namespace EmbroideryCreator
          * left diagonal: diagonal with upper part on the left side
          */
 
-        public void CreatePathAndDstFile(Dictionary<int, List<Tuple<int, int>>> positionsOfEachColor, int sizeOfEachPixel, int horizontalSize, int verticalSize)
+        public void CreatePathAndDstFile(string pathToSaveWithoutExtension, Dictionary<int, List<Tuple<int, int>>> positionsOfEachColor, int sizeOfEachPixel, int horizontalSize, int verticalSize)
         {
             LinkedList<Tuple<StitchType, Tuple<int, int>>> path = CreatePath(positionsOfEachColor, horizontalSize, verticalSize);
-            ConvertEmbroideryPathToDstFile(path, sizeOfEachPixel);
+            ConvertEmbroideryPathToDstFile(pathToSaveWithoutExtension, path, sizeOfEachPixel);
         }
 
 
-        private void ConvertEmbroideryPathToDstFile(LinkedList<Tuple<StitchType, Tuple<int, int>>> listOfStitches, int sizeOfEachPixel)
+        private void ConvertEmbroideryPathToDstFile(string pathToSaveWithoutExtension, LinkedList<Tuple<StitchType, Tuple<int, int>>> listOfStitches, int sizeOfEachPixel)
         {
             string filePath = "D:/Downloads/newFile.dst";
+            if (pathToSaveWithoutExtension != "") filePath = pathToSaveWithoutExtension + ".dst";
+
             using (FileStream fs = new FileStream(filePath, FileMode.Create, FileAccess.Write))
             {
                 using(BinaryWriter bw = new BinaryWriter(fs, new ASCIIEncoding()))

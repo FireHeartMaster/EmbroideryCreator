@@ -506,7 +506,7 @@ namespace EmbroideryCreator
             imageAndOperationsData.numberOfIterations = numberOfIterationsTrackBar.Value;
 
             //imageAndOperationsData.ProcessImage();
-            imageAndOperationsData.ProcessImageInSeparateLayers(processImageExactToSourceCheckBox.Checked);
+            imageAndOperationsData.ProcessImageInSeparateLayers(newPixelSizeTrackBar.Value, processImageExactToSourceCheckBox.Checked);
             //int newImageWidth = imageAndOperationsData.ResultingImage.Width;
             //int newImageHeight = imageAndOperationsData.ResultingImage.Height;
             mainPictureBox.Image = imageAndOperationsData.ResultingImage;/*ImageTransformations.ResizeBitmap(imageAndOperationsData.resultingImage, mainPictureBox.Width * 10);*/
@@ -598,16 +598,27 @@ namespace EmbroideryCreator
             {
                 //saveImageFileDialog.Filter = "Image files|*.bmp;*.jpg;*.jpeg;*.gif;*.png;*.tif|All files|*.*";
                 saveImageFileDialog.Filter = "Image files|*.png;*.jpg;*.jpeg;";
-
+                string filePathWithoutExtension = "";
 
                 if (saveImageFileDialog.ShowDialog() == DialogResult.OK)
                 {
-                    Bitmap imageToSave = CombineImagesWithVisibilityOfPictureBoxes(pictureBoxesByVisibilityOrder);
+                    Bitmap imageToSave;
+
+                    try
+                    {
+                        imageToSave = CombineImagesWithVisibilityOfPictureBoxes(pictureBoxesByVisibilityOrder);
+                    }catch(Exception exception)
+                    {
+                        newPixelSizeTrackBar.Value = 10;
+                        ProcessImage();
+                        imageToSave = CombineImagesWithVisibilityOfPictureBoxes(pictureBoxesByVisibilityOrder);
+                    }
+
                     imageToSave.Save(saveImageFileDialog.FileNames[0]);
                     if(saveImageFileDialog.FileNames[0].LastIndexOf(".") != -1)
                     {
                         int lengthOfSubstring = saveImageFileDialog.FileNames[0].LastIndexOf(".");
-                        string filePathWithoutExtension = saveImageFileDialog.FileNames[0].Substring(0, lengthOfSubstring);
+                        filePathWithoutExtension = saveImageFileDialog.FileNames[0].Substring(0, lengthOfSubstring);
                         imageAndOperationsData.SerializeData(filePathWithoutExtension + ".edu");
 
                         lengthOfSubstring = filePathWithoutExtension.LastIndexOf(Path.DirectorySeparatorChar);
@@ -620,7 +631,7 @@ namespace EmbroideryCreator
                     }
                 }
 
-                imageAndOperationsData.CreateMachinePath();
+                imageAndOperationsData.CreateMachinePath(filePathWithoutExtension);
             }
         }
 
@@ -966,6 +977,11 @@ namespace EmbroideryCreator
             {
                 ResizeControl(childControl, control.Size, oldControlSize);
             }
+        }
+
+        private void newPixelSizeTrackBar_Scroll(object sender, EventArgs e)
+        {
+            newPixelSizeTrackBarLabel.Text = newPixelSizeTrackBar.Value.ToString();
         }
     }
 

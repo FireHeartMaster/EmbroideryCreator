@@ -78,8 +78,11 @@ namespace EmbroideryCreator
             this.removeAlonePixelsButton = new System.Windows.Forms.Button();
             this.removeAlonePixelsTrackBar = new System.Windows.Forms.TrackBar();
             this.removeAlonePixelsLabel = new System.Windows.Forms.Label();
-            this.drawingToolsControl = new EmbroideryCreator.DrawingToolsControl();
             this.processImageExactToSourceCheckBox = new System.Windows.Forms.CheckBox();
+            this.newPixelSizeTrackBar = new System.Windows.Forms.TrackBar();
+            this.drawingToolsControl = new EmbroideryCreator.DrawingToolsControl();
+            this.newPixelSizeLabel = new System.Windows.Forms.Label();
+            this.newPixelSizeTrackBarLabel = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.widthSizeTrackBar)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numberOfColorsTrackBar)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numberOfIterationsTrackBar)).BeginInit();
@@ -92,11 +95,12 @@ namespace EmbroideryCreator
             ((System.ComponentModel.ISupportInitialize)(this.symbolsPictureBox)).BeginInit();
             this.imagesContainerPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.removeAlonePixelsTrackBar)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.newPixelSizeTrackBar)).BeginInit();
             this.SuspendLayout();
             // 
             // widthSizeTrackBar
             // 
-            this.widthSizeTrackBar.Location = new System.Drawing.Point(12, 119);
+            this.widthSizeTrackBar.Location = new System.Drawing.Point(12, 160);
             this.widthSizeTrackBar.Maximum = 300;
             this.widthSizeTrackBar.Minimum = 2;
             this.widthSizeTrackBar.Name = "widthSizeTrackBar";
@@ -107,7 +111,7 @@ namespace EmbroideryCreator
             // 
             // numberOfColorsTrackBar
             // 
-            this.numberOfColorsTrackBar.Location = new System.Drawing.Point(12, 220);
+            this.numberOfColorsTrackBar.Location = new System.Drawing.Point(8, 236);
             this.numberOfColorsTrackBar.Maximum = 50;
             this.numberOfColorsTrackBar.Minimum = 2;
             this.numberOfColorsTrackBar.Name = "numberOfColorsTrackBar";
@@ -140,7 +144,7 @@ namespace EmbroideryCreator
             // 
             this.widthSizeLabel.AutoSize = true;
             this.widthSizeLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 15F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.widthSizeLabel.Location = new System.Drawing.Point(12, 85);
+            this.widthSizeLabel.Location = new System.Drawing.Point(12, 119);
             this.widthSizeLabel.Name = "widthSizeLabel";
             this.widthSizeLabel.Size = new System.Drawing.Size(113, 25);
             this.widthSizeLabel.TabIndex = 5;
@@ -150,7 +154,7 @@ namespace EmbroideryCreator
             // 
             this.numberOfColorsLabel.AutoSize = true;
             this.numberOfColorsLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 15F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.numberOfColorsLabel.Location = new System.Drawing.Point(12, 192);
+            this.numberOfColorsLabel.Location = new System.Drawing.Point(12, 208);
             this.numberOfColorsLabel.Name = "numberOfColorsLabel";
             this.numberOfColorsLabel.Size = new System.Drawing.Size(175, 25);
             this.numberOfColorsLabel.TabIndex = 6;
@@ -174,7 +178,7 @@ namespace EmbroideryCreator
             // 
             this.numberOfColorsTrackBarLabel.AutoSize = true;
             this.numberOfColorsTrackBarLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 15F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.numberOfColorsTrackBarLabel.Location = new System.Drawing.Point(193, 192);
+            this.numberOfColorsTrackBarLabel.Location = new System.Drawing.Point(190, 208);
             this.numberOfColorsTrackBarLabel.Name = "numberOfColorsTrackBarLabel";
             this.numberOfColorsTrackBarLabel.Size = new System.Drawing.Size(34, 25);
             this.numberOfColorsTrackBarLabel.TabIndex = 8;
@@ -184,7 +188,7 @@ namespace EmbroideryCreator
             // 
             this.widthTrackBarLabel.AutoSize = true;
             this.widthTrackBarLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 15F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.widthTrackBarLabel.Location = new System.Drawing.Point(131, 85);
+            this.widthTrackBarLabel.Location = new System.Drawing.Point(128, 119);
             this.widthTrackBarLabel.Name = "widthTrackBarLabel";
             this.widthTrackBarLabel.Size = new System.Drawing.Size(45, 25);
             this.widthTrackBarLabel.TabIndex = 9;
@@ -585,15 +589,6 @@ namespace EmbroideryCreator
             this.removeAlonePixelsLabel.TabIndex = 43;
             this.removeAlonePixelsLabel.Text = "1";
             // 
-            // drawingToolsControl
-            // 
-            this.drawingToolsControl.BackColor = System.Drawing.SystemColors.ActiveBorder;
-            this.drawingToolsControl.Location = new System.Drawing.Point(848, 13);
-            this.drawingToolsControl.Name = "drawingToolsControl";
-            this.drawingToolsControl.Padding = new System.Windows.Forms.Padding(3);
-            this.drawingToolsControl.Size = new System.Drawing.Size(171, 45);
-            this.drawingToolsControl.TabIndex = 18;
-            // 
             // processImageExactToSourceCheckBox
             // 
             this.processImageExactToSourceCheckBox.AutoSize = true;
@@ -604,11 +599,54 @@ namespace EmbroideryCreator
             this.processImageExactToSourceCheckBox.Text = "Exact To Source";
             this.processImageExactToSourceCheckBox.UseVisualStyleBackColor = true;
             // 
+            // newPixelSizeTrackBar
+            // 
+            this.newPixelSizeTrackBar.Location = new System.Drawing.Point(17, 71);
+            this.newPixelSizeTrackBar.Maximum = 64;
+            this.newPixelSizeTrackBar.Minimum = 10;
+            this.newPixelSizeTrackBar.Name = "newPixelSizeTrackBar";
+            this.newPixelSizeTrackBar.Size = new System.Drawing.Size(135, 45);
+            this.newPixelSizeTrackBar.TabIndex = 45;
+            this.newPixelSizeTrackBar.Value = 10;
+            this.newPixelSizeTrackBar.Scroll += new System.EventHandler(this.newPixelSizeTrackBar_Scroll);
+            // 
+            // drawingToolsControl
+            // 
+            this.drawingToolsControl.BackColor = System.Drawing.SystemColors.ActiveBorder;
+            this.drawingToolsControl.Location = new System.Drawing.Point(848, 13);
+            this.drawingToolsControl.Name = "drawingToolsControl";
+            this.drawingToolsControl.Padding = new System.Windows.Forms.Padding(3);
+            this.drawingToolsControl.Size = new System.Drawing.Size(171, 45);
+            this.drawingToolsControl.TabIndex = 18;
+            // 
+            // newPixelSizeLabel
+            // 
+            this.newPixelSizeLabel.AutoSize = true;
+            this.newPixelSizeLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 15F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.newPixelSizeLabel.Location = new System.Drawing.Point(12, 43);
+            this.newPixelSizeLabel.Name = "newPixelSizeLabel";
+            this.newPixelSizeLabel.Size = new System.Drawing.Size(148, 25);
+            this.newPixelSizeLabel.TabIndex = 46;
+            this.newPixelSizeLabel.Text = "New Pixel Size:";
+            // 
+            // newPixelSizeTrackBarLabel
+            // 
+            this.newPixelSizeTrackBarLabel.AutoSize = true;
+            this.newPixelSizeTrackBarLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 15F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.newPixelSizeTrackBarLabel.Location = new System.Drawing.Point(159, 43);
+            this.newPixelSizeTrackBarLabel.Name = "newPixelSizeTrackBarLabel";
+            this.newPixelSizeTrackBarLabel.Size = new System.Drawing.Size(34, 25);
+            this.newPixelSizeTrackBarLabel.TabIndex = 47;
+            this.newPixelSizeTrackBarLabel.Text = "10";
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1153, 579);
+            this.Controls.Add(this.newPixelSizeTrackBarLabel);
+            this.Controls.Add(this.newPixelSizeLabel);
+            this.Controls.Add(this.newPixelSizeTrackBar);
             this.Controls.Add(this.processImageExactToSourceCheckBox);
             this.Controls.Add(this.removeAlonePixelsLabel);
             this.Controls.Add(this.removeAlonePixelsTrackBar);
@@ -666,6 +704,7 @@ namespace EmbroideryCreator
             ((System.ComponentModel.ISupportInitialize)(this.symbolsPictureBox)).EndInit();
             this.imagesContainerPanel.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.removeAlonePixelsTrackBar)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.newPixelSizeTrackBar)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -724,6 +763,9 @@ namespace EmbroideryCreator
         private System.Windows.Forms.TrackBar removeAlonePixelsTrackBar;
         private System.Windows.Forms.Label removeAlonePixelsLabel;
         private System.Windows.Forms.CheckBox processImageExactToSourceCheckBox;
+        private System.Windows.Forms.TrackBar newPixelSizeTrackBar;
+        private System.Windows.Forms.Label newPixelSizeLabel;
+        private System.Windows.Forms.Label newPixelSizeTrackBarLabel;
     }
 }
 

@@ -26,7 +26,7 @@ namespace EmbroideryCreator
         public int numberOfColors = 10;
         public int numberOfIterations = 10;
 
-        private int newPixelSize = 10;
+        private int newPixelSize = 32;
         
         private List<Color> colorMeans;
         private Dictionary<int, List<Tuple<int, int>>> positionsOfEachColor = new Dictionary<int, List<Tuple<int, int>>>();
@@ -226,34 +226,63 @@ namespace EmbroideryCreator
             }
         }
 
+        //private Bitmap GenerateCrossOfSelectedColor(Color color)
+        //{
+        //    //TODO: make a proper function for the generation of thread crosses
+        //    int alphaIntensity = 100;
+        //    Bitmap coloredCross = new Bitmap(Properties.Resources.ThreadCross);
+
+        //    using(Graphics graphics = Graphics.FromImage(coloredCross))
+        //    {
+        //        graphics.FillRectangle(new SolidBrush(Color.FromArgb(alphaIntensity, color)), 0, 0, coloredCross.Width, coloredCross.Height);
+        //    }
+
+        //    Color noColor = Color.FromArgb(0, 0, 0, 0);
+        //    for (int x = 0; x < coloredCross.Width; x++)
+        //    {
+        //        for (int y = 0; y < coloredCross.Height; y++)
+        //        {
+        //            if(Properties.Resources.ThreadCross.GetPixel(x, y).A == 0)
+        //            {
+        //                coloredCross.SetPixel(x, y, noColor);
+        //            }
+        //            else
+        //            {
+        //                coloredCross.SetPixel(x, y, Color.FromArgb(Properties.Resources.ThreadCross.GetPixel(x, y).A, coloredCross.GetPixel(x, y)));
+        //            }
+        //        }
+        //    }
+
+        //    return coloredCross;
+        //}
+
         private Bitmap GenerateCrossOfSelectedColor(Color color)
         {
-            //TODO: make a proper function for the generation of thread crosses
-            int alphaIntensity = 100;
-            Bitmap coloredCross = new Bitmap(Properties.Resources.ThreadCross);
-            
-            using(Graphics graphics = Graphics.FromImage(coloredCross))
-            {
-                graphics.FillRectangle(new SolidBrush(Color.FromArgb(alphaIntensity, color)), 0, 0, coloredCross.Width, coloredCross.Height);
-            }
+            Bitmap redColoredCross = new Bitmap(Properties.Resources.RedThreadCross);
+
+            Color baseColor = Color.FromArgb(72, 4, 9);
+            //Color baseColor = redColoredCross.GetPixel((int)(redColoredCross.Width * 0.5), (int)(redColoredCross.Height * 0.5));
+
+            Bitmap newColoredCross = new Bitmap(redColoredCross.Width, redColoredCross.Height);
 
             Color noColor = Color.FromArgb(0, 0, 0, 0);
-            for (int x = 0; x < coloredCross.Width; x++)
+            for (int x = 0; x < newColoredCross.Width; x++)
             {
-                for (int y = 0; y < coloredCross.Height; y++)
+                for (int y = 0; y < newColoredCross.Height; y++)
                 {
-                    if(Properties.Resources.ThreadCross.GetPixel(x, y).A == 0)
+                    if (redColoredCross.GetPixel(x, y).A == 0)
                     {
-                        coloredCross.SetPixel(x, y, noColor);
+                        newColoredCross.SetPixel(x, y, noColor);
                     }
                     else
                     {
-                        coloredCross.SetPixel(x, y, Color.FromArgb(Properties.Resources.ThreadCross.GetPixel(x, y).A, coloredCross.GetPixel(x, y)));
+                        Color transformedColor = ImageTransformations.TransformColor(baseColor, color, redColoredCross.GetPixel(x, y));
+                        newColoredCross.SetPixel(x, y, Color.FromArgb(redColoredCross.GetPixel(x, y).A, transformedColor));
                     }
                 }
             }
-            
-            return coloredCross;
+
+            return newColoredCross;
         }
 
         private Bitmap GetNextSymbol()
@@ -540,8 +569,10 @@ namespace EmbroideryCreator
             }
         }
 
-        public void ProcessImageInSeparateLayers(bool exactToSource = false)
+        public void ProcessImageInSeparateLayers(int newPixelSize = 10, bool exactToSource = false)
         {
+            this.newPixelSize = newPixelSize;
+
             Bitmap processedImage = originalImage;
             if (!exactToSource)
             {
@@ -564,6 +595,9 @@ namespace EmbroideryCreator
             //BorderImage = AddPaddingToImage(new Bitmap(processedImage.Width, processedImage.Height));
             GridImage = AddPaddingToImage(GridImage);
             ResultingImage = AddPaddingToImage(processedImage);
+
+            dictionaryOfColoredCrossByIndex.Clear();
+            dictionaryOfSymbolByIndex.Clear();
 
             RepaintMainImage(false, true, true);  //Setting thread image and symbols image
 
@@ -981,7 +1015,7 @@ namespace EmbroideryCreator
             pdfManager.CreatePdfStitches(pathToSave, matrixOfNewColors, colorMeans, backstitchLines, backstitchColors, dictionaryOfSymbolByIndex);
         }
 
-        public void CreateMachinePath()
+        public void CreateMachinePath(string pathToSaveWithoutExtension)
         {
             MachineEmbroidery machineEmbroidery = new MachineEmbroidery();
             //machineEmbroidery.CreatePath(positionsOfEachColor);
@@ -1005,7 +1039,7 @@ namespace EmbroideryCreator
 
             //}
 
-            machineEmbroidery.CreatePathAndDstFile(positionsOfEachColorToEmbroider, 30, matrixOfNewColors.GetLength(0), matrixOfNewColors.GetLength(1));
+            machineEmbroidery.CreatePathAndDstFile(pathToSaveWithoutExtension, positionsOfEachColorToEmbroider, 30, matrixOfNewColors.GetLength(0), matrixOfNewColors.GetLength(1));
         }
     }
 
