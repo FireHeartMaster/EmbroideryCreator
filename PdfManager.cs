@@ -12,6 +12,11 @@ namespace EmbroideryCreator
 {
     public class PdfManager
     {
+        List<PdfPage> allPages = new List<PdfPage>();
+        private List<XGraphics> graphicsOfAllPages = new List<XGraphics>();
+        private XSolidBrush pageCountBrush = new XSolidBrush(XColor.FromArgb(34, 62, 64));/*new XSolidBrush(XColor.FromArgb(105, 105, 105));*/
+        private XFont pageCountFont = new XFont("Agency FB", 14, XFontStyle.Regular);
+
         private XSolidBrush pageSetupBrush = new XSolidBrush(XColor.FromArgb(34, 62, 64));
         private XSolidBrush arrowBrush = XBrushes.DarkBlue;
 
@@ -100,8 +105,10 @@ namespace EmbroideryCreator
             foreach(var image in images)
             {
                 PdfPage page = document.AddPage();
+                allPages.Add(page);
 
                 XGraphics pageGraphics = XGraphics.FromPdfPage(page);
+                graphicsOfAllPages.Add(pageGraphics);
                 PreparePage(page, pageGraphics);
 
                 MemoryStream stream = new MemoryStream();
@@ -150,6 +157,16 @@ namespace EmbroideryCreator
             //CreatePagesWithListsOfColors(document, colorMeans, backstitchColors, dictionaryOfXimageByIndex);
             CreatePagesWithListsOfColors(document, colorMeans, backstitchColors, dictionaryOfXimageByIndex, true);
 
+            
+            for (int i = 0; i < graphicsOfAllPages.Count; i++)
+            {
+                //graphicsOfAllPages
+                double xFactorPosition = 0.9;
+                double yFactorPosition = 0.92;
+                XRect pageCountRect = new XRect(xFactorPosition * allPages[i].Width, yFactorPosition * allPages[i].Height, (1 - xFactorPosition) * allPages[i].Width, (1 - yFactorPosition) * allPages[i].Height);
+                graphicsOfAllPages[i].DrawString((i + 1).ToString() + " / " + graphicsOfAllPages.Count.ToString(), pageCountFont, pageCountBrush, pageCountRect, XStringFormats.CenterLeft);
+            }
+
             try
             {
                 document.Save(pathToSave);
@@ -169,7 +186,7 @@ namespace EmbroideryCreator
         private void CreateFirstPage(PdfDocument document, int[,] matrixOfNewColors, List<Color> colorMeans, Dictionary<int, HashSet<BackstitchLine>> backstitchLines, Dictionary<int, Color> backstitchColors, Dictionary<int, XImage> dictionaryOfXimageByIndex)
         {
             XGraphics pageGraphics = AddPageAndPrepare(document, out PdfPage currentPage);
-
+            
             double maxWidth = maxHorizontalNumberOfSquares * sizeOfEachSquare;
             double maxHeight = maxVerticalNumberOfSquares * sizeOfEachSquare;
 
@@ -310,8 +327,6 @@ namespace EmbroideryCreator
 
         private void PreparePage(PdfPage page, XGraphics pageGraphics)
         {
-            //XGraphics pageGraphics = XGraphics.FromPdfPage(page);
-
             //Drawing lines
             XPen pen = GetRoundedPenFromColorAndThickness(pageSetupBrush.Color, 1.0);
             pageGraphics.DrawLine(pen, page.Width * 0.05, page.Height * 0.13, page.Width * 0.95, page.Height * 0.13);
@@ -539,8 +554,10 @@ namespace EmbroideryCreator
         private XGraphics AddPageAndPrepare(PdfDocument document, out PdfPage currentPage)
         {
             currentPage = document.AddPage();
+            allPages.Add(currentPage);
 
             XGraphics pageGraphics = XGraphics.FromPdfPage(currentPage);
+            graphicsOfAllPages.Add(pageGraphics);
             PreparePage(currentPage, pageGraphics);
             return pageGraphics;
         }
