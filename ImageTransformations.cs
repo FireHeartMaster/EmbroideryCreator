@@ -169,7 +169,7 @@ namespace EmbroideryCreator
             means = new List<Color>();
             clustersOfColors = new Dictionary<int, List<Tuple<int, int>>>();
 
-            Dictionary<Color, int> dictionaryOfColorsAndIndexes = new Dictionary<Color, int>();
+            Dictionary<Tuple<int, int, int>, int> dictionaryOfColorsAndIndexes = new Dictionary<Tuple<int, int, int>, int>();
 
             for (int x = 0; x < imageToReduceColors.Width; x++)
             {
@@ -177,15 +177,17 @@ namespace EmbroideryCreator
                 {
                     Color currentColor = imageToReduceColors.GetPixel(x, y);
 
-                    if (!dictionaryOfColorsAndIndexes.ContainsKey(currentColor))
+                    var tupleKeyForCurrentColor = new Tuple<int, int, int>(currentColor.R, currentColor.G, currentColor.B);
+
+                    if (!dictionaryOfColorsAndIndexes.ContainsKey(tupleKeyForCurrentColor))
                     {
                         int newIndex = dictionaryOfColorsAndIndexes.Count;
-                        dictionaryOfColorsAndIndexes.Add(currentColor, newIndex);
+                        dictionaryOfColorsAndIndexes.Add(tupleKeyForCurrentColor, newIndex);
                         means.Add(currentColor);
                         clustersOfColors.Add(newIndex, new List<Tuple<int, int>>());
                     }
-                    matrixOfNewColors[x, y] = dictionaryOfColorsAndIndexes[currentColor];
-                    clustersOfColors[dictionaryOfColorsAndIndexes[currentColor]].Add(new Tuple<int, int>(x, y));
+                    matrixOfNewColors[x, y] = dictionaryOfColorsAndIndexes[tupleKeyForCurrentColor];
+                    clustersOfColors[dictionaryOfColorsAndIndexes[tupleKeyForCurrentColor]].Add(new Tuple<int, int>(x, y));
                 }
             }
 
