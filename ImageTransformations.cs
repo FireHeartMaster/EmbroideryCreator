@@ -460,19 +460,30 @@ namespace EmbroideryCreator
             float newR = newVector.Item1;
             float newG = newVector.Item2;
             float newB = newVector.Item3;
-            
+
             newR = NormalizeValueForColorLimits(newR);
             newG = NormalizeValueForColorLimits(newG);
             newB = NormalizeValueForColorLimits(newB);
 
-            return Color.FromArgb((int)newR, (int)newG, (int)newB);
+            Color resultingColor;
+
+            try
+            {
+                resultingColor = Color.FromArgb((int)newR, (int)newG, (int)newB);
+            }
+            catch(Exception exception)
+            {
+                resultingColor = targetColor;
+            }
+
+            return resultingColor;
         }
 
-        private static float NormalizeValueForColorLimits(float newR)
+        private static float NormalizeValueForColorLimits(float colorValue)
         {
-            if (newR < 0) newR = 0;
-            if (newR > 255) newR = 255;
-            return newR;
+            if (colorValue < 0) colorValue = 0;
+            if (colorValue > 255) colorValue = 255;
+            return colorValue;
         }
 
         public static bool TwoVectorsAreFacingSameDirection(Tuple<float, float> firstVector, Tuple<float, float> secondVector)
