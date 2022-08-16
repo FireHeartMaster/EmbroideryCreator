@@ -467,16 +467,9 @@ namespace EmbroideryCreator
 
                     try
                     {
-                        mainPictureBox.Image = new Bitmap(filePath);
-                        threadPictureBox.Image = new Bitmap(mainPictureBox.Image.Width, mainPictureBox.Image.Height);
-                        symbolsPictureBox.Image = new Bitmap(mainPictureBox.Image.Width, mainPictureBox.Image.Height);
-                        gridPictureBox.Image = new Bitmap(mainPictureBox.Image.Width, mainPictureBox.Image.Height);
-                        borderPictureBox.Image = new Bitmap(mainPictureBox.Image.Width, mainPictureBox.Image.Height);
-                        backstitchPictureBox.Image = new Bitmap(mainPictureBox.Image.Width, mainPictureBox.Image.Height);
-
-                        baseLayerPictureBox.Image = ImageTransformations.CreateSolidColorBitmap(Color.White, mainPictureBox.Image.Width, mainPictureBox.Image.Height);
-
-                        imageAndOperationsData = new ImageAndOperationsData(new Bitmap(mainPictureBox.Image));
+                        Bitmap imageFromFile = new Bitmap(filePath);
+                        
+                        SetImageAndData(imageFromFile);
                     }
                     catch (IOException exception)
                     {
@@ -492,17 +485,31 @@ namespace EmbroideryCreator
             }
         }
 
+        private void SetImageAndData(Bitmap originalImage)
+        {
+            mainPictureBox.Image = originalImage;
+            threadPictureBox.Image = new Bitmap(mainPictureBox.Image.Width, mainPictureBox.Image.Height);
+            symbolsPictureBox.Image = new Bitmap(mainPictureBox.Image.Width, mainPictureBox.Image.Height);
+            gridPictureBox.Image = new Bitmap(mainPictureBox.Image.Width, mainPictureBox.Image.Height);
+            borderPictureBox.Image = new Bitmap(mainPictureBox.Image.Width, mainPictureBox.Image.Height);
+            backstitchPictureBox.Image = new Bitmap(mainPictureBox.Image.Width, mainPictureBox.Image.Height);
+
+            baseLayerPictureBox.Image = ImageTransformations.CreateSolidColorBitmap(Color.White, mainPictureBox.Image.Width, mainPictureBox.Image.Height);
+
+            imageAndOperationsData = new ImageAndOperationsData(new Bitmap(mainPictureBox.Image));
+        }
+
         private void processImageButton_Click(object sender, EventArgs e)
         {
             ProcessImage();
         }
 
-        private void ProcessImage()
+        private void ProcessImage(int numberOfColors = -1)
         {
             if (imageAndOperationsData == null) return;
 
             imageAndOperationsData.newWidth = widthSizeTrackBar.Value;
-            imageAndOperationsData.numberOfColors = numberOfColorsTrackBar.Value;
+            imageAndOperationsData.numberOfColors = numberOfColors == -1 ? numberOfColorsTrackBar.Value : numberOfColors;
             imageAndOperationsData.numberOfIterations = numberOfIterationsTrackBar.Value;
 
             //imageAndOperationsData.ProcessImage();
@@ -991,6 +998,18 @@ namespace EmbroideryCreator
                 imageAndOperationsData.RepaintCrosses();
                 threadPictureBox.Image = imageAndOperationsData.ThreadImage;
             }
+        }
+
+        private void newCanvasButton_Click(object sender, EventArgs e)
+        {
+            Bitmap emptyImage = new Bitmap(100, 100);
+            using (var graphics = Graphics.FromImage(emptyImage))
+            {
+                graphics.FillRectangle(new SolidBrush(Color.White), 0, 0, emptyImage.Width, emptyImage.Height);
+            }
+
+            SetImageAndData(emptyImage);
+            ProcessImage(1);
         }
     }
 
