@@ -983,6 +983,15 @@ namespace EmbroideryCreator
         {
             newPixelSizeTrackBarLabel.Text = newPixelSizeTrackBar.Value.ToString();
         }
+
+        private void RepaintCrossesButton_Click(object sender, EventArgs e)
+        {
+            if (imageAndOperationsData != null && imageAndOperationsData.ResultingImage != null && imageAndOperationsData.ThreadImage != null)
+            {
+                imageAndOperationsData.RepaintCrosses();
+                threadPictureBox.Image = imageAndOperationsData.ThreadImage;
+            }
+        }
     }
 
     public enum DrawingMode

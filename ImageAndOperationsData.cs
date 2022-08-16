@@ -54,7 +54,22 @@ namespace EmbroideryCreator
             {
                 colorMeans[indexToUpdate] = newColor;
                 PaintNewColorOnImage(indexToUpdate, newColor, ResultingImage);
+
+                //Update color of cross
+                UpdateColorOfCross(indexToUpdate);
                 PaintCrossOfNewColorOnImage(indexToUpdate, ThreadImage);
+            }
+        }
+
+        private void UpdateColorOfCross(int indexToUpdate)
+        {
+            if (!dictionaryOfColoredCrossByIndex.ContainsKey(indexToUpdate))
+            {
+                dictionaryOfColoredCrossByIndex.Add(indexToUpdate, GenerateCrossOfSelectedColor(colorMeans[indexToUpdate]));
+            }
+            else
+            {
+                dictionaryOfColoredCrossByIndex[indexToUpdate] = GenerateCrossOfSelectedColor(colorMeans[indexToUpdate]);
             }
         }
 
@@ -154,6 +169,9 @@ namespace EmbroideryCreator
 
         private void FillPixelAtCoordinate(Color newColor, Graphics graphics, Tuple<int, int> position)
         {
+            graphics.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.NearestNeighbor;
+            graphics.PixelOffsetMode = System.Drawing.Drawing2D.PixelOffsetMode.HighQuality;
+
             graphics.FillRectangle(new SolidBrush(newColor),
                                                         BorderThicknessInNumberOfPixels + (position.Item1) * (newPixelSize) - GridThicknessInNumberOfPixels,
                                                         BorderThicknessInNumberOfPixels + (position.Item2) * (newPixelSize) - GridThicknessInNumberOfPixels,
@@ -699,6 +717,11 @@ namespace EmbroideryCreator
                     }
                 }
             }
+        }
+
+        public void RepaintCrosses()
+        {
+            RepaintMainImage(false, true, false);
         }
 
         public void PaintNewColorOnGeneralPosition(Tuple<int, int> generalPosition, int colorIndexToPaint)

@@ -80,9 +80,10 @@ namespace EmbroideryCreator
             this.removeAlonePixelsLabel = new System.Windows.Forms.Label();
             this.processImageExactToSourceCheckBox = new System.Windows.Forms.CheckBox();
             this.newPixelSizeTrackBar = new System.Windows.Forms.TrackBar();
-            this.drawingToolsControl = new EmbroideryCreator.DrawingToolsControl();
             this.newPixelSizeLabel = new System.Windows.Forms.Label();
             this.newPixelSizeTrackBarLabel = new System.Windows.Forms.Label();
+            this.drawingToolsControl = new EmbroideryCreator.DrawingToolsControl();
+            this.RepaintCrossesButton = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.widthSizeTrackBar)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numberOfColorsTrackBar)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numberOfIterationsTrackBar)).BeginInit();
@@ -610,15 +611,6 @@ namespace EmbroideryCreator
             this.newPixelSizeTrackBar.Value = 10;
             this.newPixelSizeTrackBar.Scroll += new System.EventHandler(this.newPixelSizeTrackBar_Scroll);
             // 
-            // drawingToolsControl
-            // 
-            this.drawingToolsControl.BackColor = System.Drawing.SystemColors.ActiveBorder;
-            this.drawingToolsControl.Location = new System.Drawing.Point(848, 13);
-            this.drawingToolsControl.Name = "drawingToolsControl";
-            this.drawingToolsControl.Padding = new System.Windows.Forms.Padding(3);
-            this.drawingToolsControl.Size = new System.Drawing.Size(171, 45);
-            this.drawingToolsControl.TabIndex = 18;
-            // 
             // newPixelSizeLabel
             // 
             this.newPixelSizeLabel.AutoSize = true;
@@ -639,11 +631,31 @@ namespace EmbroideryCreator
             this.newPixelSizeTrackBarLabel.TabIndex = 47;
             this.newPixelSizeTrackBarLabel.Text = "10";
             // 
+            // drawingToolsControl
+            // 
+            this.drawingToolsControl.BackColor = System.Drawing.SystemColors.ActiveBorder;
+            this.drawingToolsControl.Location = new System.Drawing.Point(848, 13);
+            this.drawingToolsControl.Name = "drawingToolsControl";
+            this.drawingToolsControl.Padding = new System.Windows.Forms.Padding(3);
+            this.drawingToolsControl.Size = new System.Drawing.Size(171, 45);
+            this.drawingToolsControl.TabIndex = 18;
+            // 
+            // RepaintCrossesButton
+            // 
+            this.RepaintCrossesButton.Location = new System.Drawing.Point(13, 460);
+            this.RepaintCrossesButton.Name = "RepaintCrossesButton";
+            this.RepaintCrossesButton.Size = new System.Drawing.Size(139, 23);
+            this.RepaintCrossesButton.TabIndex = 48;
+            this.RepaintCrossesButton.Text = "Repaint Crosses";
+            this.RepaintCrossesButton.UseVisualStyleBackColor = true;
+            this.RepaintCrossesButton.Click += new System.EventHandler(this.RepaintCrossesButton_Click);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1153, 579);
+            this.Controls.Add(this.RepaintCrossesButton);
             this.Controls.Add(this.newPixelSizeTrackBarLabel);
             this.Controls.Add(this.newPixelSizeLabel);
             this.Controls.Add(this.newPixelSizeTrackBar);
@@ -766,6 +778,7 @@ namespace EmbroideryCreator
         private System.Windows.Forms.TrackBar newPixelSizeTrackBar;
         private System.Windows.Forms.Label newPixelSizeLabel;
         private System.Windows.Forms.Label newPixelSizeTrackBarLabel;
+        private System.Windows.Forms.Button RepaintCrossesButton;
     }
 }
 
