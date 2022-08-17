@@ -841,8 +841,8 @@ namespace EmbroideryCreator
 
         private Tuple<int, int> ConvertFromGeneralPositionOnImageToCoordinates(Tuple<int, int> generalPosition)
         {
-            int x = (int)(((float)(generalPosition.Item1 - BorderThicknessInNumberOfPixels)) / newPixelSize);
-            int y = (int)(((float)(generalPosition.Item2 - BorderThicknessInNumberOfPixels)) / newPixelSize);
+            int x = (int)Math.Round(((float)(generalPosition.Item1 - BorderThicknessInNumberOfPixels)) / newPixelSize);
+            int y = (int)Math.Round(((float)(generalPosition.Item2 - BorderThicknessInNumberOfPixels)) / newPixelSize);
 
             return new Tuple<int, int>(x, y);
         }
