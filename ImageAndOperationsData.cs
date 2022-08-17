@@ -370,6 +370,10 @@ namespace EmbroideryCreator
             BorderThicknessInNumberOfPixels = borderThicknessInNumberOfPixels;
             GridThicknessInNumberOfPixels = gridThicknessInNumberOfPixels;
 
+            if(colorMeans.Count > 0 && (colorMeans[0].A != 0 || colorMeans[0].R != 0 || colorMeans[0].G != 0 || colorMeans[0].B != 0)){
+                AddEmptyColor();
+            }
+
             FillAllNotFilledSymbols();
         }
 
@@ -395,6 +399,7 @@ namespace EmbroideryCreator
         private Bitmap PixelateImageAlternateOrder(Bitmap originalImage)
         {
             Bitmap pixelatedImage = ImageTransformations.PixelateAlternateOrder(originalImage, newWidth, ref colorMeans, ref positionsOfEachColor);
+            AddEmptyColor();
             return pixelatedImage;
         }
 
@@ -402,13 +407,45 @@ namespace EmbroideryCreator
         {
             Bitmap colorReducedImage = ImageTransformations.ReduceNumberOfColors(pixelatedImage, numberOfColors, numberOfIterations, 
                                                                                 out colorMeans, out positionsOfEachColor, out matrixOfNewColors);
+            AddEmptyColor();
             return colorReducedImage;
         }
 
         private Bitmap SetColorsWithoutReducingNumberOfColors(Bitmap pixelatedImage, int numberOfIterations = 10)
         {
             Bitmap colorReducedImage = ImageTransformations.SetColorsWithoutReducingNumberOfColors(pixelatedImage, out colorMeans, out positionsOfEachColor, out matrixOfNewColors);
+            AddEmptyColor();
             return colorReducedImage;
+        }
+
+        private void AddEmptyColor()
+        {
+            Color emptyColor = Color.FromArgb(0, 0, 0, 0);
+
+            colorMeans.Insert(0, emptyColor);
+            colorIsBackgroundList.Insert(0, true);
+
+            positionsOfEachColor.Add(positionsOfEachColor.Count, new List<Tuple<int, int>>());
+
+            for (int i = positionsOfEachColor.Count - 1; i >= 1; i--)
+            {
+                positionsOfEachColor[i] = positionsOfEachColor[i - 1];
+
+                foreach (Tuple<int, int> position in positionsOfEachColor[i])
+                {
+                    matrixOfNewColors[position.Item1, position.Item2] = i;
+                }
+            }
+
+            Bitmap emptySquare = new Bitmap(newPixelSize, newPixelSize);
+            using(var graphics = Graphics.FromImage(emptySquare))
+            {
+                Brush emptyBrush = new SolidBrush(emptyColor);
+                graphics.FillRectangle(emptyBrush, 0, 0, emptySquare.Width, emptySquare.Height);
+            }
+
+            dictionaryOfColoredCrossByIndex.Add(0, emptySquare);
+            dictionaryOfSymbolByIndex.Add(0, emptySquare);
         }
 
         private Bitmap ResizingImage(Bitmap colorReducedImage)

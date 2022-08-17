@@ -547,11 +547,12 @@ namespace EmbroideryCreator
             flowLayoutPanelListOfCrossStitchColors.Controls.Clear();
             selectedColorsControlsList.Clear();
             imageAndOperationsData.colorIsBackgroundList.Clear();
+            imageAndOperationsData.colorIsBackgroundList.Add(true); // corresponding to empty color
 
             flowLayoutPanelListOfBackstitchColors.Controls.Clear();
             selectedBackstitchColorsControlsList.Clear();
 
-            for (int i = 0; i < crossStitchColorMeans.Count; i++)
+            for (int i = 1; i < crossStitchColorMeans.Count; i++)   //We start at 1 here to take the empty color into account
             {
                 ReducedColorControl crossStitchColorControl = new ReducedColorControl();
                 crossStitchColorControl.InitializeReducedColorControl(crossStitchColorMeans[i], i, this);
@@ -772,7 +773,7 @@ namespace EmbroideryCreator
         private void AddNewColor(Color newColor)
         {
             ReducedColorControl colorControl = new ReducedColorControl();
-            colorControl.InitializeReducedColorControl(newColor, flowLayoutPanelListOfCrossStitchColors.Controls.Count, /*colorControl,*/ this);
+            colorControl.InitializeReducedColorControl(newColor, flowLayoutPanelListOfCrossStitchColors.Controls.Count + 1, /*colorControl,*/ this);    //the "+1" here it to take the empty color into account
             flowLayoutPanelListOfCrossStitchColors.Controls.Add(colorControl);
             imageAndOperationsData.AddNewColor(newColor);
             imageAndOperationsData.colorIsBackgroundList.Add(false);
@@ -835,6 +836,11 @@ namespace EmbroideryCreator
                 BackstitchColorControl controlToRemove = selectedBackstitchColorsControlsList[1];
                 controlToRemove.Dispose();
                 selectedBackstitchColorsControlsList.RemoveAt(1);
+            }
+
+            if(selectedBackstitchColorsControlsList.Count > 0)
+            {
+                selectedBackstitchColorsControlsList[0].myReferenceToMainForm.UpdateBackstitchColorByIndex(selectedBackstitchColorsControlsList[0].backstitchColorIndex, selectedBackstitchColorsControlsList[0].color);
             }
         }
 
