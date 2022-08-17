@@ -375,6 +375,32 @@ namespace EmbroideryCreator
             }
 
             FillAllNotFilledSymbols();
+
+            RemoveBackstitchLinesPoints();
+        }
+
+        private void RemoveBackstitchLinesPoints()
+        {
+            //This function should remove every backstitch that starts and ends at the same position, which creates points in image that appears in the PDF file
+
+            foreach (KeyValuePair<int, HashSet<BackstitchLine>> indexesAndBackstitchLines in backstitchLines)
+            {
+                List<BackstitchLine> linesToRemove = new List<BackstitchLine>();
+
+                foreach (BackstitchLine backstitchLine in indexesAndBackstitchLines.Value)
+                {
+                    //if(backstitchLine.startingPosition == backstitchLine.endingPosition)
+                    if(Math.Round(backstitchLine.startingPosition.Item1, 1) == Math.Round(backstitchLine.endingPosition.Item1, 1) && Math.Round(backstitchLine.startingPosition.Item2, 1) == Math.Round(backstitchLine.endingPosition.Item2, 1))
+                    {
+                        linesToRemove.Add(backstitchLine);
+                    }
+                }
+
+                foreach (BackstitchLine lineToRemove in linesToRemove)
+                {
+                    backstitchLines[indexesAndBackstitchLines.Key].Remove(lineToRemove);
+                }
+            }
         }
 
         public void SerializeData(string filePath)
@@ -1014,6 +1040,8 @@ namespace EmbroideryCreator
 
         public void AddNewBackstitchLine(int indexToAddLine, Tuple<float, float> startingPosition, Tuple<float, float> endingPosition)
         {
+            if (startingPosition == endingPosition) return;
+
             if (startingPosition.Item1 >= 0 && startingPosition.Item1 < matrixOfNewColors.GetLength(0) &&
                     endingPosition.Item2 >= 0 && endingPosition.Item2 < matrixOfNewColors.GetLength(1))
             {                

@@ -349,6 +349,8 @@ namespace EmbroideryCreator
 
         private void SetBackstitchDrawMouseUp()
         {
+            if (imageAndOperationsData == null || imageAndOperationsData.ResultingImage == null) return;
+
             switch (drawingToolsControl.currentDrawingTool)
             {
                 case DrawingToolInUse.Pencil:
