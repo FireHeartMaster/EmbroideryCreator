@@ -781,12 +781,12 @@ namespace EmbroideryCreator
 
         private void AddNewBackstitchColor(Color newColor)
         {
-            BackstitchColorControl colorControl = new BackstitchColorControl();
-            colorControl.InitializeBackstitchColorControl(newColor, flowLayoutPanelListOfBackstitchColors.Controls.Count, this);
-            flowLayoutPanelListOfBackstitchColors.Controls.Add(colorControl);
-            //imageAndOperationsData.AddNewColor(newColor);
+            int indexToAdd = imageAndOperationsData.AddNewBackstitchColor(newColor);
 
-            imageAndOperationsData.AddNewBackstitchColor(newColor);
+            BackstitchColorControl colorControl = new BackstitchColorControl();
+
+            colorControl.InitializeBackstitchColorControl(newColor, indexToAdd, this);
+            flowLayoutPanelListOfBackstitchColors.Controls.Add(colorControl);
         }
 
         private void addColorButton_Click(object sender, EventArgs e)
@@ -810,38 +810,19 @@ namespace EmbroideryCreator
                 int firstIndex = selectedBackstitchColorsControlsList[0].backstitchColorIndex;
                 int otherIndex = selectedBackstitchColorsControlsList[1].backstitchColorIndex;
 
-                //The following code deals with the list and dictionary management of the indexes, but first let's paint the pixels of the removed index
-                //with the color of the index that will stay
-                //UpdateBackstitchColorByIndex(otherIndex, imageAndOperationsData.GetColors()[firstIndex]);
-                //TODO: Update backstitch colors using the correct function (imageAndOperationsData.GetColors retrieves the reduced colors,
-                //not the backstitch ones)
-
-                //Remove the desired index from the backend's list
-                //imageAndOperationsData.MergeTwoColors(firstIndex, otherIndex);
-                //TODO: merge two backstitch colors in the backend
-
-                //Redistribute index values to the list of the frontend
-                foreach (object control in flowLayoutPanelListOfBackstitchColors.Controls)
-                {
-                    BackstitchColorControl backstitchColorControl = (BackstitchColorControl)control;
-                    if (backstitchColorControl.backstitchColorIndex > otherIndex)
-                    {
-                        backstitchColorControl.backstitchColorIndex--;
-                    }
-                }
-
-                ////Now I can remove the desired control from both the selection list and from the collection of controls of the panel
+                ////Remove the desired control from both the selection list and from the collection of controls of the panel
                 flowLayoutPanelListOfBackstitchColors.Controls.Remove(selectedBackstitchColorsControlsList[1]);
                 //selectedColorsControlsList[1].ModifySelectionCheckBox(false);
                 BackstitchColorControl controlToRemove = selectedBackstitchColorsControlsList[1];
                 controlToRemove.Dispose();
                 selectedBackstitchColorsControlsList.RemoveAt(1);
+
+                imageAndOperationsData.MergeTwoBackstitchColors(firstIndex, otherIndex, false);
             }
 
-            if(selectedBackstitchColorsControlsList.Count > 0)
-            {
-                selectedBackstitchColorsControlsList[0].myReferenceToMainForm.UpdateBackstitchColorByIndex(selectedBackstitchColorsControlsList[0].backstitchColorIndex, selectedBackstitchColorsControlsList[0].color);
-            }
+            //Repainting backstitch image
+            imageAndOperationsData.PaintAllBackstitchLines();
+            backstitchPictureBox.Image = imageAndOperationsData.BackstitchImage;
         }
 
         private void addBackstitchColorButton_Click(object sender, EventArgs e)
@@ -860,22 +841,13 @@ namespace EmbroideryCreator
 
             while (selectedBackstitchColorsControlsList.Count > 0)
             {
-                int firstIndex = selectedBackstitchColorsControlsList[0].backstitchColorIndex;
-
-                //Redistribute index values to the list of the frontend
-                foreach (object control in flowLayoutPanelListOfBackstitchColors.Controls)
-                {
-                    BackstitchColorControl backstitchColorControl = (BackstitchColorControl)control;
-                    if (backstitchColorControl.backstitchColorIndex > firstIndex)
-                    {
-                        backstitchColorControl.backstitchColorIndex--;
-                    }
-                }
-
-                ////Now I can remove the desired control from both the selection list and from the collection of controls of the panel
-                flowLayoutPanelListOfBackstitchColors.Controls.Remove(selectedBackstitchColorsControlsList[0]);
-                //selectedColorsControlsList[1].ModifySelectionCheckBox(false);
                 BackstitchColorControl controlToRemove = selectedBackstitchColorsControlsList[0];
+
+                int firstIndex = controlToRemove.backstitchColorIndex;
+
+                //Remove the desired control from both the selection list and from the collection of controls of the panel
+                flowLayoutPanelListOfBackstitchColors.Controls.Remove(controlToRemove);
+                //selectedColorsControlsList[1].ModifySelectionCheckBox(false);
                 controlToRemove.Dispose();
                 selectedBackstitchColorsControlsList.RemoveAt(0);
 

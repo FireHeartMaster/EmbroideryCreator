@@ -37,10 +37,10 @@ namespace EmbroideryCreator
 
         private void PaintNewBackstitchColor() => myReferenceToMainForm.UpdateBackstitchColorByIndex(backstitchColorIndex, color);
 
-        public void InitializeBackstitchColorControl(Color newColor, int i,/* BackstitchColorControl colorControl, */MainForm referenceToMainForm)
+        public void InitializeBackstitchColorControl(Color newColor, int backstitchIndex,MainForm referenceToMainForm)
         {
             backstitchColorPictureBox.Image = ImageTransformations.CreateSolidColorBitmap(newColor, 40, 5);
-            backstitchColorIndex = i;
+            backstitchColorIndex = backstitchIndex;
             color = newColor;
             myReferenceToMainForm = referenceToMainForm;
         }

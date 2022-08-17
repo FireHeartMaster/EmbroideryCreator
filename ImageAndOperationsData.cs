@@ -331,15 +331,15 @@ namespace EmbroideryCreator
             }
         }
 
-        private void PaintAllBackstitchLines()
+        public void PaintAllBackstitchLines()
         {
             BackstitchImage = new Bitmap(ResultingImage.Width, ResultingImage.Height);
 
-            for (int i = 0; i < backstitchLines.Count; i++)
+            foreach (KeyValuePair<int, HashSet<BackstitchLine>> indexesAndLines in backstitchLines)
             {
-                foreach (BackstitchLine backstitchLine in backstitchLines[i])
+                foreach (BackstitchLine backstitchLine in indexesAndLines.Value)
                 {
-                    PaintBackstitchLine(backstitchColors[i], backstitchLine);
+                    PaintBackstitchLine(backstitchColors[indexesAndLines.Key], backstitchLine);
                 }
             }
         }
@@ -438,11 +438,7 @@ namespace EmbroideryCreator
             }
 
             Bitmap emptySquare = new Bitmap(newPixelSize, newPixelSize);
-            using(var graphics = Graphics.FromImage(emptySquare))
-            {
-                Brush emptyBrush = new SolidBrush(emptyColor);
-                graphics.FillRectangle(emptyBrush, 0, 0, emptySquare.Width, emptySquare.Height);
-            }
+            emptySquare = ImageTransformations.CreateSolidColorBitmap(emptyColor, emptySquare.Width, emptySquare.Height);
 
             dictionaryOfColoredCrossByIndex.Add(0, emptySquare);
             dictionaryOfSymbolByIndex.Add(0, emptySquare);
@@ -602,9 +598,9 @@ namespace EmbroideryCreator
             //resultingImage = withBorderImage;
             ResultingImage = processedImage;
             BackstitchImage = new Bitmap(ResultingImage.Width, ResultingImage.Height);
-            for (int i = 0; i < backstitchLines.Count; i++)
+            foreach (int linesIndexes in backstitchLines.Keys)
             {
-                backstitchLines[i] = new HashSet<BackstitchLine>();
+                backstitchLines[linesIndexes] = new HashSet<BackstitchLine>();
             }
         }
 
@@ -618,9 +614,9 @@ namespace EmbroideryCreator
             processedImage = AddBorderIncreasingSizeOfOriginalImageByAddingPadding(processedImage);
             ResultingImage = processedImage;
             BackstitchImage = new Bitmap(ResultingImage.Width, ResultingImage.Height);
-            for (int i = 0; i < backstitchLines.Count; i++)
+            foreach (int linesIndexes in backstitchLines.Keys)
             {
-                backstitchLines[i] = new HashSet<BackstitchLine>();
+                backstitchLines[linesIndexes] = new HashSet<BackstitchLine>();
             }
         }
 
@@ -661,9 +657,10 @@ namespace EmbroideryCreator
             //resultingImage = withBorderImage;
             //ResultingImage = processedImage;
             BackstitchImage = new Bitmap(ResultingImage.Width, ResultingImage.Height);
-            for (int i = 0; i < backstitchLines.Count; i++)
+
+            foreach (int linesIndexes in backstitchLines.Keys)
             {
-                backstitchLines[i] = new HashSet<BackstitchLine>();
+                backstitchLines[linesIndexes] = new HashSet<BackstitchLine>();
             }
         }
 
@@ -701,6 +698,22 @@ namespace EmbroideryCreator
             //Also let's remove it from the list of colors, for this one we can simply remove it without any reordering
             //That's why here we remove from the specified index instead of removing the last element
             colorMeans.RemoveAt(otherIndex);
+        }
+
+        public void MergeTwoBackstitchColors(int firstIndex, int otherIndex, bool repaint = false)
+        {
+            foreach (BackstitchLine backstitchLine in backstitchLines[otherIndex])
+            {
+                backstitchLines[firstIndex].Add(backstitchLine);
+            }
+
+            backstitchLines.Remove(otherIndex);
+            backstitchColors.Remove(otherIndex);
+
+            if (repaint)
+            {
+                PaintAllBackstitchLines();
+            }
         }
 
         public void PaintPixelInPositionWithColorOfIndex(Tuple<int, int> position, int colorIndexToPaint)
@@ -958,10 +971,18 @@ namespace EmbroideryCreator
             PaintSymbolOnSeveralPixelPositions(listOfPositionsToChange, colorIndexToPaint, SymbolsImage);
         }
 
-        public void AddNewBackstitchColor(Color newColor)
+        public int AddNewBackstitchColor(Color newColor)
         {
-            backstitchLines.Add(backstitchColors.Count, new HashSet<BackstitchLine>());
-            backstitchColors.Add(backstitchColors.Count, newColor);
+            int nextUnusedIndex = 0;
+            while (backstitchLines.ContainsKey(nextUnusedIndex))
+            {
+                nextUnusedIndex++;
+            }
+
+            backstitchLines.Add(nextUnusedIndex, new HashSet<BackstitchLine>());
+            backstitchColors.Add(nextUnusedIndex, newColor);
+
+            return nextUnusedIndex;
         }
 
         //public void RemoveBackstitchColor(Color colorToRemove)
@@ -982,7 +1003,7 @@ namespace EmbroideryCreator
 
         public void RemoveBackstitchColorByIndex(int indexToRemove)
         {
-            if(indexToRemove >= 0 && indexToRemove < backstitchColors.Count)
+            if(backstitchColors.ContainsKey(indexToRemove))
             {
                 backstitchLines.Remove(indexToRemove);
                 backstitchColors.Remove(indexToRemove);
@@ -995,8 +1016,7 @@ namespace EmbroideryCreator
         {
             if (startingPosition.Item1 >= 0 && startingPosition.Item1 < matrixOfNewColors.GetLength(0) &&
                     endingPosition.Item2 >= 0 && endingPosition.Item2 < matrixOfNewColors.GetLength(1))
-            {
-                HashSet<BackstitchLine> a = backstitchLines[indexToAddLine];
+            {                
                 BackstitchLine newBackstitchLine = new BackstitchLine(startingPosition, endingPosition);
                 backstitchLines[indexToAddLine].Add(newBackstitchLine);
 
@@ -1023,18 +1043,16 @@ namespace EmbroideryCreator
             float distanceToConsiderCloseEnough = (3.0f * GridThicknessInNumberOfPixels / newPixelSize) * 0.5f;
             Tuple<float, float> imagePosition = ConvertFromGeneralPositionOnImageToFloatCoordinates(generalPixelPosition);
 
-            for (int i = 0; i < backstitchLines.Count; i++)
+            foreach (KeyValuePair<int, HashSet<BackstitchLine>> lines in backstitchLines)
             {
-                //TODO: Verify if the reference point is between the starting and ending points of a backstitch line
-
-                foreach (BackstitchLine currentBackstitchLineToVerifyDistance in backstitchLines[i])
+                foreach (BackstitchLine currentBackstitchLineToVerifyDistance in lines.Value)
                 {
                     //float distanceToLine = ImageTransformations.CalculateDistanceOfPointToLine(imagePosition, currentBackstitchLineToVerifyDistance.startingPosition, currentBackstitchLineToVerifyDistance.endingPosition);
 
                     //if(distanceToLine <= distanceToConsiderCloseEnough)
                     if(ImageTransformations.IsPointCloseEnoughToLineDefinedByTwoPoints(imagePosition, currentBackstitchLineToVerifyDistance.startingPosition, currentBackstitchLineToVerifyDistance.endingPosition, distanceToConsiderCloseEnough))
                     {
-                        indexFound = i;
+                        indexFound = lines.Key;
                         backstitchLineFound = currentBackstitchLineToVerifyDistance;
                         
                         return new Tuple<int, BackstitchLine>(indexFound, backstitchLineFound);
@@ -1058,7 +1076,7 @@ namespace EmbroideryCreator
 
         public void UpdateBackstitchColorByIndex(int indexToUpdate, Color newColor)
         {
-            if(indexToUpdate >= 0 && indexToUpdate < backstitchColors.Count)
+            if(backstitchColors.ContainsKey(indexToUpdate))
             {
                 backstitchColors[indexToUpdate] = newColor;
 
