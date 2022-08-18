@@ -46,6 +46,8 @@ namespace EmbroideryCreator
         Dictionary<int, Bitmap> dictionaryOfColoredCrossByIndex = new Dictionary<int, Bitmap>();
         Dictionary<int, Bitmap> dictionaryOfSymbolByIndex = new Dictionary<int, Bitmap>();
 
+        public Tuple<int, int> GetSizeInPixels() => new Tuple<int, int>(matrixOfNewColors.GetLength(0), matrixOfNewColors.GetLength(1));
+
         IconImagesManager iconsManager = new IconImagesManager();
 
         public void ChangeColorByIndex(int indexToUpdate, Color newColor)
@@ -446,8 +448,8 @@ namespace EmbroideryCreator
 
         private void AddEmptyColor()
         {
-            Color emptyColor = Color.FromArgb(0, 0, 0, 0);
 
+            Color emptyColor = AddEmptyColorToCrossesAndSymbols();
             colorMeans.Insert(0, emptyColor);
             colorIsBackgroundList.Insert(0, true);
 
@@ -462,12 +464,23 @@ namespace EmbroideryCreator
                     matrixOfNewColors[position.Item1, position.Item2] = i;
                 }
             }
+        }
 
+        private Color AddEmptyColorToCrossesAndSymbols()
+        {
+            Color emptyColor = Color.FromArgb(0, 0, 0, 0);
             Bitmap emptySquare = new Bitmap(newPixelSize, newPixelSize);
             emptySquare = ImageTransformations.CreateSolidColorBitmap(emptyColor, emptySquare.Width, emptySquare.Height);
 
-            dictionaryOfColoredCrossByIndex.Add(0, emptySquare);
-            dictionaryOfSymbolByIndex.Add(0, emptySquare);
+            if (!dictionaryOfColoredCrossByIndex.ContainsKey(0))
+            {
+                dictionaryOfColoredCrossByIndex.Add(0, emptySquare);
+            }
+            if (!dictionaryOfSymbolByIndex.ContainsKey(0))
+            {
+                dictionaryOfSymbolByIndex.Add(0, emptySquare);
+            }
+            return emptyColor;
         }
 
         private Bitmap ResizingImage(Bitmap colorReducedImage)
@@ -663,23 +676,8 @@ namespace EmbroideryCreator
             }
             //processedImage = AddGridResizingImage(processedImage);
             //processedImage = AddBorderIncreasingSizeOfOriginalImageByAddingPadding(processedImage);
-            int reducedNumberOfColorsWidth = processedImage.Width;
-            int reducedNumberOfColorsHeight = processedImage.Height;
-            
-            processedImage = ResizingImage(processedImage);
-            GridImage = AddGridToImage(new Bitmap(processedImage.Width, processedImage.Height), reducedNumberOfColorsWidth, reducedNumberOfColorsHeight);
-            
-            //BorderImage = AddPaddingToImage(new Bitmap(processedImage.Width, processedImage.Height));
-            GridImage = AddPaddingToImage(GridImage);
-            ResultingImage = AddPaddingToImage(processedImage);
+            processedImage = MakeImageLayers(processedImage);
 
-            dictionaryOfColoredCrossByIndex.Clear();
-            dictionaryOfSymbolByIndex.Clear();
-
-            RepaintMainImage(false, true, true);  //Setting thread image and symbols image
-
-            BorderImage = AddBorder(new Bitmap(ResultingImage.Width, ResultingImage.Height));
-            
             //resultingImage = withBorderImage;
             //ResultingImage = processedImage;
             BackstitchImage = new Bitmap(ResultingImage.Width, ResultingImage.Height);
@@ -688,6 +686,30 @@ namespace EmbroideryCreator
             {
                 backstitchLines[linesIndexes] = new HashSet<BackstitchLine>();
             }
+        }
+
+        private Bitmap MakeImageLayers(Bitmap pixelatedImageWithReducedNumberOfColors, bool clearDictionariesOfCrossesAndSymbols = true)
+        {
+            int reducedNumberOfColorsWidth = pixelatedImageWithReducedNumberOfColors.Width;
+            int reducedNumberOfColorsHeight = pixelatedImageWithReducedNumberOfColors.Height;
+
+            pixelatedImageWithReducedNumberOfColors = ResizingImage(pixelatedImageWithReducedNumberOfColors);
+            GridImage = AddGridToImage(new Bitmap(pixelatedImageWithReducedNumberOfColors.Width, pixelatedImageWithReducedNumberOfColors.Height), reducedNumberOfColorsWidth, reducedNumberOfColorsHeight);
+
+            //BorderImage = AddPaddingToImage(new Bitmap(processedImage.Width, processedImage.Height));
+            GridImage = AddPaddingToImage(GridImage);
+            ResultingImage = AddPaddingToImage(pixelatedImageWithReducedNumberOfColors);
+
+            if (clearDictionariesOfCrossesAndSymbols)
+            {
+                dictionaryOfColoredCrossByIndex.Clear();
+                dictionaryOfSymbolByIndex.Clear();
+            }
+
+            RepaintMainImage(false, true, true);  //Setting thread image and symbols image
+
+            BorderImage = AddBorder(new Bitmap(ResultingImage.Width, ResultingImage.Height));
+            return pixelatedImageWithReducedNumberOfColors;
         }
 
         public void MergeTwoColors(int firstIndex, int otherIndex)
@@ -1041,10 +1063,11 @@ namespace EmbroideryCreator
         public void AddNewBackstitchLine(int indexToAddLine, Tuple<float, float> startingPosition, Tuple<float, float> endingPosition)
         {
             if (startingPosition == endingPosition) return;
-
+            if (Math.Round(startingPosition.Item1, 1) == Math.Round(endingPosition.Item1, 1) && Math.Round(startingPosition.Item2, 1) == Math.Round(endingPosition.Item2, 1)) return;
+            
             if (startingPosition.Item1 >= 0 && startingPosition.Item1 < matrixOfNewColors.GetLength(0) &&
                     endingPosition.Item2 >= 0 && endingPosition.Item2 < matrixOfNewColors.GetLength(1))
-            {                
+            {
                 BackstitchLine newBackstitchLine = new BackstitchLine(startingPosition, endingPosition);
                 backstitchLines[indexToAddLine].Add(newBackstitchLine);
 
@@ -1113,6 +1136,115 @@ namespace EmbroideryCreator
                     PaintBackstitchLine(backstitchColors[indexToUpdate], backstitchLineOfSelectedColor);
                 }
             }
+        }
+
+        public void ChangeCanvasSize(int newCanvasWidth, int newCanvasHeight, int newPixelWidthUpdated = 10)
+        {
+            newPixelSize = newPixelWidthUpdated;
+            
+            newWidth = newCanvasWidth;
+
+            originalImage = ImageTransformations.CropOrAddPadding(originalImage, newCanvasWidth, newCanvasHeight);
+
+            Bitmap pixelatedImage = new Bitmap(newCanvasWidth, newCanvasHeight);
+            int[,] newMatrixOfNewColors = new int[newCanvasWidth, newCanvasHeight];
+
+            for (int i = 0; i < newCanvasWidth; i++)
+            {
+                for (int j = 0; j < newCanvasHeight; j++)
+                {
+                    Color colorOfTheCurrentPixel;
+                    if(i < matrixOfNewColors.GetLength(0) && j < matrixOfNewColors.GetLength(1) && i < newMatrixOfNewColors.GetLength(0) && j < newMatrixOfNewColors.GetLength(1))
+                    {
+                        colorOfTheCurrentPixel = colorMeans[matrixOfNewColors[i, j]];
+                        newMatrixOfNewColors[i, j] = matrixOfNewColors[i, j];
+                    }
+                    else
+                    {
+                        colorOfTheCurrentPixel = Color.FromArgb(0, 0, 0, 0);
+                        newMatrixOfNewColors[i, j] = 0;    //Empty color
+                        if (!positionsOfEachColor.ContainsKey(0))
+                        {
+                            positionsOfEachColor.Add(0, new List<Tuple<int, int>>());
+                        }
+                        positionsOfEachColor[0].Add(new Tuple<int, int>(i, j));
+                    }
+                    pixelatedImage.SetPixel(i, j, colorOfTheCurrentPixel);
+                }
+            }
+
+            matrixOfNewColors = newMatrixOfNewColors;
+
+            foreach (KeyValuePair<int, List<Tuple<int, int>>> indexAndPositions in positionsOfEachColor)
+            {
+                List<Tuple<int, int>> positionsToRemove = new List<Tuple<int, int>>();
+
+                foreach (Tuple<int, int> currentPosition in indexAndPositions.Value)
+                {
+                    if(currentPosition.Item1 >= newCanvasWidth || currentPosition.Item2 >= newCanvasHeight)
+                    {
+                        positionsToRemove.Add(currentPosition);
+                    }
+                }
+
+                foreach (Tuple<int, int> currentPositionToRemove in positionsToRemove)
+                {
+                    positionsOfEachColor[indexAndPositions.Key].Remove(currentPositionToRemove);
+                }
+            }
+
+            _ = MakeImageLayers(pixelatedImage, false);
+
+            //check which backstitch lines remain inside, which intersect the borders (and compute those intersections) and remove the ones that are completely outside
+            foreach (KeyValuePair<int, HashSet<BackstitchLine>> backstitchIndexesAndLines in backstitchLines)
+            {
+                List<BackstitchLine> linesToRemove = new List<BackstitchLine>();
+                List<BackstitchLine> modifiedLinesToAdd = new List<BackstitchLine>();
+
+                foreach (BackstitchLine currentBackstitchLine in backstitchIndexesAndLines.Value)
+                {
+                    bool isStartingPointInside = ImageTransformations.IsPointInsideRectangle(ImageTransformations.ConvertPairType(currentBackstitchLine.startingPosition), new Tuple<double, double>(0, 0), newCanvasWidth, newCanvasHeight);
+                    bool isEndingPointInside = ImageTransformations.IsPointInsideRectangle(ImageTransformations.ConvertPairType(currentBackstitchLine.endingPosition), new Tuple<double, double>(0, 0), newCanvasWidth, newCanvasHeight);
+
+                    if (!isStartingPointInside && !isEndingPointInside)
+                    {
+                        //both points are outside, so this line should be completely removed
+                        linesToRemove.Add(currentBackstitchLine);
+                    }else if(!isStartingPointInside || !isEndingPointInside)
+                    {
+                        //one of the points is inside and the other is outside
+                        var pointInside = isStartingPointInside ? currentBackstitchLine.startingPosition : currentBackstitchLine.endingPosition;
+                        var pointOutside = isStartingPointInside ? currentBackstitchLine.endingPosition : currentBackstitchLine.startingPosition;
+
+                        List<Tuple<double, double>> intersections = ImageTransformations.FindIntersectionsOfLineAndSquare(currentBackstitchLine.startingPosition.Item1, currentBackstitchLine.startingPosition.Item2,
+                                                                                        currentBackstitchLine.endingPosition.Item1, currentBackstitchLine.endingPosition.Item2,
+                                                                                        0, 0, newCanvasWidth, newCanvasHeight);
+
+
+                        if(intersections.Count == 2)
+                        {
+                            linesToRemove.Add(currentBackstitchLine);
+                            BackstitchLine modifiedBackstitchLine = new BackstitchLine(ImageTransformations.ConvertPairType(intersections[0]), ImageTransformations.ConvertPairType(intersections[1]));
+                            modifiedLinesToAdd.Add(modifiedBackstitchLine);
+                            //backstitchLines[backstitchIndexesAndLines.Key].Add(modifiedBackstitchLine);
+                        }
+
+                    }//else both points are inside, for which case we don't need to do anything
+                }
+
+                foreach (BackstitchLine currentLineToRemove in linesToRemove)
+                {
+                    backstitchLines[backstitchIndexesAndLines.Key].Remove(currentLineToRemove);
+                }
+
+                foreach (BackstitchLine backstitchLineToAdd in modifiedLinesToAdd)
+                {
+                    backstitchLines[backstitchIndexesAndLines.Key].Add(backstitchLineToAdd);
+                }
+            }
+
+            //repaint the backstitch image
+            PaintAllBackstitchLines();
         }
 
         public void SavePdf(string pathToSave, Bitmap topLogo, string title, string secondTitle, string subtitle, string leftText, string rightText, string footerText, string footerLink, string secondFooterText, string[] socialMediaLinks, Bitmap[] socialMediaImages, string[] socialMediaNames)

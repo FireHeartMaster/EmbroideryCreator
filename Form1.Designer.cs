@@ -85,6 +85,7 @@ namespace EmbroideryCreator
             this.RepaintCrossesButton = new System.Windows.Forms.Button();
             this.drawingToolsControl = new EmbroideryCreator.DrawingToolsControl();
             this.newCanvasButton = new System.Windows.Forms.Button();
+            this.changeCanvasSizeButton = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.widthSizeTrackBar)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numberOfColorsTrackBar)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numberOfIterationsTrackBar)).BeginInit();
@@ -661,11 +662,22 @@ namespace EmbroideryCreator
             this.newCanvasButton.UseVisualStyleBackColor = true;
             this.newCanvasButton.Click += new System.EventHandler(this.newCanvasButton_Click);
             // 
+            // changeCanvasSizeButton
+            // 
+            this.changeCanvasSizeButton.Location = new System.Drawing.Point(12, 547);
+            this.changeCanvasSizeButton.Name = "changeCanvasSizeButton";
+            this.changeCanvasSizeButton.Size = new System.Drawing.Size(139, 23);
+            this.changeCanvasSizeButton.TabIndex = 50;
+            this.changeCanvasSizeButton.Text = "Change Canvas Size";
+            this.changeCanvasSizeButton.UseVisualStyleBackColor = true;
+            this.changeCanvasSizeButton.Click += new System.EventHandler(this.changeCanvasSizeButton_Click);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1153, 579);
+            this.Controls.Add(this.changeCanvasSizeButton);
             this.Controls.Add(this.newCanvasButton);
             this.Controls.Add(this.RepaintCrossesButton);
             this.Controls.Add(this.newPixelSizeTrackBarLabel);
@@ -792,6 +804,7 @@ namespace EmbroideryCreator
         private System.Windows.Forms.Label newPixelSizeTrackBarLabel;
         private System.Windows.Forms.Button RepaintCrossesButton;
         private System.Windows.Forms.Button newCanvasButton;
+        private System.Windows.Forms.Button changeCanvasSizeButton;
     }
 }
 

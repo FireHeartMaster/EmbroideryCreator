@@ -310,6 +310,18 @@ namespace EmbroideryCreator
             return result;
         }
 
+        public static Bitmap CropOrAddPadding(Bitmap originalImage, int newWidth, int newHeight)
+        {
+            Bitmap newImage = new Bitmap(newWidth, newHeight);
+
+            using(var graphics = Graphics.FromImage(newImage))
+            {
+                graphics.DrawImage(originalImage, 0, 0);
+            }
+
+            return newImage;
+        }
+
         public static void GetNewSize(int originalWidth, int originalHeight, int newPixelSize, out int width, out int height)
         {
             bool biggerIsWidth = originalWidth > originalHeight;
@@ -769,8 +781,10 @@ namespace EmbroideryCreator
             }
         }
 
-        private static List<Tuple<double, double>> GetIntersectionsWithRectangleInsideOfIt(double xA, double yA, double xB, double yB, double xO, double yO, double a, double b)
+        public static List<Tuple<double, double>> GetIntersectionsWithRectangleInsideOfIt(double xA, double yA, double xB, double yB, double xO, double yO, double a, double b)
         {
+            //A and B are the points that will define the possible intersections with the rectangle
+            //O is the top left corner of the rectangle, while a and b are respectively the rectangle's width and height
             List<Tuple<double, double>> intersections = ComputeIntersectionsOfLineAndRectangle(xA, yA, xB, yB, xO, yO, a, b);
 
             List<Tuple<double, double>> pointsInside = new List<Tuple<double, double>>();
@@ -787,6 +801,16 @@ namespace EmbroideryCreator
             }
 
             return pointsInside;
+        }
+
+        public static Tuple<double, double> ConvertPairType(Tuple<float, float> pair)
+        {
+            return new Tuple<double, double>(pair.Item1, pair.Item2);
+        }
+
+        public static Tuple<float, float> ConvertPairType(Tuple<double, double> pair)
+        {
+            return new Tuple<float, float>((float)pair.Item1, (float)pair.Item2);
         }
     }
 }

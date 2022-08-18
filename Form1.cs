@@ -359,7 +359,7 @@ namespace EmbroideryCreator
                         Tuple<float, float> startingPosition = imageAndOperationsData.ConvertFromGeneralPositionOnImageToCoordinatesIncludingHalfValues(realImagePositionMouseDown);
                         Tuple<float, float> endingPosition = imageAndOperationsData.ConvertFromGeneralPositionOnImageToCoordinatesIncludingHalfValues(realImagePositionMouseUp);
                         imageAndOperationsData.AddNewBackstitchLine(selectedBackstitchColorsControlsList[0].backstitchColorIndex, startingPosition, endingPosition);
-                        //backstitchPictureBox.Image = imageAndOperationsData.BackstitchImage;
+                        backstitchPictureBox.Image = imageAndOperationsData.BackstitchImage;
                     }
                     break;
 
@@ -518,22 +518,34 @@ namespace EmbroideryCreator
             imageAndOperationsData.ProcessImageInSeparateLayers(newPixelSizeTrackBar.Value, processImageExactToSourceCheckBox.Checked);
             //int newImageWidth = imageAndOperationsData.ResultingImage.Width;
             //int newImageHeight = imageAndOperationsData.ResultingImage.Height;
+            ResetImagesAfterProcessing(true);
+        }
+
+        private void ResetImagesAfterProcessing(bool clearBackgroundList, bool clearBackstitchImage = true)
+        {
             mainPictureBox.Image = imageAndOperationsData.ResultingImage;/*ImageTransformations.ResizeBitmap(imageAndOperationsData.resultingImage, mainPictureBox.Width * 10);*/
             threadPictureBox.Image = imageAndOperationsData.ThreadImage;
             symbolsPictureBox.Image = imageAndOperationsData.SymbolsImage;
             gridPictureBox.Image = imageAndOperationsData.GridImage;
             borderPictureBox.Image = imageAndOperationsData.BorderImage;
-            backstitchPictureBox.Image = new Bitmap(mainPictureBox.Image.Width, mainPictureBox.Image.Height);
+            if (clearBackstitchImage)
+            {
+                backstitchPictureBox.Image = new Bitmap(mainPictureBox.Image.Width, mainPictureBox.Image.Height);
+            }
+            else
+            {
+                backstitchPictureBox.Image = imageAndOperationsData.BackstitchImage;
+            }
 
             baseLayerPictureBox.Image = ImageTransformations.CreateSolidColorBitmap(Color.White, imageAndOperationsData.ResultingImage.Width, imageAndOperationsData.ResultingImage.Height);
 
 
-            FillListsOfColors();
+            FillListsOfColors(clearBackgroundList);
 
             ResetOrderOfVisibilityOfPictureBoxes();
         }
 
-        private void FillListsOfColors()
+        private void FillListsOfColors(bool clearBackgroundList = true)
         {
             List<Color> crossStitchColorMeans = imageAndOperationsData.GetCrossStitchColors();
             List<Color> backstitchColors = imageAndOperationsData.GetBackstitchColors();
@@ -548,8 +560,11 @@ namespace EmbroideryCreator
 
             flowLayoutPanelListOfCrossStitchColors.Controls.Clear();
             selectedColorsControlsList.Clear();
-            imageAndOperationsData.colorIsBackgroundList.Clear();
-            imageAndOperationsData.colorIsBackgroundList.Add(true); // corresponding to empty color
+            if (clearBackgroundList)
+            {
+                imageAndOperationsData.colorIsBackgroundList.Clear();
+                imageAndOperationsData.colorIsBackgroundList.Add(true); // corresponding to empty color
+            }
 
             flowLayoutPanelListOfBackstitchColors.Controls.Clear();
             selectedBackstitchColorsControlsList.Clear();
@@ -559,7 +574,10 @@ namespace EmbroideryCreator
                 ReducedColorControl crossStitchColorControl = new ReducedColorControl();
                 crossStitchColorControl.InitializeReducedColorControl(crossStitchColorMeans[i], i, this);
                 flowLayoutPanelListOfCrossStitchColors.Controls.Add(crossStitchColorControl);
-                imageAndOperationsData.colorIsBackgroundList.Add(false);
+                if (clearBackgroundList)
+                {
+                    imageAndOperationsData.colorIsBackgroundList.Add(false);
+                }
             }
 
             for (int i = 0; i < backstitchColors.Count; i++)
@@ -990,6 +1008,22 @@ namespace EmbroideryCreator
 
             SetImageAndData(emptyImage);
             ProcessImage(1);
+        }
+
+        private void changeCanvasSizeButton_Click(object sender, EventArgs e)
+        {
+            if (imageAndOperationsData == null || imageAndOperationsData.ResultingImage == null) return;
+
+            Tuple<int, int> currentSize = imageAndOperationsData.GetSizeInPixels();
+            using (ChangeCanvasSizeDialog changeCanvasSizeDialog = new ChangeCanvasSizeDialog(currentSize.Item1, currentSize.Item2))
+            {
+                if (changeCanvasSizeDialog.ShowDialog() == DialogResult.OK)
+                {
+                    imageAndOperationsData.ChangeCanvasSize(changeCanvasSizeDialog.newWidth, changeCanvasSizeDialog.newHeight, newPixelSizeTrackBar.Value);
+
+                    ResetImagesAfterProcessing(false, false);
+                }
+            }
         }
     }
 
