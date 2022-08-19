@@ -254,11 +254,21 @@ namespace EmbroideryCreator
 
         private void FillAllNotFilledSymbols()
         {
-            if (dictionaryOfSymbolByIndex.Count > 0) return;
+            if (dictionaryOfSymbolByIndex.Count > 0 && dictionaryOfSymbolByIndex.Count == colorMeans.Count) return;
 
             for (int i = 0; i < colorMeans.Count; i++)
             {
                 TryToAddNewSymbol(i);
+            }
+        }
+
+        private void FillAllNotFilledThreadColoredCrosses()
+        {
+            if (dictionaryOfColoredCrossByIndex.Count > 0 && dictionaryOfColoredCrossByIndex.Count == colorMeans.Count) return;
+
+            for (int i = 0; i < colorMeans.Count; i++)
+            {
+                TryToAddNewColoredCross(i);
             }
         }
 
@@ -405,6 +415,7 @@ namespace EmbroideryCreator
             TryToAddEmptyColor();
 
             FillAllNotFilledSymbols();
+            FillAllNotFilledThreadColoredCrosses();
 
             RemoveBackstitchLinesPoints();
         }
