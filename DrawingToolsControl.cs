@@ -48,7 +48,7 @@ namespace EmbroideryCreator
             EnableNewTool(DrawingToolInUse.ColorPicker);
         }
 
-        private void EnableNewTool(DrawingToolInUse newSelectedDrawingTool)
+        public void EnableNewTool(DrawingToolInUse newSelectedDrawingTool)
         {
             //ResetCurrentToolsImage();
             switch (newSelectedDrawingTool)

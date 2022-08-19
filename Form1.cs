@@ -145,6 +145,31 @@ namespace EmbroideryCreator
             }                        
         }
 
+        private void MainForm_KeyDown(object sender, KeyEventArgs e)
+        {
+            switch (e.KeyCode)
+            {
+                case Keys.D1:
+                    drawingToolsControl.EnableNewTool((DrawingToolInUse)(1 - 1));
+                    break;
+                case Keys.D2:
+                    drawingToolsControl.EnableNewTool((DrawingToolInUse)(2 - 1));
+                    break;
+                case Keys.D3:
+                    drawingToolsControl.EnableNewTool((DrawingToolInUse)(3 - 1));
+                    break;
+                case Keys.D4:
+                    drawingToolsControl.EnableNewTool((DrawingToolInUse)(4 - 1));
+                    break;
+                case Keys.D5:
+                    drawingToolsControl.EnableNewTool((DrawingToolInUse)(5 - 1));
+                    break;
+
+                default:
+                    break;
+            }
+        }
+
         private void mainPictureBox_MouseDown(object sender, MouseEventArgs e)
         {
             isDrawing = true;
@@ -1002,6 +1027,7 @@ namespace EmbroideryCreator
         private void MainForm_Load(object sender, EventArgs e)
         {
             oldFormSize = base.Size;
+            KeyPreview = true;
         }
 
         private void ResizeControl(Control control, Size newSize, Size oldSize)
