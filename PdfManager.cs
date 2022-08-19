@@ -455,6 +455,10 @@ namespace EmbroideryCreator
             int totalAmountOfColors = isCrossStitchAndNotBackstitch ? colorMeans.Count : backstitchColors.Count;
 
             int indexOfTheFirstColorOfTheCurrentPage = 0;
+            if(colorMeans.Count > 0 && colorMeans[0].A == 0)
+            {
+                indexOfTheFirstColorOfTheCurrentPage = 1; //skip the first color because it is the empty color
+            }
 
             if (totalAmountOfColors == 0) return;
 
