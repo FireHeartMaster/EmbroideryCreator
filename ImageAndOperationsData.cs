@@ -308,9 +308,9 @@ namespace EmbroideryCreator
             return iconsManager.GetNextIcon();
         }
 
-        public int GetColorIndexFromPosition(Tuple<int, int> generalPosition)
+        public int GetColorIndexFromPosition(Tuple<int, int> generalPosition, bool roundToClosest = true)
         {
-            Tuple<int, int> coordinates = ConvertFromGeneralPositionOnImageToCoordinates(generalPosition);
+            Tuple<int, int> coordinates = ConvertFromGeneralPositionOnImageToCoordinates(generalPosition, roundToClosest);
             if (coordinates.Item1 < 0 || coordinates.Item1 >= matrixOfNewColors.GetLength(0) || coordinates.Item2 < 0 || coordinates.Item2 >= matrixOfNewColors.GetLength(1))
             {
                 return -1;
@@ -836,9 +836,9 @@ namespace EmbroideryCreator
             RepaintMainImage(false, true, false);
         }
 
-        public void PaintNewColorOnGeneralPosition(Tuple<int, int> generalPosition, int colorIndexToPaint)
+        public void PaintNewColorOnGeneralPosition(Tuple<int, int> generalPosition, int colorIndexToPaint, bool roundToClosest = true)
         {
-            Tuple<int, int> coordinates = ConvertFromGeneralPositionOnImageToCoordinates(generalPosition);
+            Tuple<int, int> coordinates = ConvertFromGeneralPositionOnImageToCoordinates(generalPosition, roundToClosest);
             if(coordinates.Item1 < 0 || coordinates.Item1 >= matrixOfNewColors.GetLength(0) || coordinates.Item2 < 0 || coordinates.Item2 >= matrixOfNewColors.GetLength(1))
             {
                 return;
@@ -901,12 +901,15 @@ namespace EmbroideryCreator
             RepaintMainImage(true, true, true);
         }
 
-        private Tuple<int, int> ConvertFromGeneralPositionOnImageToCoordinates(Tuple<int, int> generalPosition)
+        private Tuple<int, int> ConvertFromGeneralPositionOnImageToCoordinates(Tuple<int, int> generalPosition, bool roundToClosest = true)
         {
-            int x = (int)Math.Round(((float)(generalPosition.Item1 - BorderThicknessInNumberOfPixels)) / newPixelSize);
-            int y = (int)Math.Round(((float)(generalPosition.Item2 - BorderThicknessInNumberOfPixels)) / newPixelSize);
+            double x = (((float)(generalPosition.Item1 - BorderThicknessInNumberOfPixels)) / newPixelSize);
+            double y = (((float)(generalPosition.Item2 - BorderThicknessInNumberOfPixels)) / newPixelSize);
 
-            return new Tuple<int, int>(x, y);
+            int xRounded = (int)(roundToClosest ? Math.Round(x) : x);
+            int yRounded = (int)(roundToClosest ? Math.Round(y) : y);
+
+            return new Tuple<int, int>(xRounded, yRounded);
         }
 
         private Tuple<float, float> ConvertFromGeneralPositionOnImageToFloatCoordinates(Tuple<int, int> generalPosition)
@@ -964,9 +967,9 @@ namespace EmbroideryCreator
             }
         }
 
-        public void FillRegionWithColorByPosition(Tuple<int, int> generalPosition, int colorIndexToPaint)
+        public void FillRegionWithColorByPosition(Tuple<int, int> generalPosition, int colorIndexToPaint, bool roundToClosest = true)
         {
-            Tuple<int, int> coordinates = ConvertFromGeneralPositionOnImageToCoordinates(generalPosition);
+            Tuple<int, int> coordinates = ConvertFromGeneralPositionOnImageToCoordinates(generalPosition, roundToClosest);
             if (coordinates.Item1 < 0 || coordinates.Item1 >= matrixOfNewColors.GetLength(0) || coordinates.Item2 < 0 || coordinates.Item2 >= matrixOfNewColors.GetLength(1))
             {
                 return;

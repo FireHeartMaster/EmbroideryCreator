@@ -811,7 +811,7 @@ namespace EmbroideryCreator
                                             XPoint startingPoint, double squareSize, Dictionary<int, XImage> dictionaryOfXimageByIndex, bool drawColor = true, bool drawSymbol = true)
         {
             Color currentPositionColor = colorMeans[matrixOfNewColors[i, j]];
-            XSolidBrush brush = new XSolidBrush(XColor.FromArgb(currentPositionColor.R, currentPositionColor.G, currentPositionColor.B));
+            XSolidBrush brush = new XSolidBrush(XColor.FromArgb(currentPositionColor.A, currentPositionColor.R, currentPositionColor.G, currentPositionColor.B));
 
             XRect positionToDrawRect = new XRect(   startingPoint.X + relativeIndexI * squareSize,
                                                     startingPoint.Y + relativeIndexJ * squareSize,

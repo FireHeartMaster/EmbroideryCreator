@@ -410,17 +410,17 @@ namespace EmbroideryCreator
 
         private void CrossStitchDraw(Point positionOnImage)
         {
-            Tuple<int, int> realImagePosition = ImageTransformations.ConvertFromPictureBoxToRealImage(mainPictureBox, new Tuple<int, int>(positionOnImage.X, positionOnImage.Y));
+            Tuple<int, int> realImagePosition = ImageTransformations.ConvertFromPictureBoxToRealImage(mainPictureBox, new Tuple<int, int>(positionOnImage.X, positionOnImage.Y), false);
 
             int colorIndexToPaint = selectedColorsControlsList.Count > 0 ? selectedColorsControlsList[0].reducedColorIndex : ((ReducedColorControl)flowLayoutPanelListOfCrossStitchColors.Controls[0]).reducedColorIndex;
 
             switch (drawingToolsControl.currentDrawingTool)
             {
                 case DrawingToolInUse.Pencil:
-                    imageAndOperationsData.PaintNewColorOnGeneralPosition(realImagePosition, colorIndexToPaint);
+                    imageAndOperationsData.PaintNewColorOnGeneralPosition(realImagePosition, colorIndexToPaint, false);
                     break;
                 case DrawingToolInUse.Bucket:
-                    imageAndOperationsData.FillRegionWithColorByPosition(realImagePosition, colorIndexToPaint);
+                    imageAndOperationsData.FillRegionWithColorByPosition(realImagePosition, colorIndexToPaint, false);
                     isDrawing = false;
                     //SetBackstitchDrawMouseUp();
                     break;
@@ -432,10 +432,10 @@ namespace EmbroideryCreator
                     }
                     break;
                 case DrawingToolInUse.Eraser:
-                    imageAndOperationsData.PaintNewColorOnGeneralPosition(realImagePosition, 0);
+                    imageAndOperationsData.PaintNewColorOnGeneralPosition(realImagePosition, 0, false);
                     break;
                 case DrawingToolInUse.ColorPicker:
-                    PickColor(realImagePosition);
+                    PickColor(realImagePosition, false);
                     isDrawing = false;
                     break;
                 default:
@@ -448,9 +448,9 @@ namespace EmbroideryCreator
             symbolsPictureBox.Image = imageAndOperationsData.SymbolsImage;
         }
 
-        private void PickColor(Tuple<int, int> realImagePosition)
+        private void PickColor(Tuple<int, int> realImagePosition, bool roundToClosest = true)
         {
-            int colorIndex = imageAndOperationsData.GetColorIndexFromPosition(realImagePosition);
+            int colorIndex = imageAndOperationsData.GetColorIndexFromPosition(realImagePosition, roundToClosest);
             if (colorIndex != -1)
             {                
                 //select the picked color

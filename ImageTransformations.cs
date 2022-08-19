@@ -364,7 +364,7 @@ namespace EmbroideryCreator
             return bitmap;
         }
 
-        public static Tuple<int, int> ConvertFromPictureBoxToRealImage(PictureBox pictureBox, Tuple<int, int> pictureBoxPosition)
+        public static Tuple<int, int> ConvertFromPictureBoxToRealImage(PictureBox pictureBox, Tuple<int, int> pictureBoxPosition, bool roundToClosest = true)
         {
             bool biggerIsWidth = pictureBox.Image.Width > pictureBox.Image.Height;
 
@@ -377,9 +377,13 @@ namespace EmbroideryCreator
             {
                 ratio = ((float)pictureBox.Image.Height) / pictureBox.Size.Height;
             }
-            int horizontalPosition = (int)Math.Round(ratio * (pictureBoxPosition.Item1 - (pictureBox.Size.Width * 0.5f)) + pictureBox.Image.Width * 0.5f);
-            int verticalPosition = (int)Math.Round(ratio * (pictureBoxPosition.Item2 - (pictureBox.Size.Height * 0.5f)) + pictureBox.Image.Height * 0.5f);
-            return new Tuple<int, int>(horizontalPosition, verticalPosition);
+            double horizontalPosition = (ratio * (pictureBoxPosition.Item1 - (pictureBox.Size.Width * 0.5f)) + pictureBox.Image.Width * 0.5f);
+            double verticalPosition = (ratio * (pictureBoxPosition.Item2 - (pictureBox.Size.Height * 0.5f)) + pictureBox.Image.Height * 0.5f);
+
+            int horizontalPositionRounded = (int)(roundToClosest ? Math.Round(horizontalPosition) : horizontalPosition);
+            int verticalPositionRounded = (int)(roundToClosest ? Math.Round(verticalPosition) : verticalPosition);
+
+            return new Tuple<int, int>(horizontalPositionRounded, verticalPositionRounded);
         }
 
         public static float CalculateDistanceOfPointToLine(Tuple<float, float> referencePoint, Tuple<float, float> lineStartingPoint, Tuple<float, float> lineEndingPoint)
