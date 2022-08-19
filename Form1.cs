@@ -155,13 +155,26 @@ namespace EmbroideryCreator
                 case Keys.D2:
                     drawingToolsControl.EnableNewTool((DrawingToolInUse)(2 - 1));
                     break;
+                case Keys.B:
+                    if (!ModifierKeys.HasFlag(Keys.Shift))
+                    {
+                        drawingToolsControl.EnableNewTool((DrawingToolInUse)(1 - 1));
+                    }
+                    else
+                    {
+                        drawingToolsControl.EnableNewTool((DrawingToolInUse)(2 - 1));
+                    }
+                    break;
                 case Keys.D3:
+                case Keys.E:
                     drawingToolsControl.EnableNewTool((DrawingToolInUse)(3 - 1));
                     break;
                 case Keys.D4:
+                case Keys.H:
                     drawingToolsControl.EnableNewTool((DrawingToolInUse)(4 - 1));
                     break;
                 case Keys.D5:
+                case Keys.I:
                     drawingToolsControl.EnableNewTool((DrawingToolInUse)(5 - 1));
                     break;
 
@@ -437,14 +450,21 @@ namespace EmbroideryCreator
         {
             Tuple<int, int> realImagePosition = ImageTransformations.ConvertFromPictureBoxToRealImage(mainPictureBox, new Tuple<int, int>(positionOnImage.X, positionOnImage.Y), false);
 
-            int colorIndexToPaint = selectedColorsControlsList.Count > 0 ? selectedColorsControlsList[0].reducedColorIndex : ((ReducedColorControl)flowLayoutPanelListOfCrossStitchColors.Controls[0]).reducedColorIndex;
+            int indexOfTheFirstColorOfList = -1;
+            if (flowLayoutPanelListOfCrossStitchColors.Controls.Count > 0)
+            {
+                indexOfTheFirstColorOfList = ((ReducedColorControl)flowLayoutPanelListOfCrossStitchColors.Controls[0]).reducedColorIndex;
+            }
+            int colorIndexToPaint = selectedColorsControlsList.Count > 0 ? selectedColorsControlsList[0].reducedColorIndex : indexOfTheFirstColorOfList;
 
             switch (drawingToolsControl.currentDrawingTool)
             {
                 case DrawingToolInUse.Pencil:
+                    if (colorIndexToPaint == -1) return;
                     imageAndOperationsData.PaintNewColorOnGeneralPosition(realImagePosition, colorIndexToPaint, false);
                     break;
                 case DrawingToolInUse.Bucket:
+                    if (colorIndexToPaint == -1) return;
                     imageAndOperationsData.FillRegionWithColorByPosition(realImagePosition, colorIndexToPaint, false);
                     isDrawing = false;
                     //SetBackstitchDrawMouseUp();
@@ -824,31 +844,61 @@ namespace EmbroideryCreator
                 int firstIndex = selectedColorsControlsList[0].reducedColorIndex;
                 int otherIndex = selectedColorsControlsList[1].reducedColorIndex;
 
-                //The following code deals with the list and dictionary management of the indexes, but first let's paint the pixels of the removed index
-                //with the color of the index that will stay
-                UpdateReducedColorByIndex(otherIndex, imageAndOperationsData.GetCrossStitchColors()[firstIndex]);
-
-                //Remove the desired index from the backend's list
-                imageAndOperationsData.MergeTwoColors(firstIndex, otherIndex);
-
-                //Redistribute index values to the list of the frontend
-                foreach (object control in flowLayoutPanelListOfCrossStitchColors.Controls)
-                {
-                    ReducedColorControl reducedColorControl = (ReducedColorControl)control;
-                    if (reducedColorControl.reducedColorIndex > otherIndex)
-                    {
-                        reducedColorControl.reducedColorIndex--;
-                    }
-                }
-
-                ////Now I can remove the desired control from both the selection list and from the collection of controls of the panel
-                flowLayoutPanelListOfCrossStitchColors.Controls.Remove(selectedColorsControlsList[1]);
-                imageAndOperationsData.colorIsBackgroundList.RemoveAt(selectedColorsControlsList[1].reducedColorIndex);
-                //selectedColorsControlsList[1].ModifySelectionCheckBox(false);
                 ReducedColorControl controlToRemove = selectedColorsControlsList[1];
-                controlToRemove.Dispose();
-                selectedColorsControlsList.RemoveAt(1);
+                MergeTwoColorsByTheirIndexes(firstIndex, otherIndex, controlToRemove);
+                selectedColorsControlsList.RemoveAt(1); //removing the second color selected, i.e. 1
             }
+        }
+
+        private void MergeTwoColorsByTheirIndexes(int firstIndex, int otherIndex, ReducedColorControl controlToRemove)
+        {
+            //The following code deals with the list and dictionary management of the indexes, but first let's paint the pixels of the removed index
+            //with the color of the index that will stay
+            UpdateReducedColorByIndex(otherIndex, imageAndOperationsData.GetCrossStitchColors()[firstIndex]);
+
+            //Remove the desired index from the backend's list by merging it with the first index
+            imageAndOperationsData.MergeTwoColors(firstIndex, otherIndex);
+
+            //removing this index from the frontend
+            //Redistribute index values to the list of the frontend
+            foreach (object control in flowLayoutPanelListOfCrossStitchColors.Controls)
+            {
+                ReducedColorControl reducedColorControl = (ReducedColorControl)control;
+                if (reducedColorControl.reducedColorIndex > otherIndex)
+                {
+                    reducedColorControl.reducedColorIndex--;
+                }
+            }
+
+            ////Now I can remove the desired control from both the selection list and from the collection of controls of the panel
+            if (controlToRemove != null)
+            {
+                flowLayoutPanelListOfCrossStitchColors.Controls.Remove(controlToRemove);
+                controlToRemove.Dispose();
+            }            
+        }
+
+        private ReducedColorControl GetReducedColorControlByIndex(int index)
+        {
+            foreach (object control in flowLayoutPanelListOfCrossStitchColors.Controls)
+            {
+                ReducedColorControl reducedColorControl = (ReducedColorControl)control;
+                if (reducedColorControl.reducedColorIndex == index)
+                {
+                    return reducedColorControl;
+                }
+            }
+
+            return null;
+        }
+
+        private void RemoveCrossStitchColor(int index)
+        {
+            if (index == 0) return;
+
+            ReducedColorControl reducedColorControlToRemove = GetReducedColorControlByIndex(index);
+
+            MergeTwoColorsByTheirIndexes(0, index, reducedColorControlToRemove);
         }
 
         private void AddNewColor(Color newColor)
@@ -857,7 +907,6 @@ namespace EmbroideryCreator
             colorControl.InitializeReducedColorControl(newColor, flowLayoutPanelListOfCrossStitchColors.Controls.Count + 1, /*colorControl,*/ this);    //the "+1" here it to take the empty color into account
             flowLayoutPanelListOfCrossStitchColors.Controls.Add(colorControl);
             imageAndOperationsData.AddNewColor(newColor);
-            imageAndOperationsData.colorIsBackgroundList.Add(false);
         }
 
         private void AddNewBackstitchColor(Color newColor)
@@ -955,6 +1004,15 @@ namespace EmbroideryCreator
             currentDrawingMode = DrawingMode.Backstitch;
 
             currentStitchModeLabel.Text = "Back Stitch";
+        }
+
+        public void IncreaseIndexesOfAllCrossStitchColors()
+        {
+            foreach (object colorControl in flowLayoutPanelListOfCrossStitchColors.Controls)
+            {
+                ReducedColorControl reducedColorControl = (ReducedColorControl)colorControl;
+                reducedColorControl.reducedColorIndex++;
+            }
         }
 
         private void mainPictureBox_MouseHover(object sender, EventArgs e)
@@ -1085,6 +1143,48 @@ namespace EmbroideryCreator
 
                     ResetImagesAfterProcessing(false, false);
                 }
+            }
+        }
+
+        private void removeUnusedCrossStichColorsButton_Click(object sender, EventArgs e)
+        {
+            if (imageAndOperationsData == null || imageAndOperationsData.ResultingImage == null) return;
+
+            List<ReducedColorControl> reducedColorControlsToRemove = new List<ReducedColorControl>();
+            foreach (object colorControl in flowLayoutPanelListOfCrossStitchColors.Controls)
+            {
+                ReducedColorControl reducedColorControl = (ReducedColorControl)colorControl;
+                if(reducedColorControl.reducedColorIndex == 0)
+                {
+                    imageAndOperationsData.TryToAddEmptyColor();
+                    IncreaseIndexesOfAllCrossStitchColors();
+                }
+
+                int amountForThisCrossStitchColor = imageAndOperationsData.GetAmountOfColorsForColorIndex(reducedColorControl.reducedColorIndex, out _);
+
+                if(amountForThisCrossStitchColor == 0)
+                {                    
+                    reducedColorControlsToRemove.Add(reducedColorControl);
+                }
+            }
+
+            foreach (var currentReducedColorControlToRemove in reducedColorControlsToRemove)
+            {
+                RemoveCrossStitchColor(currentReducedColorControlToRemove.reducedColorIndex);
+                selectedColorsControlsList.RemoveAll(selectedReducedColor => selectedReducedColor.reducedColorIndex == currentReducedColorControlToRemove.reducedColorIndex);
+            }
+        }
+
+        private void deleteCrossStitchColorButton_Click(object sender, EventArgs e)
+        {
+            if (imageAndOperationsData == null || imageAndOperationsData.ResultingImage == null) return;
+
+            while (selectedColorsControlsList.Count > 0)
+            {
+                ReducedColorControl selectedReducedColorToRemove = selectedColorsControlsList[0];
+                RemoveCrossStitchColor(selectedReducedColorToRemove.reducedColorIndex);
+                
+                selectedColorsControlsList.RemoveAt(0); //removing the first color selected, i.e. 0
             }
         }
     }

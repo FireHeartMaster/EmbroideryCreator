@@ -86,6 +86,8 @@ namespace EmbroideryCreator
             this.newCanvasButton = new System.Windows.Forms.Button();
             this.changeCanvasSizeButton = new System.Windows.Forms.Button();
             this.drawingToolsControl = new EmbroideryCreator.DrawingToolsControl();
+            this.removeUnusedCrossStichColorsButton = new System.Windows.Forms.Button();
+            this.deleteCrossStitchColorButton = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.widthSizeTrackBar)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numberOfColorsTrackBar)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numberOfIterationsTrackBar)).BeginInit();
@@ -260,7 +262,7 @@ namespace EmbroideryCreator
             // 
             this.mergeCrossStitchColorsButton.Location = new System.Drawing.Point(848, 489);
             this.mergeCrossStitchColorsButton.Name = "mergeCrossStitchColorsButton";
-            this.mergeCrossStitchColorsButton.Size = new System.Drawing.Size(98, 23);
+            this.mergeCrossStitchColorsButton.Size = new System.Drawing.Size(95, 23);
             this.mergeCrossStitchColorsButton.TabIndex = 16;
             this.mergeCrossStitchColorsButton.Text = "Merge colors";
             this.mergeCrossStitchColorsButton.UseVisualStyleBackColor = true;
@@ -270,7 +272,7 @@ namespace EmbroideryCreator
             // 
             this.addCrossStitchColorButton.Location = new System.Drawing.Point(848, 518);
             this.addCrossStitchColorButton.Name = "addCrossStitchColorButton";
-            this.addCrossStitchColorButton.Size = new System.Drawing.Size(98, 23);
+            this.addCrossStitchColorButton.Size = new System.Drawing.Size(95, 23);
             this.addCrossStitchColorButton.TabIndex = 17;
             this.addCrossStitchColorButton.Text = "Add color";
             this.addCrossStitchColorButton.UseVisualStyleBackColor = true;
@@ -398,7 +400,7 @@ namespace EmbroideryCreator
             this.RetrieveSavedFileButton.Name = "RetrieveSavedFileButton";
             this.RetrieveSavedFileButton.Size = new System.Drawing.Size(139, 23);
             this.RetrieveSavedFileButton.TabIndex = 26;
-            this.RetrieveSavedFileButton.Text = "RetrieveSavedFile ";
+            this.RetrieveSavedFileButton.Text = "Retrieve Saved File ";
             this.RetrieveSavedFileButton.UseVisualStyleBackColor = true;
             this.RetrieveSavedFileButton.Click += new System.EventHandler(this.RetrieveSavedFileButton_Click);
             // 
@@ -672,11 +674,33 @@ namespace EmbroideryCreator
             this.drawingToolsControl.Size = new System.Drawing.Size(215, 45);
             this.drawingToolsControl.TabIndex = 18;
             // 
+            // removeUnusedCrossStichColorsButton
+            // 
+            this.removeUnusedCrossStichColorsButton.Location = new System.Drawing.Point(848, 547);
+            this.removeUnusedCrossStichColorsButton.Name = "removeUnusedCrossStichColorsButton";
+            this.removeUnusedCrossStichColorsButton.Size = new System.Drawing.Size(95, 23);
+            this.removeUnusedCrossStichColorsButton.TabIndex = 51;
+            this.removeUnusedCrossStichColorsButton.Text = "Remove unused";
+            this.removeUnusedCrossStichColorsButton.UseVisualStyleBackColor = true;
+            this.removeUnusedCrossStichColorsButton.Click += new System.EventHandler(this.removeUnusedCrossStichColorsButton_Click);
+            // 
+            // deleteCrossStitchColorButton
+            // 
+            this.deleteCrossStitchColorButton.Location = new System.Drawing.Point(848, 576);
+            this.deleteCrossStitchColorButton.Name = "deleteCrossStitchColorButton";
+            this.deleteCrossStitchColorButton.Size = new System.Drawing.Size(98, 23);
+            this.deleteCrossStitchColorButton.TabIndex = 52;
+            this.deleteCrossStitchColorButton.Text = "Delete color";
+            this.deleteCrossStitchColorButton.UseVisualStyleBackColor = true;
+            this.deleteCrossStitchColorButton.Click += new System.EventHandler(this.deleteCrossStitchColorButton_Click);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1153, 579);
+            this.ClientSize = new System.Drawing.Size(1153, 603);
+            this.Controls.Add(this.deleteCrossStitchColorButton);
+            this.Controls.Add(this.removeUnusedCrossStichColorsButton);
             this.Controls.Add(this.changeCanvasSizeButton);
             this.Controls.Add(this.newCanvasButton);
             this.Controls.Add(this.RepaintCrossesButton);
@@ -806,6 +830,8 @@ namespace EmbroideryCreator
         private System.Windows.Forms.Button RepaintCrossesButton;
         private System.Windows.Forms.Button newCanvasButton;
         private System.Windows.Forms.Button changeCanvasSizeButton;
+        private System.Windows.Forms.Button removeUnusedCrossStichColorsButton;
+        private System.Windows.Forms.Button deleteCrossStitchColorButton;
     }
 }
 
