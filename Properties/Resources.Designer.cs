@@ -1164,6 +1164,16 @@ namespace EmbroideryCreator.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
+        /// </summary>
+        internal static System.Drawing.Icon EmbroideryCreatorIcon {
+            get {
+                object obj = ResourceManager.GetObject("EmbroideryCreatorIcon", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
         internal static System.Drawing.Bitmap EraserIcon {

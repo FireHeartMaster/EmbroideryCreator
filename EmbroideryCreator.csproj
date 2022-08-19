@@ -32,6 +32,9 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>Resources\EmbroideryCreatorIcon.ico</ApplicationIcon>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="PdfSharp, Version=1.51.5185.0, Culture=neutral, PublicKeyToken=f94615aa0424f9eb, processorArchitecture=MSIL">
       <HintPath>packages\PDFsharp.1.51.5185-beta\lib\net20\PdfSharp.dll</HintPath>
@@ -136,6 +139,7 @@
     <None Include="Resources\RedThreadCross.png" />
     <None Include="Resources\CrossStitchSymbol.png" />
     <None Include="Resources\ColorPickerIcon.png" />
+    <None Include="Resources\EmbroideryCreatorIcon.ico" />
     <Content Include="Resources\Icons\001.png" />
     <Content Include="Resources\Icons\002.png" />
     <Content Include="Resources\Icons\003.png" />
