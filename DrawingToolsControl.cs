@@ -43,6 +43,11 @@ namespace EmbroideryCreator
             EnableNewTool(DrawingToolInUse.Move);
         }
 
+        private void colorPickerPictureBox_Click(object sender, EventArgs e)
+        {
+            EnableNewTool(DrawingToolInUse.ColorPicker);
+        }
+
         private void EnableNewTool(DrawingToolInUse newSelectedDrawingTool)
         {
             //ResetCurrentToolsImage();
@@ -66,6 +71,10 @@ namespace EmbroideryCreator
                     currentDrawingTool = DrawingToolInUse.Move;
                     currentActiveToolPictureBox = movePictureBox;
                     break;
+                case DrawingToolInUse.ColorPicker:
+                    currentDrawingTool = DrawingToolInUse.ColorPicker;
+                    currentActiveToolPictureBox = colorPickerPictureBox;
+                    break;
 
 
                 default:
@@ -88,7 +97,7 @@ namespace EmbroideryCreator
             //currentActiveToolPictureBox.Invalidate();
             selectedToolpictureBox.Location = new Point((int)(currentActiveToolPictureBox.Location.X - (selectedToolpictureBox.Size.Width - currentActiveToolPictureBox.Size.Width) * 0.5),
                                                         (int)(currentActiveToolPictureBox.Location.Y - (selectedToolpictureBox.Size.Height - currentActiveToolPictureBox.Size.Height) * 0.5));
-        }
+        }        
     }
 
     public enum DrawingToolInUse
@@ -96,6 +105,7 @@ namespace EmbroideryCreator
         Pencil,
         Bucket,
         Eraser,
-        Move
+        Move, 
+        ColorPicker
     }
 }

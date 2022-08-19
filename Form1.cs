@@ -175,6 +175,9 @@ namespace EmbroideryCreator
                             case DrawingToolInUse.Move:
                                 MoveTool(e.Location);
                                 break;
+                            case DrawingToolInUse.Eraser:
+                                DrawOnPictureBox(e.Location);
+                                break;
 
                             default:
                                 break;
@@ -428,6 +431,13 @@ namespace EmbroideryCreator
                         originalPositionMoveTool = pictureBoxesByVisibilityOrder[0].Location;
                     }
                     break;
+                case DrawingToolInUse.Eraser:
+                    imageAndOperationsData.PaintNewColorOnGeneralPosition(realImagePosition, 0);
+                    break;
+                case DrawingToolInUse.ColorPicker:
+                    PickColor(realImagePosition);
+                    isDrawing = false;
+                    break;
                 default:
                     break;
             }
@@ -436,6 +446,16 @@ namespace EmbroideryCreator
             mainPictureBox.Image = imageAndOperationsData.ResultingImage;
             threadPictureBox.Image = imageAndOperationsData.ThreadImage;
             symbolsPictureBox.Image = imageAndOperationsData.SymbolsImage;
+        }
+
+        private void PickColor(Tuple<int, int> realImagePosition)
+        {
+            int colorIndex = imageAndOperationsData.GetColorIndexFromPosition(realImagePosition);
+            if (colorIndex != -1)
+            {                
+                //select the picked color
+                UncheckAllOtherCrossStitchColorControlsAndCheckTheChosenOne(colorIndex);
+            }
         }
 
         private void RemoveAlonePixels()
@@ -596,6 +616,22 @@ namespace EmbroideryCreator
                 if(reducedColorControl.reducedColorIndex != indexToRemainChecked)
                 {
                     reducedColorControl.ModifySelectionCheckBox(false);
+                }
+            }
+        }
+
+        public void UncheckAllOtherCrossStitchColorControlsAndCheckTheChosenOne(int indexToRemainChecked)
+        {
+            foreach (object colorControl in flowLayoutPanelListOfCrossStitchColors.Controls)
+            {
+                ReducedColorControl reducedColorControl = (ReducedColorControl)colorControl;
+                if (reducedColorControl.reducedColorIndex != indexToRemainChecked)
+                {
+                    reducedColorControl.ModifySelectionCheckBox(false);
+                }
+                else
+                {
+                    reducedColorControl.ModifySelectionCheckBox(true);
                 }
             }
         }

@@ -34,11 +34,13 @@ namespace EmbroideryCreator
             this.pencilPictureBox = new System.Windows.Forms.PictureBox();
             this.selectedToolpictureBox = new System.Windows.Forms.PictureBox();
             this.movePictureBox = new System.Windows.Forms.PictureBox();
+            this.colorPickerPictureBox = new System.Windows.Forms.PictureBox();
             ((System.ComponentModel.ISupportInitialize)(this.eraserPictureBox)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.bucketPictureBox)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pencilPictureBox)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.selectedToolpictureBox)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.movePictureBox)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.colorPickerPictureBox)).BeginInit();
             this.SuspendLayout();
             // 
             // eraserPictureBox
@@ -99,11 +101,24 @@ namespace EmbroideryCreator
             this.movePictureBox.TabStop = false;
             this.movePictureBox.Click += new System.EventHandler(this.movePictureBox_Click);
             // 
+            // colorPickerPictureBox
+            // 
+            this.colorPickerPictureBox.Image = global::EmbroideryCreator.Properties.Resources.ColorPickerIcon;
+            this.colorPickerPictureBox.Location = new System.Drawing.Point(176, 6);
+            this.colorPickerPictureBox.Margin = new System.Windows.Forms.Padding(6);
+            this.colorPickerPictureBox.Name = "colorPickerPictureBox";
+            this.colorPickerPictureBox.Size = new System.Drawing.Size(30, 30);
+            this.colorPickerPictureBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.colorPickerPictureBox.TabIndex = 5;
+            this.colorPickerPictureBox.TabStop = false;
+            this.colorPickerPictureBox.Click += new System.EventHandler(this.colorPickerPictureBox_Click);
+            // 
             // DrawingToolsControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.ActiveBorder;
+            this.Controls.Add(this.colorPickerPictureBox);
             this.Controls.Add(this.movePictureBox);
             this.Controls.Add(this.eraserPictureBox);
             this.Controls.Add(this.bucketPictureBox);
@@ -111,12 +126,13 @@ namespace EmbroideryCreator
             this.Controls.Add(this.selectedToolpictureBox);
             this.Name = "DrawingToolsControl";
             this.Padding = new System.Windows.Forms.Padding(3);
-            this.Size = new System.Drawing.Size(172, 45);
+            this.Size = new System.Drawing.Size(215, 45);
             ((System.ComponentModel.ISupportInitialize)(this.eraserPictureBox)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.bucketPictureBox)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pencilPictureBox)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.selectedToolpictureBox)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.movePictureBox)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.colorPickerPictureBox)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -128,5 +144,6 @@ namespace EmbroideryCreator
         private System.Windows.Forms.PictureBox selectedToolpictureBox;
         private System.Windows.Forms.PictureBox eraserPictureBox;
         private System.Windows.Forms.PictureBox movePictureBox;
+        private System.Windows.Forms.PictureBox colorPickerPictureBox;
     }
 }

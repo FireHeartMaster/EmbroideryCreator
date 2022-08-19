@@ -118,9 +118,6 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="090" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Icons\090.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
   <data name="068" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Icons\068.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
@@ -139,9 +136,6 @@
   <data name="071" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Icons\071.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="027" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Icons\027.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
   <data name="017" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Icons\017.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
@@ -150,9 +144,6 @@
   </data>
   <data name="018" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Icons\018.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="064" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Icons\064.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="DmcTable" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\DmcTable.csv;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
@@ -163,14 +154,20 @@
   <data name="033" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Icons\033.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="069" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Icons\069.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="008" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Icons\008.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="067" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Icons\067.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="056" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Icons\056.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="035" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Icons\035.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="YouTubeLogo" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\SocialMedia\YouTubeLogo.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="061" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Icons\061.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -178,8 +175,14 @@
   <data name="083" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Icons\083.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="008" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Icons\008.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="090" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Icons\090.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="098" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Icons\098.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="MoveIcon" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\MoveIcon.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="ThreadCross" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\ThreadCross.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -223,29 +226,26 @@
   <data name="075" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Icons\075.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="095" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Icons\095.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
   <data name="072" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Icons\072.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="043" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Icons\043.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="096" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Icons\096.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="PinterestLogo" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\SocialMedia\PinterestLogo.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="066" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Icons\066.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="086" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Icons\086.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="089" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Icons\089.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="030" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Icons\030.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
   <data name="031" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Icons\031.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="029" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Icons\029.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="036" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Icons\036.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -253,17 +253,11 @@
   <data name="078" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Icons\078.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="103" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Icons\103.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="059" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Icons\059.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="082" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Icons\082.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="038" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Icons\038.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="058" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Icons\058.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="057" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Icons\057.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -271,8 +265,8 @@
   <data name="007" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Icons\007.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="051" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Icons\051.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="015" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Icons\015.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="020" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Icons\020.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -280,20 +274,23 @@
   <data name="012" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Icons\012.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="080" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Icons\080.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="103" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Icons\103.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="082" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Icons\082.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="FacebookLogo" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\SocialMedia\FacebookLogo.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="095" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Icons\095.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="049" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Icons\049.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="046" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Icons\046.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="096" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Icons\096.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="079" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Icons\079.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="059" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Icons\059.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="044" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Icons\044.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -313,8 +310,14 @@
   <data name="091" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Icons\091.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="005" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Icons\005.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="092" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Icons\092.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="037" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Icons\037.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="085" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Icons\085.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -322,14 +325,20 @@
   <data name="050" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Icons\050.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="024" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Icons\024.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="088" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Icons\088.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="BucketIcon" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\BucketIcon.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="030" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Icons\030.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="087" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Icons\087.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="PhinaliaLogo" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\PhinaliaLogo.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="034" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Icons\034.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -349,11 +358,11 @@
   <data name="054" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Icons\054.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="024" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Icons\024.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="032" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Icons\032.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="093" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Icons\093.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="051" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Icons\051.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="025" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Icons\025.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -364,8 +373,11 @@
   <data name="062" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Icons\062.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="086" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Icons\086.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="079" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Icons\079.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="RedThreadCross" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\RedThreadCross.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="021" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Icons\021.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -373,8 +385,8 @@
   <data name="SelectedToolIcon" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\SelectedToolIcon.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="048" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Icons\048.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="066" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Icons\066.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="097" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Icons\097.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -385,44 +397,53 @@
   <data name="PencilIcon" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\PencilIcon.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="015" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Icons\015.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="046" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Icons\046.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="016" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Icons\016.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="098" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Icons\098.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="BucketIcon" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\BucketIcon.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="048" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Icons\048.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="093" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Icons\093.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="InstagramLogo" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\SocialMedia\InstagramLogo.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="069" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Icons\069.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="041" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Icons\041.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="032" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Icons\032.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
   <data name="102" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Icons\102.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="037" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Icons\037.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="104" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Icons\104.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="064" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Icons\064.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="063" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Icons\063.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="040" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Icons\040.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="EraserIcon" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\EraserIcon.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="100" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Icons\100.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="080" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Icons\080.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="004" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Icons\004.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="040" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Icons\040.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="058" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Icons\058.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="001" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Icons\001.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -436,11 +457,14 @@
   <data name="002" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Icons\002.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="056" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Icons\056.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="CrossStitchSymbol" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\CrossStitchSymbol.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="005" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Icons\005.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="027" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Icons\027.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="104" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Icons\104.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="053" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Icons\053.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -448,31 +472,10 @@
   <data name="094" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Icons\094.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="029" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Icons\029.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="100" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Icons\100.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="MoveIcon" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\MoveIcon.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="FacebookLogo" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\SocialMedia\FacebookLogo.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="InstagramLogo" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\SocialMedia\InstagramLogo.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="PhinaliaLogo" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\PhinaliaLogo.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="PinterestLogo" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\SocialMedia\PinterestLogo.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="YouTubeLogo" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\SocialMedia\YouTubeLogo.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="CrossStitchSymbol" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\CrossStitchSymbol.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="RedThreadCross" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\RedThreadCross.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="ColorPickerIcon" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ColorPickerIcon.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
 </root>

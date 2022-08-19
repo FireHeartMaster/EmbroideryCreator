@@ -174,6 +174,7 @@ namespace EmbroideryCreator
             graphics.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.NearestNeighbor;
             graphics.PixelOffsetMode = System.Drawing.Drawing2D.PixelOffsetMode.HighQuality;
 
+            graphics.CompositingMode = System.Drawing.Drawing2D.CompositingMode.SourceCopy;
             graphics.FillRectangle(new SolidBrush(newColor),
                                                         BorderThicknessInNumberOfPixels + (position.Item1) * (newPixelSize) - GridThicknessInNumberOfPixels,
                                                         BorderThicknessInNumberOfPixels + (position.Item2) * (newPixelSize) - GridThicknessInNumberOfPixels,
@@ -187,12 +188,11 @@ namespace EmbroideryCreator
             graphics.PixelOffsetMode = System.Drawing.Drawing2D.PixelOffsetMode.HighQuality;
 
             Bitmap crossOfSelectedColor;
-            if (!dictionaryOfColoredCrossByIndex.ContainsKey(indexToUpdate))
-            {
-                dictionaryOfColoredCrossByIndex.Add(indexToUpdate, GenerateCrossOfSelectedColor(colorMeans[indexToUpdate]));
-            }
+            TryToAddNewColoredCross(indexToUpdate);
 
             crossOfSelectedColor = dictionaryOfColoredCrossByIndex[indexToUpdate];
+
+            graphics.CompositingMode = System.Drawing.Drawing2D.CompositingMode.SourceCopy;
             graphics.DrawImage(crossOfSelectedColor, 
                                                         BorderThicknessInNumberOfPixels + (position.Item1) * (newPixelSize) - GridThicknessInNumberOfPixels,
                                                         BorderThicknessInNumberOfPixels + (position.Item2) * (newPixelSize) - GridThicknessInNumberOfPixels,
@@ -202,14 +202,12 @@ namespace EmbroideryCreator
 
         private void FillSymbolAtCoordinate(int indexToUpdate, Graphics graphics, Tuple<int, int> position)
         {
-            //throw new NotImplementedException();
             Bitmap symbolForSelectedColor;
-            if (!dictionaryOfSymbolByIndex.ContainsKey(indexToUpdate))
-            {
-                dictionaryOfSymbolByIndex.Add(indexToUpdate, GetNextSymbol());  
-            }
+            TryToAddNewSymbol(indexToUpdate);
 
             symbolForSelectedColor = dictionaryOfSymbolByIndex[indexToUpdate];
+
+            graphics.CompositingMode = System.Drawing.Drawing2D.CompositingMode.SourceCopy;
             graphics.DrawImage(symbolForSelectedColor,
                                                         BorderThicknessInNumberOfPixels + (position.Item1) * (newPixelSize) - GridThicknessInNumberOfPixels,
                                                         BorderThicknessInNumberOfPixels + (position.Item2) * (newPixelSize) - GridThicknessInNumberOfPixels,
@@ -239,10 +237,7 @@ namespace EmbroideryCreator
 
             for (int i = 0; i < colorMeans.Count; i++)
             {
-                if (!dictionaryOfSymbolByIndex.ContainsKey(i))
-                {
-                    dictionaryOfSymbolByIndex.Add(i, GetNextSymbol());
-                }
+                TryToAddNewSymbol(i);
             }
         }
 
@@ -280,8 +275,8 @@ namespace EmbroideryCreator
         {
             Bitmap redColoredCross = new Bitmap(Properties.Resources.RedThreadCross);
 
-            Color baseColor = Color.FromArgb(72, 4, 9);
-            //Color baseColor = redColoredCross.GetPixel((int)(redColoredCross.Width * 0.5), (int)(redColoredCross.Height * 0.5));
+            //Color baseColor = Color.FromArgb(72, 4, 9);
+            Color baseColor = redColoredCross.GetPixel((int)(redColoredCross.Width * 0.5), (int)(redColoredCross.Height * 0.5));
 
             Bitmap newColoredCross = new Bitmap(redColoredCross.Width, redColoredCross.Height);
 
@@ -311,6 +306,20 @@ namespace EmbroideryCreator
             //Random rnd = new Random();
             //return GenerateCrossOfSelectedColor(Color.FromArgb(255, rnd.Next(0, 255), rnd.Next(0, 255), rnd.Next(0, 255)));
             return iconsManager.GetNextIcon();
+        }
+
+        public int GetColorIndexFromPosition(Tuple<int, int> generalPosition)
+        {
+            Tuple<int, int> coordinates = ConvertFromGeneralPositionOnImageToCoordinates(generalPosition);
+            if (coordinates.Item1 < 0 || coordinates.Item1 >= matrixOfNewColors.GetLength(0) || coordinates.Item2 < 0 || coordinates.Item2 >= matrixOfNewColors.GetLength(1))
+            {
+                return -1;
+            }
+
+            //also return the invalid index when it's the empty color because the empty color isn't in the list of colors available to the user to select
+            if (matrixOfNewColors[coordinates.Item1, coordinates.Item2] == 0) return -1;
+
+            return matrixOfNewColors[coordinates.Item1, coordinates.Item2];
         }
 
         private void PaintBackstitchLine(Color colorToPaint, BackstitchLine backstitchLine)
@@ -372,7 +381,7 @@ namespace EmbroideryCreator
             BorderThicknessInNumberOfPixels = borderThicknessInNumberOfPixels;
             GridThicknessInNumberOfPixels = gridThicknessInNumberOfPixels;
 
-            if(colorMeans.Count > 0 && (colorMeans[0].A != 0 || colorMeans[0].R != 0 || colorMeans[0].G != 0 || colorMeans[0].B != 0)){
+            if (colorMeans.Count > 0 && (colorMeans[0].A != 0 || colorMeans[0].R != 0 || colorMeans[0].G != 0 || colorMeans[0].B != 0)){
                 AddEmptyColor();
             }
 
@@ -464,6 +473,7 @@ namespace EmbroideryCreator
                     matrixOfNewColors[position.Item1, position.Item2] = i;
                 }
             }
+            positionsOfEachColor[0] = new List<Tuple<int, int>>();
         }
 
         private Color AddEmptyColorToCrossesAndSymbols()
@@ -704,6 +714,8 @@ namespace EmbroideryCreator
             {
                 dictionaryOfColoredCrossByIndex.Clear();
                 dictionaryOfSymbolByIndex.Clear();
+
+                AddEmptyColorToCrossesAndSymbols();
             }
 
             RepaintMainImage(false, true, true);  //Setting thread image and symbols image
@@ -819,6 +831,8 @@ namespace EmbroideryCreator
 
         public void RepaintCrosses()
         {
+            dictionaryOfColoredCrossByIndex.Clear();
+            AddEmptyColorToCrossesAndSymbols();
             RepaintMainImage(false, true, false);
         }
 
@@ -929,12 +943,21 @@ namespace EmbroideryCreator
             int newColorIndex = colorMeans.Count;
             positionsOfEachColor.Add(newColorIndex, new List<Tuple<int, int>>());
             colorMeans.Add(newColor);
+            TryToAddNewSymbol(newColorIndex);
 
+            TryToAddNewColoredCross(newColorIndex);
+        }
+
+        private void TryToAddNewSymbol(int newColorIndex)
+        {
             if (!dictionaryOfSymbolByIndex.ContainsKey(newColorIndex))
             {
                 dictionaryOfSymbolByIndex.Add(newColorIndex, GetNextSymbol());
             }
+        }
 
+        private void TryToAddNewColoredCross(int newColorIndex)
+        {
             if (!dictionaryOfColoredCrossByIndex.ContainsKey(newColorIndex))
             {
                 dictionaryOfColoredCrossByIndex.Add(newColorIndex, GenerateCrossOfSelectedColor(colorMeans[newColorIndex]));

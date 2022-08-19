@@ -135,6 +135,7 @@
   <ItemGroup>
     <None Include="Resources\RedThreadCross.png" />
     <None Include="Resources\CrossStitchSymbol.png" />
+    <None Include="Resources\ColorPickerIcon.png" />
     <Content Include="Resources\Icons\001.png" />
     <Content Include="Resources\Icons\002.png" />
     <Content Include="Resources\Icons\003.png" />
