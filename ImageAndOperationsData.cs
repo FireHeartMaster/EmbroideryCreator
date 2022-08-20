@@ -26,7 +26,7 @@ namespace EmbroideryCreator
         public int numberOfColors = 10;
         public int numberOfIterations = 10;
 
-        private int newPixelSize = 32;
+        public int NewPixelSize { get; private set; } = 32;
         
         private List<Color> colorMeans;
         private Dictionary<int, List<Tuple<int, int>>> positionsOfEachColor = new Dictionary<int, List<Tuple<int, int>>>();
@@ -64,7 +64,7 @@ namespace EmbroideryCreator
                 //Update symbol of cross
                 if(newColor.A == 0)
                 {
-                    dictionaryOfSymbolByIndex[indexToUpdate] = GetSquareOfColor(newPixelSize, newColor);
+                    dictionaryOfSymbolByIndex[indexToUpdate] = GetSquareOfColor(NewPixelSize, newColor);
                     PaintNewSymbolOnImage(indexToUpdate, newColor, SymbolsImage);
                 }
             }
@@ -195,10 +195,10 @@ namespace EmbroideryCreator
 
             graphics.CompositingMode = System.Drawing.Drawing2D.CompositingMode.SourceCopy;
             graphics.FillRectangle(new SolidBrush(newColor),
-                                                        BorderThicknessInNumberOfPixels + (position.Item1) * (newPixelSize) - GridThicknessInNumberOfPixels,
-                                                        BorderThicknessInNumberOfPixels + (position.Item2) * (newPixelSize) - GridThicknessInNumberOfPixels,
-                                                        newPixelSize/* - GridThicknessInNumberOfPixels*/,
-                                                        newPixelSize/* - GridThicknessInNumberOfPixels*/);
+                                                        BorderThicknessInNumberOfPixels + (position.Item1) * (NewPixelSize) - GridThicknessInNumberOfPixels,
+                                                        BorderThicknessInNumberOfPixels + (position.Item2) * (NewPixelSize) - GridThicknessInNumberOfPixels,
+                                                        NewPixelSize/* - GridThicknessInNumberOfPixels*/,
+                                                        NewPixelSize/* - GridThicknessInNumberOfPixels*/);
         }
 
         private void FillCrossAtCoordinate(int indexToUpdate, Graphics graphics, Tuple<int, int> position)
@@ -215,10 +215,10 @@ namespace EmbroideryCreator
 
             graphics.CompositingMode = System.Drawing.Drawing2D.CompositingMode.SourceCopy;
             graphics.DrawImage(crossOfSelectedColor, 
-                                                        BorderThicknessInNumberOfPixels + (position.Item1) * (newPixelSize) - GridThicknessInNumberOfPixels,
-                                                        BorderThicknessInNumberOfPixels + (position.Item2) * (newPixelSize) - GridThicknessInNumberOfPixels,
-                                                        newPixelSize/* - GridThicknessInNumberOfPixels*/,
-                                                        newPixelSize/* - GridThicknessInNumberOfPixels*/);
+                                                        BorderThicknessInNumberOfPixels + (position.Item1) * (NewPixelSize) - GridThicknessInNumberOfPixels,
+                                                        BorderThicknessInNumberOfPixels + (position.Item2) * (NewPixelSize) - GridThicknessInNumberOfPixels,
+                                                        NewPixelSize/* - GridThicknessInNumberOfPixels*/,
+                                                        NewPixelSize/* - GridThicknessInNumberOfPixels*/);
         }
 
         private void FillSymbolAtCoordinate(int indexToUpdate, Graphics graphics, Tuple<int, int> position)
@@ -230,10 +230,10 @@ namespace EmbroideryCreator
 
             graphics.CompositingMode = System.Drawing.Drawing2D.CompositingMode.SourceCopy;
             graphics.DrawImage(symbolForSelectedColor,
-                                                        BorderThicknessInNumberOfPixels + (position.Item1) * (newPixelSize) - GridThicknessInNumberOfPixels,
-                                                        BorderThicknessInNumberOfPixels + (position.Item2) * (newPixelSize) - GridThicknessInNumberOfPixels,
-                                                        newPixelSize/* - GridThicknessInNumberOfPixels*/,
-                                                        newPixelSize/* - GridThicknessInNumberOfPixels*/);
+                                                        BorderThicknessInNumberOfPixels + (position.Item1) * (NewPixelSize) - GridThicknessInNumberOfPixels,
+                                                        BorderThicknessInNumberOfPixels + (position.Item2) * (NewPixelSize) - GridThicknessInNumberOfPixels,
+                                                        NewPixelSize/* - GridThicknessInNumberOfPixels*/,
+                                                        NewPixelSize/* - GridThicknessInNumberOfPixels*/);
         }
 
         public void ChangeSymbolByIndex(int indexToUpdate, Bitmap newSymbol)
@@ -402,7 +402,7 @@ namespace EmbroideryCreator
             this.newWidth = newWidth;
             this.numberOfColors = numberOfColors;
             this.numberOfIterations = numberOfIterations;
-            this.newPixelSize = newPixelSize;
+            this.NewPixelSize = newPixelSize;
             this.colorMeans = colorMeans;
             this.positionsOfEachColor = positionsOfEachColor;
             this.matrixOfNewColors = matrixOfNewColors;
@@ -432,7 +432,7 @@ namespace EmbroideryCreator
             this.newWidth = imageAndOperationsData.newWidth;
             this.numberOfColors = imageAndOperationsData.numberOfColors;
             this.numberOfIterations = imageAndOperationsData.numberOfIterations;
-            this.newPixelSize = imageAndOperationsData.newPixelSize;
+            this.NewPixelSize = imageAndOperationsData.NewPixelSize;
             this.colorMeans = new List<Color>(imageAndOperationsData.colorMeans);
             
             this.positionsOfEachColor = new Dictionary<int, List<Tuple<int, int>>>();
@@ -500,7 +500,7 @@ namespace EmbroideryCreator
 
         public void SerializeData(string filePath)
         {
-            ImageAndOperationsDataSerialized serializableData = new ImageAndOperationsDataSerialized(originalImage, ResultingImage, ThreadImage, SymbolsImage, BackstitchImage, GridImage, BorderImage, newWidth, numberOfColors, numberOfIterations, newPixelSize, colorMeans, positionsOfEachColor, matrixOfNewColors, colorIsBackgroundList, backstitchLines, backstitchColors, BorderThicknessInNumberOfPixels, GridThicknessInNumberOfPixels);
+            ImageAndOperationsDataSerialized serializableData = new ImageAndOperationsDataSerialized(originalImage, ResultingImage, ThreadImage, SymbolsImage, BackstitchImage, GridImage, BorderImage, newWidth, numberOfColors, numberOfIterations, NewPixelSize, colorMeans, positionsOfEachColor, matrixOfNewColors, colorIsBackgroundList, backstitchLines, backstitchColors, BorderThicknessInNumberOfPixels, GridThicknessInNumberOfPixels);
 
             SerializerHelper.WriteToFile<ImageAndOperationsDataSerialized>(filePath, serializableData);
         }
@@ -574,7 +574,7 @@ namespace EmbroideryCreator
         private Color AddEmptyColorToCrossesAndSymbols()
         {
             Color emptyColor = Color.FromArgb(0, 0, 0, 0);
-            Bitmap emptySquare = GetSquareOfColor(newPixelSize, emptyColor);
+            Bitmap emptySquare = GetSquareOfColor(NewPixelSize, emptyColor);
 
             if (!dictionaryOfColoredCrossByIndex.ContainsKey(0))
             {
@@ -610,7 +610,7 @@ namespace EmbroideryCreator
         private Bitmap ResizingImage(Bitmap colorReducedImage)
         {
             //bool largerIsWidth = colorReducedImage.Width > colorReducedImage.Height;
-            Bitmap augmentedImage = ImageTransformations.ResizeBitmap(colorReducedImage, newPixelSize);
+            Bitmap augmentedImage = ImageTransformations.ResizeBitmap(colorReducedImage, NewPixelSize);
             return augmentedImage;
         }
 
@@ -625,7 +625,7 @@ namespace EmbroideryCreator
                     Color penColor = x % intervalForDarkerLines == 0 ? Color.Black : Color.Gray;
                     Pen pen = new Pen(penColor, 1.0f);
                     //GridThicknessInNumberOfPixels = 1;
-                    graphics.DrawLine(pen, x * newPixelSize/* - newPixelSize*0.5f*/, 0, x * newPixelSize/* - newPixelSize*0.5f*/, imageToAddGrid.Height - 1);
+                    graphics.DrawLine(pen, x * NewPixelSize/* - newPixelSize*0.5f*/, 0, x * NewPixelSize/* - newPixelSize*0.5f*/, imageToAddGrid.Height - 1);
                 }
 
                 //horizontal lines
@@ -634,7 +634,7 @@ namespace EmbroideryCreator
                     Color penColor = y % intervalForDarkerLines == 0 ? Color.Black : Color.Gray;
                     Pen pen = new Pen(penColor, 1.0f);
                     //GridThicknessInNumberOfPixels = 1;
-                    graphics.DrawLine(pen, 0, y * newPixelSize/* - newPixelSize*0.5f*/, imageToAddGrid.Width - 1, y * newPixelSize/* - newPixelSize*0.5f*/);
+                    graphics.DrawLine(pen, 0, y * NewPixelSize/* - newPixelSize*0.5f*/, imageToAddGrid.Width - 1, y * NewPixelSize/* - newPixelSize*0.5f*/);
                 }
             }
             return imageToAddGrid;
@@ -643,7 +643,7 @@ namespace EmbroideryCreator
         private Bitmap AddGridResizingImage(Bitmap colorReducedImage)
         {
             //bool largerIsWidth = colorReducedImage.Width > colorReducedImage.Height;
-            Bitmap augmentedImage = ImageTransformations.ResizeBitmap(colorReducedImage, newPixelSize);
+            Bitmap augmentedImage = ImageTransformations.ResizeBitmap(colorReducedImage, NewPixelSize);
 
             Bitmap withGridImage = new Bitmap(augmentedImage);
             int intervalForDarkerLines = 10;
@@ -655,7 +655,7 @@ namespace EmbroideryCreator
                     Color penColor = x % intervalForDarkerLines == 0 ? Color.Black : Color.Gray;
                     Pen pen = new Pen(penColor, 1.0f);
                     //GridThicknessInNumberOfPixels = 1;
-                    graphics.DrawLine(pen, x * newPixelSize/* - newPixelSize*0.5f*/, 0, x * newPixelSize/* - newPixelSize*0.5f*/, withGridImage.Height - 1);
+                    graphics.DrawLine(pen, x * NewPixelSize/* - newPixelSize*0.5f*/, 0, x * NewPixelSize/* - newPixelSize*0.5f*/, withGridImage.Height - 1);
                 }
 
                 //horizontal lines
@@ -664,7 +664,7 @@ namespace EmbroideryCreator
                     Color penColor = y % intervalForDarkerLines == 0 ? Color.Black : Color.Gray;
                     Pen pen = new Pen(penColor, 1.0f);
                     //GridThicknessInNumberOfPixels = 1;
-                    graphics.DrawLine(pen, 0, y * newPixelSize/* - newPixelSize*0.5f*/, withGridImage.Width - 1, y * newPixelSize/* - newPixelSize*0.5f*/);
+                    graphics.DrawLine(pen, 0, y * NewPixelSize/* - newPixelSize*0.5f*/, withGridImage.Width - 1, y * NewPixelSize/* - newPixelSize*0.5f*/);
                 }
             }
             return withGridImage;
@@ -746,7 +746,7 @@ namespace EmbroideryCreator
         private void SetPenAndBorderThickness(out int penSize, out Pen pen)
         {
             Color penColor = Color.Black;
-            penSize = (int)(newPixelSize * 0.5f)/* + 1*/;
+            penSize = (int)(NewPixelSize * 0.5f)/* + 1*/;
             pen = new Pen(penColor, penSize);
             BorderThicknessInNumberOfPixels = penSize;
         }
@@ -785,7 +785,7 @@ namespace EmbroideryCreator
 
         public void ProcessImageInSeparateLayers(int newPixelSize = 10, bool exactToSource = false)
         {
-            this.newPixelSize = newPixelSize;
+            this.NewPixelSize = newPixelSize;
 
             Bitmap processedImage = originalImage;
             if (!exactToSource)
@@ -917,7 +917,7 @@ namespace EmbroideryCreator
         private void RepaintMainImage(bool paintColors = true, bool paintCrosses = true, bool paintSymbols = true)
         {
             float aspectRatio = ((float)originalImage.Height) / originalImage.Width;
-            ImageTransformations.GetNewSize(newWidth, (int)(newWidth * aspectRatio), newPixelSize, out int resultingImageWidth, out int resultingImageHeight);
+            ImageTransformations.GetNewSize(newWidth, (int)(newWidth * aspectRatio), NewPixelSize, out int resultingImageWidth, out int resultingImageHeight);
             if (paintColors)
             {
                 ResultingImage = AddPaddingToImage(new Bitmap(resultingImageWidth, resultingImageHeight));
@@ -1030,8 +1030,8 @@ namespace EmbroideryCreator
 
         private Tuple<int, int> ConvertFromGeneralPositionOnImageToCoordinates(Tuple<int, int> generalPosition, bool roundToClosest = true)
         {
-            double x = (((float)(generalPosition.Item1 - BorderThicknessInNumberOfPixels)) / newPixelSize);
-            double y = (((float)(generalPosition.Item2 - BorderThicknessInNumberOfPixels)) / newPixelSize);
+            double x = (((float)(generalPosition.Item1 - BorderThicknessInNumberOfPixels)) / NewPixelSize);
+            double y = (((float)(generalPosition.Item2 - BorderThicknessInNumberOfPixels)) / NewPixelSize);
 
             int xRounded = (int)(roundToClosest ? Math.Round(x) : x);
             int yRounded = (int)(roundToClosest ? Math.Round(y) : y);
@@ -1041,24 +1041,24 @@ namespace EmbroideryCreator
 
         private Tuple<float, float> ConvertFromGeneralPositionOnImageToFloatCoordinates(Tuple<int, int> generalPosition)
         {
-            float x = ((float)(generalPosition.Item1 - BorderThicknessInNumberOfPixels)) / newPixelSize;
-            float y = ((float)(generalPosition.Item2 - BorderThicknessInNumberOfPixels)) / newPixelSize;
+            float x = ((float)(generalPosition.Item1 - BorderThicknessInNumberOfPixels)) / NewPixelSize;
+            float y = ((float)(generalPosition.Item2 - BorderThicknessInNumberOfPixels)) / NewPixelSize;
 
             return new Tuple<float, float>(x, y);
         }
 
         public Tuple<float, float> ConvertFromGeneralPositionOnImageToCoordinatesIncludingHalfValues(Tuple<int, int> generalPosition)
         {
-            double x = Math.Round(((generalPosition.Item1 - BorderThicknessInNumberOfPixels) * 2.0) / newPixelSize) / 2;
-            double y = Math.Round(((generalPosition.Item2 - BorderThicknessInNumberOfPixels) * 2.0) / newPixelSize) / 2;
+            double x = Math.Round(((generalPosition.Item1 - BorderThicknessInNumberOfPixels) * 2.0) / NewPixelSize) / 2;
+            double y = Math.Round(((generalPosition.Item2 - BorderThicknessInNumberOfPixels) * 2.0) / NewPixelSize) / 2;
 
             return new Tuple<float, float>((float)x, (float)y);
         }
 
         private Tuple<int, int> ConvertFromCoordinatesIncludingHalfValuesToGeneralPositionOnImage(Tuple<float, float> coordinates)
         {
-            int x = (int)Math.Round(coordinates.Item1 * newPixelSize + BorderThicknessInNumberOfPixels);
-            int y = (int)Math.Round(coordinates.Item2 * newPixelSize + BorderThicknessInNumberOfPixels);
+            int x = (int)Math.Round(coordinates.Item1 * NewPixelSize + BorderThicknessInNumberOfPixels);
+            int y = (int)Math.Round(coordinates.Item2 * NewPixelSize + BorderThicknessInNumberOfPixels);
 
             return new Tuple<int, int>(x, y);
         }
@@ -1249,7 +1249,7 @@ namespace EmbroideryCreator
             int indexFound = -1;
             BackstitchLine backstitchLineFound = new BackstitchLine();
 
-            float distanceToConsiderCloseEnough = (3.0f * GridThicknessInNumberOfPixels / newPixelSize) * 0.5f;
+            float distanceToConsiderCloseEnough = (3.0f * GridThicknessInNumberOfPixels / NewPixelSize) * 0.5f;
             Tuple<float, float> imagePosition = ConvertFromGeneralPositionOnImageToFloatCoordinates(generalPixelPosition);
 
             foreach (KeyValuePair<int, HashSet<BackstitchLine>> lines in backstitchLines)
@@ -1298,7 +1298,7 @@ namespace EmbroideryCreator
 
         public void ChangeCanvasSize(int newCanvasWidth, int newCanvasHeight, int newPixelWidthUpdated = 10)
         {
-            newPixelSize = newPixelWidthUpdated;
+            NewPixelSize = newPixelWidthUpdated;
             
             newWidth = newCanvasWidth;
 

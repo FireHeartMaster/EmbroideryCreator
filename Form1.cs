@@ -131,16 +131,6 @@ namespace EmbroideryCreator
             SelectNewImageFile();
         }
 
-        private void mainPictureBox_Click(object sender, EventArgs e)
-        {
-            //SelectNewImageFile();
-        }
-
-        private void mainPictureBox_DoubleClick(object sender, EventArgs e)
-        {
-            
-        }
-
         internal void UpdateIfShouldPaintReducedColorBackground(int reducedColorIndex, bool isBackground)
         {
             if(reducedColorIndex >= 0 && reducedColorIndex < imageAndOperationsData.colorIsBackgroundList.Count)
@@ -209,6 +199,11 @@ namespace EmbroideryCreator
 
         private void mainPictureBox_MouseDown(object sender, MouseEventArgs e)
         {
+            MouseDownOnImage(e);
+        }
+
+        private void MouseDownOnImage(MouseEventArgs e)
+        {
             isDrawing = true;
 
             Point pointOnImage = e.Location;
@@ -217,6 +212,11 @@ namespace EmbroideryCreator
         }
 
         private void mainPictureBox_MouseUp(object sender, MouseEventArgs e)
+        {
+            MouseUpOnImage();
+        }
+
+        private void MouseUpOnImage()
         {
             isDrawing = false;
 
@@ -233,8 +233,13 @@ namespace EmbroideryCreator
                     break;
             }
         }
-        
+
         private void mainPictureBox_MouseMove(object sender, MouseEventArgs e)
+        {
+            MouseMoveOnImage(e);
+        }
+
+        private void MouseMoveOnImage(MouseEventArgs e)
         {
             if (isDrawing)
             {
@@ -1100,16 +1105,6 @@ namespace EmbroideryCreator
                 ReducedColorControl reducedColorControl = (ReducedColorControl)colorControl;
                 reducedColorControl.reducedColorIndex++;
             }
-        }
-
-        private void mainPictureBox_MouseHover(object sender, EventArgs e)
-        {
-            
-        }
-
-        private void mainPictureBox_Paint(object sender, PaintEventArgs e)
-        {
-
         }
 
         public bool CheckIfMultipleSelectionIsActive()
