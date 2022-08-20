@@ -1246,6 +1246,26 @@ namespace EmbroideryCreator.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap RedoIcon {
+            get {
+                object obj = ResourceManager.GetObject("RedoIcon", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap RedoIconDisabled {
+            get {
+                object obj = ResourceManager.GetObject("RedoIconDisabled", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap RedThreadCross {
             get {
                 object obj = ResourceManager.GetObject("RedThreadCross", resourceCulture);
@@ -1269,6 +1289,26 @@ namespace EmbroideryCreator.Properties {
         internal static System.Drawing.Bitmap ThreadCross {
             get {
                 object obj = ResourceManager.GetObject("ThreadCross", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap UndoIcon {
+            get {
+                object obj = ResourceManager.GetObject("UndoIcon", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap UndoIconDisabled {
+            get {
+                object obj = ResourceManager.GetObject("UndoIconDisabled", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

@@ -50,6 +50,10 @@ namespace EmbroideryCreator
         private Size pictureBoxUnscaledSize;
         private int currentScrollAmount = 0;
 
+        private UndoStateManager undoStateManager = new UndoStateManager();
+
+        private bool crossStitchChangesSinceMouseDown = false;
+
         public MainForm()
         {
             InitializeComponent();
@@ -178,6 +182,26 @@ namespace EmbroideryCreator
                     drawingToolsControl.EnableNewTool((DrawingToolInUse)(5 - 1));
                     break;
 
+                case Keys.Z:
+                    if(ModifierKeys.HasFlag(Keys.Control))
+                    {
+                        if (!ModifierKeys.HasFlag(Keys.Shift))
+                        {
+                            Undo();
+                        }
+                        else
+                        {
+                            Redo();
+                        }
+                    }
+                    break;
+                case Keys.Y:
+                    if (ModifierKeys.HasFlag(Keys.Control))
+                    {
+                        Redo();
+                    }
+                    break;
+
                 default:
                     break;
             }
@@ -195,7 +219,19 @@ namespace EmbroideryCreator
         private void mainPictureBox_MouseUp(object sender, MouseEventArgs e)
         {
             isDrawing = false;
-            SetBackstitchDrawMouseUp();
+
+            switch (currentDrawingMode)
+            {
+                case DrawingMode.CrossStitch:
+                    SetCrossStitchDrawMouseUp();
+                    break;
+                case DrawingMode.Backstitch:
+                    SetBackstitchDrawMouseUp();
+                    break;
+
+                default:
+                    break;
+            }
         }
         
         private void mainPictureBox_MouseMove(object sender, MouseEventArgs e)
@@ -231,7 +267,8 @@ namespace EmbroideryCreator
                                 break;
 
                             case DrawingToolInUse.Eraser:
-                                TryToEraseBackstitchLineAtGeneralPosition(pointMouseUp);
+                                bool confirmRemoved = TryToEraseBackstitchLineAtGeneralPosition(pointMouseUp);
+                                if (confirmRemoved) RegisterChange();
                                 break;
                             case DrawingToolInUse.Move:
                                 MoveTool(e.Location);
@@ -361,7 +398,8 @@ namespace EmbroideryCreator
                     break;
 
                 case DrawingToolInUse.Eraser:
-                    TryToEraseBackstitchLineAtGeneralPosition(pointOnImage);
+                    bool confirmRemoved = TryToEraseBackstitchLineAtGeneralPosition(pointOnImage);
+                    if(confirmRemoved) RegisterChange();
                     break;
                 case DrawingToolInUse.Move:
                     firstMoveToolPoint = pointOnImage;
@@ -376,16 +414,39 @@ namespace EmbroideryCreator
             }
         }
 
-        private void TryToEraseBackstitchLineAtGeneralPosition(Point pointOnImage)
+        private bool TryToEraseBackstitchLineAtGeneralPosition(Point pointOnImage)
         {
-            if (lastBackstitchPointMouseUp.X == pointOnImage.X && lastBackstitchPointMouseUp.Y == pointOnImage.Y) return;
+            if (lastBackstitchPointMouseUp.X == pointOnImage.X && lastBackstitchPointMouseUp.Y == pointOnImage.Y) return false;
 
             Tuple<int, int> realImagePosition = ImageTransformations.ConvertFromPictureBoxToRealImage(backstitchPictureBox, new Tuple<int, int>(pointOnImage.X, pointOnImage.Y));
-            imageAndOperationsData.RemoveBackstitchLineClicked(realImagePosition);
+            bool confirmRemoved = imageAndOperationsData.RemoveBackstitchLineClicked(realImagePosition);
             backstitchPictureBox.Image = imageAndOperationsData.BackstitchImage;
 
             lastBackstitchPointMouseUp.X = pointOnImage.X;
             lastBackstitchPointMouseUp.Y = pointOnImage.Y;
+
+            return confirmRemoved;
+        }
+
+        private void SetCrossStitchDrawMouseUp()
+        {
+            if (imageAndOperationsData == null || imageAndOperationsData.ResultingImage == null) return;
+
+            switch (drawingToolsControl.currentDrawingTool)
+            {
+                case DrawingToolInUse.Pencil:
+                    if(crossStitchChangesSinceMouseDown) RegisterChange();
+                    break;
+
+                case DrawingToolInUse.Eraser:
+                    if(crossStitchChangesSinceMouseDown) RegisterChange();
+                    break;
+
+                default:
+                    break;
+            }
+
+            crossStitchChangesSinceMouseDown = false;
         }
 
         private void SetBackstitchDrawMouseUp()
@@ -401,6 +462,8 @@ namespace EmbroideryCreator
                         Tuple<float, float> endingPosition = imageAndOperationsData.ConvertFromGeneralPositionOnImageToCoordinatesIncludingHalfValues(realImagePositionMouseUp);
                         imageAndOperationsData.AddNewBackstitchLine(selectedBackstitchColorsControlsList[0].backstitchColorIndex, startingPosition, endingPosition);
                         backstitchPictureBox.Image = imageAndOperationsData.BackstitchImage;
+
+                        RegisterChange();
                     }
                     break;
 
@@ -461,12 +524,14 @@ namespace EmbroideryCreator
             {
                 case DrawingToolInUse.Pencil:
                     if (colorIndexToPaint == -1) return;
-                    imageAndOperationsData.PaintNewColorOnGeneralPosition(realImagePosition, colorIndexToPaint, false);
+                    crossStitchChangesSinceMouseDown |= imageAndOperationsData.PaintNewColorOnGeneralPosition(realImagePosition, colorIndexToPaint, false);
+                    //RegisterChange();
                     break;
                 case DrawingToolInUse.Bucket:
                     if (colorIndexToPaint == -1) return;
                     imageAndOperationsData.FillRegionWithColorByPosition(realImagePosition, colorIndexToPaint, false);
                     isDrawing = false;
+                    RegisterChange();
                     //SetBackstitchDrawMouseUp();
                     break;
                 case DrawingToolInUse.Move:
@@ -477,7 +542,8 @@ namespace EmbroideryCreator
                     }
                     break;
                 case DrawingToolInUse.Eraser:
-                    imageAndOperationsData.PaintNewColorOnGeneralPosition(realImagePosition, 0, false);
+                    crossStitchChangesSinceMouseDown |= imageAndOperationsData.PaintNewColorOnGeneralPosition(realImagePosition, 0, false);
+                    //RegisterChange();
                     break;
                 case DrawingToolInUse.ColorPicker:
                     PickColor(realImagePosition, false);
@@ -537,6 +603,8 @@ namespace EmbroideryCreator
                         Bitmap imageFromFile = new Bitmap(filePath);
                         
                         SetImageAndData(imageFromFile);
+                        UndoReset();
+                        RegisterChange();
                     }
                     catch (IOException exception)
                     {
@@ -584,6 +652,9 @@ namespace EmbroideryCreator
             //int newImageWidth = imageAndOperationsData.ResultingImage.Width;
             //int newImageHeight = imageAndOperationsData.ResultingImage.Height;
             ResetImagesAfterProcessing(true);
+
+            UndoReset();
+            RegisterChange();
         }
 
         private void ResetImagesAfterProcessing(bool clearBackgroundList, bool clearBackstitchImage = true)
@@ -792,6 +863,9 @@ namespace EmbroideryCreator
 
                 FillListsOfColors();
                 ResetOrderOfVisibilityOfPictureBoxes();
+
+                UndoReset();
+                RegisterChange();
             }
         }
 
@@ -848,6 +922,8 @@ namespace EmbroideryCreator
                 MergeTwoColorsByTheirIndexes(firstIndex, otherIndex, controlToRemove);
                 selectedColorsControlsList.RemoveAt(1); //removing the second color selected, i.e. 1
             }
+
+            RegisterChange();
         }
 
         private void MergeTwoColorsByTheirIndexes(int firstIndex, int otherIndex, ReducedColorControl controlToRemove)
@@ -926,6 +1002,8 @@ namespace EmbroideryCreator
             if (addColorDialog.ShowDialog() == DialogResult.OK)
             {
                 AddNewColor(addColorDialog.Color);
+
+                //RegisterChange();
             }
         }
 
@@ -953,6 +1031,8 @@ namespace EmbroideryCreator
             //Repainting backstitch image
             imageAndOperationsData.PaintAllBackstitchLines();
             backstitchPictureBox.Image = imageAndOperationsData.BackstitchImage;
+
+            RegisterChange();
         }
 
         private void addBackstitchColorButton_Click(object sender, EventArgs e)
@@ -962,13 +1042,16 @@ namespace EmbroideryCreator
             if (addColorDialog.ShowDialog() == DialogResult.OK)
             {
                 AddNewBackstitchColor(addColorDialog.Color);
+
+                //RegisterChange();
             }
         }
 
         private void deleteBackstitchColorButton_Click(object sender, EventArgs e)
         {
-            if (selectedBackstitchColorsControlsList.Count < 1) return;            
+            if (selectedBackstitchColorsControlsList.Count < 1) return;
 
+            int amountRemoved = 0;
             while (selectedBackstitchColorsControlsList.Count > 0)
             {
                 BackstitchColorControl controlToRemove = selectedBackstitchColorsControlsList[0];
@@ -983,7 +1066,11 @@ namespace EmbroideryCreator
 
                 imageAndOperationsData.RemoveBackstitchColorByIndex(firstIndex);
                 backstitchPictureBox.Image = imageAndOperationsData.BackstitchImage;
+
+                amountRemoved++;
             }
+
+            if (amountRemoved > 0) RegisterChange();
         }
 
         private void crossStitchColorsRadioButton_Clicked(object sender, EventArgs e)
@@ -1142,6 +1229,9 @@ namespace EmbroideryCreator
                     imageAndOperationsData.ChangeCanvasSize(changeCanvasSizeDialog.newWidth, changeCanvasSizeDialog.newHeight, newPixelSizeTrackBar.Value);
 
                     ResetImagesAfterProcessing(false, false);
+
+                    UndoReset();
+                    RegisterChange();
                 }
             }
         }
@@ -1173,19 +1263,93 @@ namespace EmbroideryCreator
                 RemoveCrossStitchColor(currentReducedColorControlToRemove.reducedColorIndex);
                 selectedColorsControlsList.RemoveAll(selectedReducedColor => selectedReducedColor.reducedColorIndex == currentReducedColorControlToRemove.reducedColorIndex);
             }
+
+            if(reducedColorControlsToRemove.Count > 0) RegisterChange();
         }
 
         private void deleteCrossStitchColorButton_Click(object sender, EventArgs e)
         {
             if (imageAndOperationsData == null || imageAndOperationsData.ResultingImage == null) return;
 
+            int amountRemoved = 0;
             while (selectedColorsControlsList.Count > 0)
             {
                 ReducedColorControl selectedReducedColorToRemove = selectedColorsControlsList[0];
                 RemoveCrossStitchColor(selectedReducedColorToRemove.reducedColorIndex);
                 
                 selectedColorsControlsList.RemoveAt(0); //removing the first color selected, i.e. 0
+                amountRemoved++;
             }
+
+            if(amountRemoved > 0) RegisterChange();
+        }
+
+        private void undoPictureBox_Click(object sender, EventArgs e)
+        {
+            Undo();
+        }
+
+        private void redoPictureBox_Click(object sender, EventArgs e)
+        {
+            Redo();
+        }
+
+        private void Undo()
+        {
+            if (undoStateManager.HasPreviousState())
+            {
+                imageAndOperationsData = undoStateManager.Undo();
+                ResetImagesAfterProcessing(false, false);
+
+                if (!undoStateManager.HasPreviousState())
+                {
+                    EnableDisableUndoPictureBox(false);
+                }
+                EnableDisableRedoPictureBox(true);
+            }
+        }
+
+        private void Redo()
+        {
+            if (undoStateManager.HasNextState())
+            {
+                imageAndOperationsData = undoStateManager.Redo();
+                ResetImagesAfterProcessing(false, false);
+
+                if (!undoStateManager.HasNextState())
+                {
+                    EnableDisableRedoPictureBox(false);
+                }
+                EnableDisableUndoPictureBox(true);
+            }
+        }
+
+        private void UndoReset()
+        {
+            undoStateManager.Reset();
+
+            EnableDisableUndoPictureBox(false);
+            EnableDisableRedoPictureBox(false);
+        }
+
+        private void RegisterChange()
+        {
+            undoStateManager.AddNewState(imageAndOperationsData);
+
+            EnableDisableUndoPictureBox(undoStateManager.HasPreviousState());
+            EnableDisableRedoPictureBox(false);
+        }
+
+        private void EnableDisableUndoPictureBox(bool newState)
+        {
+            undoPictureBox.Enabled = newState;
+            undoPictureBox.Image = newState ? Properties.Resources.UndoIcon : Properties.Resources.UndoIconDisabled;
+        }
+
+        private void EnableDisableRedoPictureBox(bool newState)
+        {
+            redoPictureBox.Enabled = newState;
+            redoPictureBox.Image = newState ? Properties.Resources.RedoIcon : Properties.Resources.RedoIconDisabled;
         }
     }
 

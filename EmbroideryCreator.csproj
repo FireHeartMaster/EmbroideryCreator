@@ -101,6 +101,7 @@
       <DependentUpon>ReducedColorControl.cs</DependentUpon>
     </Compile>
     <Compile Include="SerializerHelper.cs" />
+    <Compile Include="UndoStateManager.cs" />
     <EmbeddedResource Include="BackstitchColorControl.resx">
       <DependentUpon>BackstitchColorControl.cs</DependentUpon>
     </EmbeddedResource>
@@ -136,6 +137,10 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Resources\UndoIconDisabled.png" />
+    <None Include="Resources\RedoIconDisabled.png" />
+    <None Include="Resources\RedoIcon.png" />
+    <None Include="Resources\UndoIcon.png" />
     <None Include="Resources\RedThreadCross.png" />
     <None Include="Resources\CrossStitchSymbol.png" />
     <None Include="Resources\ColorPickerIcon.png" />

@@ -419,6 +419,60 @@ namespace EmbroideryCreator
 
             RemoveBackstitchLinesPoints();
         }
+        
+        public ImageAndOperationsData(ImageAndOperationsData imageAndOperationsData)
+        {
+            this.originalImage = (Bitmap)imageAndOperationsData.originalImage.Clone();
+            this.ResultingImage = (Bitmap)imageAndOperationsData.ResultingImage.Clone();
+            this.ThreadImage = (Bitmap)imageAndOperationsData.ThreadImage.Clone();
+            this.SymbolsImage = (Bitmap)imageAndOperationsData.SymbolsImage.Clone();
+            this.BackstitchImage = (Bitmap)imageAndOperationsData.BackstitchImage.Clone();
+            this.GridImage = (Bitmap)imageAndOperationsData.GridImage.Clone();
+            this.BorderImage = (Bitmap)imageAndOperationsData.BorderImage.Clone();
+            this.newWidth = imageAndOperationsData.newWidth;
+            this.numberOfColors = imageAndOperationsData.numberOfColors;
+            this.numberOfIterations = imageAndOperationsData.numberOfIterations;
+            this.newPixelSize = imageAndOperationsData.newPixelSize;
+            this.colorMeans = new List<Color>(imageAndOperationsData.colorMeans);
+            
+            this.positionsOfEachColor = new Dictionary<int, List<Tuple<int, int>>>();
+            foreach (KeyValuePair<int, List<Tuple<int, int>>> indexesAndPositions in imageAndOperationsData.positionsOfEachColor)
+            {
+                this.positionsOfEachColor.Add(indexesAndPositions.Key, new List<Tuple<int, int>>());
+                foreach (Tuple<int, int> position in indexesAndPositions.Value)
+                {
+                    this.positionsOfEachColor[indexesAndPositions.Key].Add(position);
+                }
+            }
+
+            this.matrixOfNewColors = new int[imageAndOperationsData.matrixOfNewColors.GetLength(0), imageAndOperationsData.matrixOfNewColors.GetLength(1)];
+            for (int i = 0; i < this.matrixOfNewColors.GetLength(0); i++)
+            {
+                for (int j = 0; j < this.matrixOfNewColors.GetLength(1); j++)
+                {
+                    this.matrixOfNewColors[i, j] = imageAndOperationsData.matrixOfNewColors[i, j];
+                }
+            }
+
+            this.colorIsBackgroundList = new List<bool>(imageAndOperationsData.colorIsBackgroundList);
+
+            this.backstitchLines = new Dictionary<int, HashSet<BackstitchLine>>();
+            foreach (KeyValuePair<int, HashSet<BackstitchLine>> indexesAndLines in imageAndOperationsData.backstitchLines)
+            {
+                this.backstitchLines.Add(indexesAndLines.Key, new HashSet<BackstitchLine>());
+                foreach (BackstitchLine line in indexesAndLines.Value)
+                {
+                    this.backstitchLines[indexesAndLines.Key].Add(line);
+                }
+            }
+
+            this.backstitchColors = imageAndOperationsData.backstitchColors.ToDictionary(entry => entry.Key, entry => entry.Value);
+            this.BorderThicknessInNumberOfPixels = imageAndOperationsData.BorderThicknessInNumberOfPixels;
+            this.GridThicknessInNumberOfPixels = imageAndOperationsData.GridThicknessInNumberOfPixels;
+            this.dictionaryOfColoredCrossByIndex = imageAndOperationsData.dictionaryOfColoredCrossByIndex.ToDictionary(entry => entry.Key, entry => new Bitmap(entry.Value));
+            this.dictionaryOfSymbolByIndex = imageAndOperationsData.dictionaryOfSymbolByIndex.ToDictionary(entry => entry.Key, entry => new Bitmap(entry.Value));
+            this.iconsManager = imageAndOperationsData.iconsManager;
+        }
 
         private void RemoveBackstitchLinesPoints()
         {
@@ -907,17 +961,19 @@ namespace EmbroideryCreator
             RepaintMainImage(false, true, false);
         }
 
-        public void PaintNewColorOnGeneralPosition(Tuple<int, int> generalPosition, int colorIndexToPaint, bool roundToClosest = true)
+        public bool PaintNewColorOnGeneralPosition(Tuple<int, int> generalPosition, int colorIndexToPaint, bool roundToClosest = true)
         {
             Tuple<int, int> coordinates = ConvertFromGeneralPositionOnImageToCoordinates(generalPosition, roundToClosest);
             if(coordinates.Item1 < 0 || coordinates.Item1 >= matrixOfNewColors.GetLength(0) || coordinates.Item2 < 0 || coordinates.Item2 >= matrixOfNewColors.GetLength(1))
             {
-                return;
+                return false;
             }
 
-            if (matrixOfNewColors[coordinates.Item1, coordinates.Item2] == colorIndexToPaint) return;
+            if (matrixOfNewColors[coordinates.Item1, coordinates.Item2] == colorIndexToPaint) return false;
 
             PaintPixelInPositionWithColorOfIndex(coordinates, colorIndexToPaint);
+
+            return true;
         }
 
         public void RemoveAlonePixels(int minAmountAround = 2)
@@ -1175,14 +1231,17 @@ namespace EmbroideryCreator
         }
 
 
-        public void RemoveBackstitchLineClicked(Tuple<int, int> positionClickedInPixels)
+        public bool RemoveBackstitchLineClicked(Tuple<int, int> positionClickedInPixels)
         {
             Tuple<int, BackstitchLine> indexAndLine = FindBackstitchLineByPosition(positionClickedInPixels);
 
             if(indexAndLine.Item1 != -1)
             {
                 RemoveBackstitchLine(indexAndLine.Item1, indexAndLine.Item2);
+                return true;
             }
+
+            return false;
         }
 
         private Tuple<int, BackstitchLine> FindBackstitchLineByPosition(Tuple<int, int> generalPixelPosition)

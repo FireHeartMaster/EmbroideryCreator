@@ -85,9 +85,11 @@ namespace EmbroideryCreator
             this.RepaintCrossesButton = new System.Windows.Forms.Button();
             this.newCanvasButton = new System.Windows.Forms.Button();
             this.changeCanvasSizeButton = new System.Windows.Forms.Button();
-            this.drawingToolsControl = new EmbroideryCreator.DrawingToolsControl();
             this.removeUnusedCrossStichColorsButton = new System.Windows.Forms.Button();
             this.deleteCrossStitchColorButton = new System.Windows.Forms.Button();
+            this.undoPictureBox = new System.Windows.Forms.PictureBox();
+            this.redoPictureBox = new System.Windows.Forms.PictureBox();
+            this.drawingToolsControl = new EmbroideryCreator.DrawingToolsControl();
             ((System.ComponentModel.ISupportInitialize)(this.widthSizeTrackBar)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numberOfColorsTrackBar)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numberOfIterationsTrackBar)).BeginInit();
@@ -101,6 +103,8 @@ namespace EmbroideryCreator
             this.imagesContainerPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.removeAlonePixelsTrackBar)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.newPixelSizeTrackBar)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.undoPictureBox)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.redoPictureBox)).BeginInit();
             this.SuspendLayout();
             // 
             // widthSizeTrackBar
@@ -665,15 +669,6 @@ namespace EmbroideryCreator
             this.changeCanvasSizeButton.UseVisualStyleBackColor = true;
             this.changeCanvasSizeButton.Click += new System.EventHandler(this.changeCanvasSizeButton_Click);
             // 
-            // drawingToolsControl
-            // 
-            this.drawingToolsControl.BackColor = System.Drawing.SystemColors.ActiveBorder;
-            this.drawingToolsControl.Location = new System.Drawing.Point(848, 13);
-            this.drawingToolsControl.Name = "drawingToolsControl";
-            this.drawingToolsControl.Padding = new System.Windows.Forms.Padding(3);
-            this.drawingToolsControl.Size = new System.Drawing.Size(215, 45);
-            this.drawingToolsControl.TabIndex = 18;
-            // 
             // removeUnusedCrossStichColorsButton
             // 
             this.removeUnusedCrossStichColorsButton.Location = new System.Drawing.Point(848, 547);
@@ -694,11 +689,44 @@ namespace EmbroideryCreator
             this.deleteCrossStitchColorButton.UseVisualStyleBackColor = true;
             this.deleteCrossStitchColorButton.Click += new System.EventHandler(this.deleteCrossStitchColorButton_Click);
             // 
+            // undoPictureBox
+            // 
+            this.undoPictureBox.Image = global::EmbroideryCreator.Properties.Resources.UndoIconDisabled;
+            this.undoPictureBox.Location = new System.Drawing.Point(619, 547);
+            this.undoPictureBox.Name = "undoPictureBox";
+            this.undoPictureBox.Size = new System.Drawing.Size(50, 50);
+            this.undoPictureBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.undoPictureBox.TabIndex = 53;
+            this.undoPictureBox.TabStop = false;
+            this.undoPictureBox.Click += new System.EventHandler(this.undoPictureBox_Click);
+            // 
+            // redoPictureBox
+            // 
+            this.redoPictureBox.Image = global::EmbroideryCreator.Properties.Resources.RedoIconDisabled;
+            this.redoPictureBox.Location = new System.Drawing.Point(675, 547);
+            this.redoPictureBox.Name = "redoPictureBox";
+            this.redoPictureBox.Size = new System.Drawing.Size(50, 50);
+            this.redoPictureBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.redoPictureBox.TabIndex = 54;
+            this.redoPictureBox.TabStop = false;
+            this.redoPictureBox.Click += new System.EventHandler(this.redoPictureBox_Click);
+            // 
+            // drawingToolsControl
+            // 
+            this.drawingToolsControl.BackColor = System.Drawing.SystemColors.ActiveBorder;
+            this.drawingToolsControl.Location = new System.Drawing.Point(848, 13);
+            this.drawingToolsControl.Name = "drawingToolsControl";
+            this.drawingToolsControl.Padding = new System.Windows.Forms.Padding(3);
+            this.drawingToolsControl.Size = new System.Drawing.Size(215, 45);
+            this.drawingToolsControl.TabIndex = 18;
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1153, 603);
+            this.Controls.Add(this.redoPictureBox);
+            this.Controls.Add(this.undoPictureBox);
             this.Controls.Add(this.deleteCrossStitchColorButton);
             this.Controls.Add(this.removeUnusedCrossStichColorsButton);
             this.Controls.Add(this.changeCanvasSizeButton);
@@ -766,6 +794,8 @@ namespace EmbroideryCreator
             this.imagesContainerPanel.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.removeAlonePixelsTrackBar)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.newPixelSizeTrackBar)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.undoPictureBox)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.redoPictureBox)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -832,6 +862,8 @@ namespace EmbroideryCreator
         private System.Windows.Forms.Button changeCanvasSizeButton;
         private System.Windows.Forms.Button removeUnusedCrossStichColorsButton;
         private System.Windows.Forms.Button deleteCrossStitchColorButton;
+        private System.Windows.Forms.PictureBox undoPictureBox;
+        private System.Windows.Forms.PictureBox redoPictureBox;
     }
 }
 
