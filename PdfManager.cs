@@ -1,4 +1,5 @@
 ﻿using PdfSharp.Drawing;
+using PdfSharp.Drawing.Layout;
 using PdfSharp.Pdf;
 using System;
 using System.Collections.Generic;
@@ -14,11 +15,17 @@ namespace EmbroideryCreator
     {
         List<PdfPage> allPages = new List<PdfPage>();
         private List<XGraphics> graphicsOfAllPages = new List<XGraphics>();
-        private XSolidBrush pageCountBrush = new XSolidBrush(XColor.FromArgb(34, 62, 64));/*new XSolidBrush(XColor.FromArgb(105, 105, 105));*/
+        
+        private XColor mainColor = XColor.FromArgb(34, 62, 64);
+        private XSolidBrush pageCountBrush;/*new XSolidBrush(XColor.FromArgb(105, 105, 105));*/
         private XFont pageCountFont = new XFont("Agency FB", 14, XFontStyle.Regular);
 
-        private XSolidBrush pageSetupBrush = new XSolidBrush(XColor.FromArgb(34, 62, 64));
+        private XSolidBrush pageSetupBrush;
         private XSolidBrush arrowBrush = XBrushes.DarkBlue;
+        private XSolidBrush observationAboutRoundingBrush;
+
+        XFont patternSizeFont = new XFont("Alike", 10, XFontStyle.Regular);
+        XBrush patternSizeBrush;
 
         private XImage topLogo;
         private string title = "Title";
@@ -45,6 +52,8 @@ namespace EmbroideryCreator
 
         private XFont listOfColorsTitleFont = new XFont("Verdana", 20, XFontStyle.Regular);
         private XFont listOfColorsFont = new XFont("Verdana", 10, XFontStyle.Regular);
+        private XFont obesrvationAboutRoundingFont = new XFont("Verdana", 7, XFontStyle.Regular);
+        string observationsAboutRoundingNumberOfSkeins = "The number of skeins is an approximated value assuming a 16-count Aida cloth with two strands of floss, it can vary depending on several factors.";
 
 
 
@@ -52,7 +61,7 @@ namespace EmbroideryCreator
         private double sizeOfEachSquare = 8;
 
         private readonly int maxHorizontalNumberOfSquares = 56;
-        private readonly int maxVerticalNumberOfSquares = 61;
+        private readonly int maxVerticalNumberOfSquares = 59;
 
         //private readonly XPen gridPen = new XPen(XColors.Gray, 0.5);
         //private readonly XPen thickGridPen = new XPen(XColors.Black, 1);
@@ -64,6 +73,12 @@ namespace EmbroideryCreator
         private readonly double thickGridPenThickness = 2;
 
         private readonly double backstitchLineThickness = 2;
+
+        private readonly double crossStitchListOriginalTitleHeight = 40;
+        private readonly double crossStitchListHeaderHeight = 20;
+        private readonly double crossStitchListRowHeight = 15;
+        private readonly int listsOfColorsNumberOfColumns = 1;
+        private readonly double verticalPaddingBetweenTables = 15;
 
         public PdfManager()
         {
@@ -94,6 +109,10 @@ namespace EmbroideryCreator
 
             //gridPen.LineCap = XLineCap.Round;
             //thickGridPen.LineCap = XLineCap.Round;
+
+            pageCountBrush = new XSolidBrush(mainColor);
+            pageSetupBrush = new XSolidBrush(mainColor);
+            patternSizeBrush = new XSolidBrush(mainColor);
         }
 
         public void CreatePdf(List<Bitmap> images, string pathToSave)
@@ -137,7 +156,7 @@ namespace EmbroideryCreator
             }
         }
 
-        public void CreatePdfStitches(string pathToSave, int[,] matrixOfNewColors, List<Color> colorMeans, Dictionary<int, HashSet<BackstitchLine>> backstitchLines, Dictionary<int, Color> backstitchColors, Dictionary<int, Bitmap> dictionaryOfSymbolByColor)
+        public void CreatePdfStitches(string pathToSave, int[,] matrixOfNewColors, List<Color> colorMeans, Dictionary<int, List<Tuple<int, int>>> positionsOfEachColor, Dictionary<int, HashSet<BackstitchLine>> backstitchLines, Dictionary<int, Color> backstitchColors, Dictionary<int, Bitmap> dictionaryOfSymbolByColor)
         {
             PdfDocument document = new PdfDocument();
 
@@ -155,7 +174,7 @@ namespace EmbroideryCreator
             CreateAllDrawingPages(document, matrixOfNewColors, colorMeans, backstitchLines, backstitchColors, dictionaryOfXimageByIndex);
 
             //CreatePagesWithListsOfColors(document, colorMeans, backstitchColors, dictionaryOfXimageByIndex);
-            CreatePagesWithListsOfColors(document, colorMeans, backstitchColors, dictionaryOfXimageByIndex, true);
+            CreatePagesWithListsOfColors(document, colorMeans, positionsOfEachColor, backstitchLines, backstitchColors, dictionaryOfXimageByIndex, true);
 
             
             for (int i = 0; i < graphicsOfAllPages.Count; i++)
@@ -305,6 +324,12 @@ namespace EmbroideryCreator
                                     startingPoint.Y + backstitch.endingPosition.Item2 * firstPageSizeOfEachSquare);
                 }
             }
+
+            //Size of the pattern in number of stitches
+            string patternSizeText = "Design size: " + matrixOfNewColors.GetLength(0).ToString() + " x " + matrixOfNewColors.GetLength(1).ToString() + " stitches";
+            double yPosition = startingPoint.Y + maxHeight + 3.25 * patternSizeFont.Size;
+            XRect patternSizeRect = new XRect(0, yPosition, currentPage.Width, currentPage.Height * 0.88 - yPosition);
+            pageGraphics.DrawString(patternSizeText, patternSizeFont, patternSizeBrush, patternSizeRect, XStringFormats.Center);
         }
 
         private void WriteGridNumber(XGraphics pageGraphics, double squareSize, int number, double positionX, double positionY, bool isUpperNumber, double angle)
@@ -422,35 +447,28 @@ namespace EmbroideryCreator
             }
         }
 
-        private void CreatePagesWithListsOfColors(PdfDocument document, List<Color> colorMeans, Dictionary<int, Color> backstitchColors, Dictionary<int, XImage> dictionaryOfXimageByIndex, bool convertToDmcColors = true)
+        private void CreatePagesWithListsOfColors(PdfDocument document, List<Color> colorMeans, Dictionary<int, List<Tuple<int, int>>> positionsOfEachColor, Dictionary<int, HashSet<BackstitchLine>> backstitchLines, Dictionary<int, Color> backstitchColors, Dictionary<int, XImage> dictionaryOfXimageByIndex, bool convertToDmcColors = true)
         {
             //throw new NotImplementedException();
 
             double startingHeight = startingPointForDrawings.Y;
             XGraphics pageGraphics = AddPageAndPrepare(document, out _);
             //cross stitch list
-            DrawListOfColors(document, ref pageGraphics, ref startingHeight, colorMeans, backstitchColors, dictionaryOfXimageByIndex, true, convertToDmcColors);
+            DrawListOfColors(document, ref pageGraphics, ref startingHeight, colorMeans, positionsOfEachColor, backstitchLines, backstitchColors, dictionaryOfXimageByIndex, true, convertToDmcColors, true);
             
             //backstitch list
-            DrawListOfColors(document, ref pageGraphics, ref startingHeight, colorMeans, backstitchColors, dictionaryOfXimageByIndex, false, convertToDmcColors);
+            DrawListOfColors(document, ref pageGraphics, ref startingHeight, colorMeans, positionsOfEachColor, backstitchLines, backstitchColors, dictionaryOfXimageByIndex, false, convertToDmcColors, true);
         }
 
-        private void DrawListOfColors(PdfDocument document, ref XGraphics pageGraphics, ref double startingHeight, List<Color> colorMeans, Dictionary<int, Color> backstitchColors, Dictionary<int, XImage> dictionaryOfXimageByIndex, bool isCrossStitchAndNotBackstitch = true, bool convertToDmcColors = true)
+        private void DrawListOfColors(PdfDocument document, ref XGraphics pageGraphics, ref double startingHeight, List<Color> colorMeans, Dictionary<int, List<Tuple<int, int>>> positionsOfEachColor, Dictionary<int, HashSet<BackstitchLine>> backstitchLines, Dictionary<int, Color> backstitchColors, Dictionary<int, XImage> dictionaryOfXimageByIndex, bool isCrossStitchAndNotBackstitch = true, bool convertToDmcColors = true, bool includeNumberOfStitches = true, bool includeNumberOfSkeins = true)
         {
-            //throw new NotImplementedException();
-
-            double crossStitchListOriginalTitleHeight = 40;
             double crossStitchListTitleHeight = isCrossStitchAndNotBackstitch ? 135 : crossStitchListOriginalTitleHeight;
-            double crossStitchListHeaderHeight = 20;
-            double crossStitchListRowHeight = 15;
-            int numberOfColumns = 2;
-            double verticalPaddingBetweenTables = 15;
 
             double heightToStartList = startingHeight + crossStitchListTitleHeight;
             double maxHeightToEndList = startingPointForDrawings.Y + maxVerticalNumberOfSquares * sizeOfEachSquare;
             double listWidth = maxHorizontalNumberOfSquares * sizeOfEachSquare;
 
-            double widthOfEachColumn = listWidth / numberOfColumns;
+            double widthOfEachColumn = listWidth / listsOfColorsNumberOfColumns;
 
             int totalAmountOfColors = isCrossStitchAndNotBackstitch ? colorMeans.Count : backstitchColors.Count;
 
@@ -490,10 +508,10 @@ namespace EmbroideryCreator
                 }
 
                 int amountOfColorsInTheCurrentPage;
-                if (((totalAmountOfColors - indexOfTheFirstColorOfTheCurrentPage) / numberOfColumns) * crossStitchListRowHeight > (maxHeightToEndList - heightToStartList))
+                if (((totalAmountOfColors - indexOfTheFirstColorOfTheCurrentPage) / listsOfColorsNumberOfColumns) * crossStitchListRowHeight > (maxHeightToEndList - heightToStartList))
                 {
                     //not all remaining colors fit in the current page
-                    amountOfColorsInTheCurrentPage = (int)(((maxHeightToEndList - heightToStartList) / crossStitchListRowHeight) * numberOfColumns);
+                    amountOfColorsInTheCurrentPage = (int)(((maxHeightToEndList - heightToStartList) / crossStitchListRowHeight) * listsOfColorsNumberOfColumns);
                 }
                 else
                 {
@@ -501,39 +519,69 @@ namespace EmbroideryCreator
                     amountOfColorsInTheCurrentPage = totalAmountOfColors - indexOfTheFirstColorOfTheCurrentPage;
                 }
 
-                int amountOfColorsPerColumn = (int)Math.Ceiling(((double)amountOfColorsInTheCurrentPage) / numberOfColumns);
-                for (int column = 0; column < numberOfColumns; column++)
+                int amountOfColorsPerColumn = (int)Math.Ceiling(((double)amountOfColorsInTheCurrentPage) / listsOfColorsNumberOfColumns);
+                for (int column = 0; column < listsOfColorsNumberOfColumns; column++)
                 {
                     //draw column header
-                    string[] headerStrings;
+                    List<string> headerStrings;
 
                     if (convertToDmcColors)
                     {
-                        headerStrings = new string[] { "Symbol", "Dmc Color", "Name" };
+                        headerStrings = new List<string>() { "Symbol", "Dmc Color", "Name" };
                     }
                     else
                     {
-                        headerStrings = new string[] { "Symbol", "Color" };
+                        headerStrings = new List<string>() { "Symbol", "Color" };
                     }
+
+                    if (includeNumberOfStitches && isCrossStitchAndNotBackstitch)
+                    {
+                        headerStrings.Add("N° stitches");
+                    }
+
+                    if (includeNumberOfSkeins)
+                    {
+                        headerStrings.Add("N° skeins");
+                    }
+
                     DrawListOfColorsRow(pageGraphics, headerStrings, startingPointForDrawings.X + column * widthOfEachColumn, heightToStartList - crossStitchListHeaderHeight, widthOfEachColumn, crossStitchListHeaderHeight, Color.Empty, false);
 
                     int startingIndex = indexOfTheFirstColorOfTheCurrentPage + amountOfColorsPerColumn * column;
                     for (int i = startingIndex; i - startingIndex < amountOfColorsPerColumn && i < totalAmountOfColors; i++)
                     {
                         //draw row
-                        string[] rowStrings;
+                        List< string> rowStrings;
 
                         //get color
                         Color currentColor = isCrossStitchAndNotBackstitch ? colorMeans[i] : backstitchColors[i];
                         if (convertToDmcColors)
                         {
                             DmcColor dmcColor = ColorsConverter.ConvertColorToDmc(currentColor);
-                            rowStrings = new string[] { dmcColor.Number, dmcColor.Name };
+                            rowStrings = new List<string>() { dmcColor.Number, dmcColor.Name };
                         }
                         else
                         {
                             string hexColor = "#" + currentColor.R.ToString("X2") + currentColor.G.ToString("X2") + currentColor.B.ToString("X2");
-                            rowStrings = new string[] { hexColor };
+                            rowStrings = new List<string>() { hexColor };
+                        }
+
+                        if (includeNumberOfStitches && isCrossStitchAndNotBackstitch)
+                        {
+                            rowStrings.Add(positionsOfEachColor[i].Count.ToString());
+                        }
+
+                        if (includeNumberOfSkeins)
+                        {
+                            double numberOfSkeins;
+                            if (isCrossStitchAndNotBackstitch)
+                            {
+                                numberOfSkeins = Math.Round(CalculateNumberOfSkeinsForCrossStitch(positionsOfEachColor[i].Count), 1);
+                            }
+                            else
+                            {
+                                numberOfSkeins = Math.Round(CalculateNumberOfSkeinsForBackstitch(backstitchLines[i], 16, 2), 1);
+                            }
+                            rowStrings.Add(numberOfSkeins.ToString("0.#", System.Globalization.CultureInfo.InvariantCulture));
                         }
 
                         try
@@ -551,8 +599,41 @@ namespace EmbroideryCreator
 
                 DrawListOfColorsBorders(startingHeight, crossStitchListTitleHeight, crossStitchListHeaderHeight, crossStitchListRowHeight, listWidth, pageGraphics, amountOfColorsPerColumn);
                 indexOfTheFirstColorOfTheCurrentPage += amountOfColorsInTheCurrentPage;
-                startingHeight += crossStitchListTitleHeight + crossStitchListHeaderHeight + amountOfColorsPerColumn * crossStitchListRowHeight + verticalPaddingBetweenTables;
+                startingHeight += crossStitchListTitleHeight + crossStitchListHeaderHeight + amountOfColorsPerColumn * crossStitchListRowHeight;
+
+                //write observation about the number of skeins
+                startingHeight += crossStitchListRowHeight;
+                double observationHeight = 3 * listOfColorsFont.Size;
+                XRect observationAboutRoundingRect = new XRect(startingPointForDrawings.X, startingHeight, listWidth + 3 * sizeOfEachSquare, observationHeight);                
+                XTextFormatter textFormatter = new XTextFormatter(pageGraphics);
+                textFormatter.DrawString(observationsAboutRoundingNumberOfSkeins, obesrvationAboutRoundingFont, pageSetupBrush, observationAboutRoundingRect, XStringFormats.TopLeft);
+
+                startingHeight += observationHeight + crossStitchListRowHeight + verticalPaddingBetweenTables;
             }
+        }
+
+        private double CalculateNumberOfSkeinsForCrossStitch(int numberOfStitches, int aidaCount = 16, int numberOfStrandsUsed = 2)
+        {
+            double stitchesPerSkein = 17 * (15.0 / (6.0 / aidaCount)) * (6.0 / numberOfStrandsUsed);
+            return numberOfStitches / stitchesPerSkein;
+        }
+
+        private double CalculateNumberOfSkeinsForBackstitch(HashSet<BackstitchLine> backstitchLines, int aidaCount = 16, int numberOfStrandsUsed = 2)
+        {
+            double lengthInInchesPerSkein = 17 * 18 * (6.0 / numberOfStrandsUsed); //length IN INCHES per skein
+            double backstitchLengthInAbsoluteUnits = 0;
+
+            foreach (BackstitchLine currentLine in backstitchLines)
+            {
+                double xGap = currentLine.startingPosition.Item1 - currentLine.endingPosition.Item1;
+                double yGap = currentLine.startingPosition.Item2 - currentLine.endingPosition.Item2;
+
+                backstitchLengthInAbsoluteUnits += Math.Sqrt(xGap * xGap + yGap * yGap);
+            }
+
+            double backstitchLengthInInches = backstitchLengthInAbsoluteUnits / aidaCount;
+
+            return backstitchLengthInInches / lengthInInchesPerSkein;
         }
 
         private XGraphics AddPageAndPrepare(PdfDocument document, out PdfPage currentPage)
@@ -577,13 +658,13 @@ namespace EmbroideryCreator
             DrawRectangleWithLines(pageGraphics, startingPointForDrawings.X, startingHeight, listOfColorsBorderWidth, crossStitchListTitleHeight + crossStitchListHeaderHeight + amountOfColorsPerColumn * crossStitchListRowHeight, listOfColorsBorderThickness, penColor);
         }
 
-        private void DrawListOfColorsRow(XGraphics pageGraphics, string[] rowStrings, double rowPositionX, double rowPositionY, double columnWidth, double columnHeight, Color color, bool drawSymbol = true, XImage symbol = null, bool isCrossStitchAndNotBackstitch = true)
+        private void DrawListOfColorsRow(XGraphics pageGraphics, List<string> rowStrings, double rowPositionX, double rowPositionY, double columnWidth, double columnHeight, Color color, bool drawSymbol = true, XImage symbol = null, bool isCrossStitchAndNotBackstitch = true)
         {
             //throw new NotImplementedException();
 
             int additionalFieldValue = (drawSymbol ? 1 : 0);
 
-            int numberOfFields = rowStrings.Length + additionalFieldValue;
+            int numberOfFields = rowStrings.Count + additionalFieldValue;
 
             double fieldWidth = columnWidth / numberOfFields;
 
