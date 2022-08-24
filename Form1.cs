@@ -197,6 +197,12 @@ namespace EmbroideryCreator
                         Redo();
                     }
                     break;
+                case Keys.S:
+                    if (quickSaveButton.Enabled && ModifierKeys.HasFlag(Keys.Control))
+                    {
+                        QuickSaveButtonClicked();
+                    }
+                    break;
 
                 default:
                     break;
@@ -675,6 +681,8 @@ namespace EmbroideryCreator
 
             UndoReset();
             RegisterChange();
+
+            EnableDisableQuickSaveButton(true);
         }
 
         private void ResetImagesAfterProcessing(bool clearBackgroundList, bool clearBackstitchImage = true)
@@ -809,7 +817,12 @@ namespace EmbroideryCreator
 
         private void quickSaveButton_Click(object sender, EventArgs e)
         {
-            if(pathToSaveFileWithoutExtension != "")
+            QuickSaveButtonClicked();
+        }
+
+        private void QuickSaveButtonClicked()
+        {
+            if (pathToSaveFileWithoutExtension != "")
             {
                 SaveOnlyEmbroideryFileFromPath(pathToSaveFileWithoutExtension);
             }
