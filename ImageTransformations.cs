@@ -554,8 +554,8 @@ namespace EmbroideryCreator
             return IsPointBetweenTwoOthers(referencePoint, auxStartingPoint, auxEndingPoint);
         }
 
-        public static void RescaleImage(double width, double height, double maxRescaledWidth, double maxRescaledHeight, out double newWidth, out double newHeight)
-        {
+        public static void RescaleImageToMaximumSize(double width, double height, double maxRescaledWidth, double maxRescaledHeight, out double newWidth, out double newHeight)
+       {
             double rescaleFactor = maxRescaledWidth / width;
 
             newHeight = rescaleFactor * height;
@@ -568,6 +568,23 @@ namespace EmbroideryCreator
                 rescaleFactor = maxRescaledHeight / height;
                 newWidth = rescaleFactor * width;
                 newHeight = maxRescaledHeight;
+            }
+        }
+
+        public static void RescaleImageToMinimumSize(double width, double height, double minRescaledWidth, double minRescaledHeight, out double newWidth, out double newHeight)
+        {
+            double rescaleFactor = minRescaledWidth / width;
+
+            newHeight = rescaleFactor * height;
+            if (newHeight > minRescaledHeight)
+            {
+                newWidth = minRescaledWidth;
+            }
+            else
+            {
+                rescaleFactor = minRescaledHeight / height;
+                newWidth = rescaleFactor * width;
+                newHeight = minRescaledHeight;
             }
         }
 

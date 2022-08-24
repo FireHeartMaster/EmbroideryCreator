@@ -812,7 +812,18 @@ namespace EmbroideryCreator
                             "Visit our website: ", "https://phinalia.com", "Join our community:", 
                             new string[] { "https://facebook.com", "https://instagram.com", "https://youtube.com", "https://pinterest.com" }, 
                             new Bitmap[] { Properties.Resources.FacebookLogo, Properties.Resources.InstagramLogo, Properties.Resources.YouTubeLogo, Properties.Resources.PinterestLogo }, 
-                            new string[] { "Facebook", "Instagram", "YouTube", "Pinterest" });
+                            new string[] { "Facebook", "Instagram", "YouTube", "Pinterest" }, 
+                            false);
+                        imageAndOperationsData.SavePdf(filePathWithoutExtension + "AlternativeDesign" + ".pdf", Properties.Resources.PhinaliaLogo, title, "", "COLORED CROSS STITCH", "2022 | Phinalia", "Phinalia Library Collection",
+                            "Visit our website: ", "https://phinalia.com", "Join our community:",
+                            new string[] { "https://facebook.com", "https://instagram.com", "https://youtube.com", "https://pinterest.com" },
+                            new Bitmap[] { Properties.Resources.FacebookLogo, Properties.Resources.InstagramLogo, Properties.Resources.YouTubeLogo, Properties.Resources.PinterestLogo },
+                            new string[] { "Facebook", "Instagram", "YouTube", "Pinterest" }, 
+                            true, 
+                            "Obra de Arte",
+                            title, 
+                            "3 EXEMPLOS DE GRÁFICOS",
+                            title);
                     }
                 }
 

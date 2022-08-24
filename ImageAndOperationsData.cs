@@ -1418,10 +1418,20 @@ namespace EmbroideryCreator
             return positionsOfEachColor[index].Count;
         }
 
-        public void SavePdf(string pathToSave, Bitmap topLogo, string title, string secondTitle, string subtitle, string leftText, string rightText, string footerText, string footerLink, string secondFooterText, string[] socialMediaLinks, Bitmap[] socialMediaImages, string[] socialMediaNames)
+        public void SavePdf(string pathToSave, Bitmap topLogo, string title, string secondTitle, string subtitle, string leftText, string rightText, string footerText, string footerLink, string secondFooterText, string[] socialMediaLinks, Bitmap[] socialMediaImages, string[] socialMediaNames, bool isAlternativeDesign = false, string collectionTextFirstPage = "", string titleFirstPage = "", string subtitleFirstPage = "", string subTitleAlternativeDesignListOfColors = "")
         {
+            FillAllNotFilledSymbols();
+            FillAllNotFilledThreadColoredCrosses();
+
             PdfManager pdfManager = new PdfManager(topLogo, title, secondTitle, subtitle, leftText, rightText, footerText, footerLink, secondFooterText, socialMediaLinks, socialMediaImages, socialMediaNames);
-            pdfManager.CreatePdfStitches(pathToSave, matrixOfNewColors, colorMeans, positionsOfEachColor, backstitchLines, backstitchColors, dictionaryOfSymbolByIndex);
+            if (!isAlternativeDesign)
+            {
+                pdfManager.CreatePdfStitches(pathToSave, matrixOfNewColors, colorMeans, positionsOfEachColor, backstitchLines, backstitchColors, dictionaryOfSymbolByIndex);
+            }
+            else
+            {
+                pdfManager.CreatePdfStitchesAlternativeDesign(pathToSave, matrixOfNewColors, colorMeans, positionsOfEachColor, backstitchLines, backstitchColors, dictionaryOfSymbolByIndex, dictionaryOfColoredCrossByIndex, collectionTextFirstPage, titleFirstPage, subtitleFirstPage, subTitleAlternativeDesignListOfColors);
+            }
         }
 
         public void CreateMachinePath(string pathToSaveWithoutExtension)

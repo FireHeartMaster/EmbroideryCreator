@@ -1103,9 +1103,39 @@ namespace EmbroideryCreator.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap BlackBlur {
+            get {
+                object obj = ResourceManager.GetObject("BlackBlur", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap BlackBlur2 {
+            get {
+                object obj = ResourceManager.GetObject("BlackBlur2", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap BucketIcon {
             get {
                 object obj = ResourceManager.GetObject("BucketIcon", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap buttonAlternativeDesign {
+            get {
+                object obj = ResourceManager.GetObject("buttonAlternativeDesign", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
