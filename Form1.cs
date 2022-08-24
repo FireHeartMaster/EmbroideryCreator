@@ -54,6 +54,12 @@ namespace EmbroideryCreator
 
         private bool crossStitchChangesSinceMouseDown = false;
 
+        private string collection = "";
+        private string title = "";
+        private string subtitle = "";
+        private string alternativeTitle = "";
+        private string pathToSaveFileWithoutExtension = "";
+
         public MainForm()
         {
             InitializeComponent();
@@ -603,13 +609,22 @@ namespace EmbroideryCreator
                     //Get the path of specified file
                     string filePath = openNewImageFileDialog.FileName;
 
+                    if (openNewImageFileDialog.FileNames[0].LastIndexOf(".") != -1)
+                    {
+                        int lengthOfSubstring = openNewImageFileDialog.FileNames[0].LastIndexOf(".");
+                        //pathToSaveFileWithoutExtension = openNewImageFileDialog.FileNames[0].Substring(0, lengthOfSubstring);
+                        pathToSaveFileWithoutExtension = "";
+                        //quickSaveButton.Enabled = true;
+                        //quickSaveButton.BackgroundImage = Properties.Resources.QuickSaveIcon;
+                    }
+
                     try
                     {
                         Bitmap imageFromFile = new Bitmap(filePath);
                         
                         SetImageAndData(imageFromFile);
                         UndoReset();
-                        RegisterChange();
+                        //RegisterChange();
                     }
                     catch (IOException exception)
                     {
@@ -779,7 +794,34 @@ namespace EmbroideryCreator
 
         private void saveImageButton_Click(object sender, EventArgs e)
         {
-            if(imageAndOperationsData != null && imageAndOperationsData.ResultingImage != null)
+            SaveEmbroideryFile();
+        }
+
+        private void savePdfButton_Click(object sender, EventArgs e)
+        {
+            SavePdfFile();
+        }
+
+        private void saveMachinePathFileButton_Click(object sender, EventArgs e)
+        {
+            SaveMachinePathFile();
+        }
+
+        private void quickSaveButton_Click(object sender, EventArgs e)
+        {
+            if(pathToSaveFileWithoutExtension != "")
+            {
+                SaveOnlyEmbroideryFileFromPath(pathToSaveFileWithoutExtension);
+            }
+            else
+            {
+                SaveEmbroideryFile();
+            }
+        }
+
+        private void SaveEmbroideryFile()
+        {
+            if (imageAndOperationsData != null && imageAndOperationsData.ResultingImage != null)
             {
                 //saveImageFileDialog.Filter = "Image files|*.bmp;*.jpg;*.jpeg;*.gif;*.png;*.tif|All files|*.*";
                 saveImageFileDialog.Filter = "Image files|*.png;*.jpg;*.jpeg;";
@@ -792,7 +834,8 @@ namespace EmbroideryCreator
                     try
                     {
                         imageToSave = CombineImagesWithVisibilityOfPictureBoxes(pictureBoxesByVisibilityOrder);
-                    }catch(Exception exception)
+                    }
+                    catch (Exception exception)
                     {
                         newPixelSizeTrackBar.Value = 10;
                         ProcessImage();
@@ -800,34 +843,112 @@ namespace EmbroideryCreator
                     }
 
                     imageToSave.Save(saveImageFileDialog.FileNames[0]);
-                    if(saveImageFileDialog.FileNames[0].LastIndexOf(".") != -1)
+                    if (saveImageFileDialog.FileNames[0].LastIndexOf(".") != -1)
                     {
                         int lengthOfSubstring = saveImageFileDialog.FileNames[0].LastIndexOf(".");
                         filePathWithoutExtension = saveImageFileDialog.FileNames[0].Substring(0, lengthOfSubstring);
                         imageAndOperationsData.SerializeData(filePathWithoutExtension + ".edu");
-
-                        lengthOfSubstring = filePathWithoutExtension.LastIndexOf(Path.DirectorySeparatorChar);
-                        string title = filePathWithoutExtension.Substring(lengthOfSubstring + 1, filePathWithoutExtension.Length - lengthOfSubstring - 1);
-                        imageAndOperationsData.SavePdf(filePathWithoutExtension + ".pdf", Properties.Resources.PhinaliaLogo, title, "", "COLORED CROSS STITCH", "2022 | Phinalia", "Phinalia Library Collection",
-                            "Visit our website: ", "https://phinalia.com", "Join our community:", 
-                            new string[] { "https://facebook.com", "https://instagram.com", "https://youtube.com", "https://pinterest.com" }, 
-                            new Bitmap[] { Properties.Resources.FacebookLogo, Properties.Resources.InstagramLogo, Properties.Resources.YouTubeLogo, Properties.Resources.PinterestLogo }, 
-                            new string[] { "Facebook", "Instagram", "YouTube", "Pinterest" }, 
-                            false);
-                        imageAndOperationsData.SavePdf(filePathWithoutExtension + "AlternativeDesign" + ".pdf", Properties.Resources.PhinaliaLogo, title, "", "COLORED CROSS STITCH", "2022 | Phinalia", "Phinalia Library Collection",
-                            "Visit our website: ", "https://phinalia.com", "Join our community:",
-                            new string[] { "https://facebook.com", "https://instagram.com", "https://youtube.com", "https://pinterest.com" },
-                            new Bitmap[] { Properties.Resources.FacebookLogo, Properties.Resources.InstagramLogo, Properties.Resources.YouTubeLogo, Properties.Resources.PinterestLogo },
-                            new string[] { "Facebook", "Instagram", "YouTube", "Pinterest" }, 
-                            true, 
-                            "Obra de Arte",
-                            title, 
-                            "3 EXEMPLOS DE GRÁFICOS",
-                            title);
+                        pathToSaveFileWithoutExtension = filePathWithoutExtension;
+                        EnableDisableQuickSaveButton(false);
+                        //quickSaveButton.Enabled = true;
+                        //quickSaveButton.BackgroundImage = Properties.Resources.QuickSaveIcon;
                     }
                 }
+            }
+        }
 
-                imageAndOperationsData.CreateMachinePath(filePathWithoutExtension);
+        private void SaveMachinePathFile()
+        {
+            if (imageAndOperationsData != null && imageAndOperationsData.ResultingImage != null)
+            {
+                //saveImageFileDialog.Filter = "Image files|*.bmp;*.jpg;*.jpeg;*.gif;*.png;*.tif|All files|*.*";
+                saveImageFileDialog.Filter = "Embroidery|*.dst;";
+                string filePathWithoutExtension = "";
+
+                if (saveImageFileDialog.ShowDialog() == DialogResult.OK)
+                {
+                    if (saveImageFileDialog.FileNames[0].LastIndexOf(".") != -1)
+                    {
+                        int lengthOfSubstring = saveImageFileDialog.FileNames[0].LastIndexOf(".");
+                        pathToSaveFileWithoutExtension = saveImageFileDialog.FileNames[0].Substring(0, lengthOfSubstring);
+                        imageAndOperationsData.CreateMachinePath(pathToSaveFileWithoutExtension);
+                        //quickSaveButton.Enabled = true;
+                        //quickSaveButton.BackgroundImage = Properties.Resources.QuickSaveIcon;
+                    }
+                }
+            }
+        }
+
+        private void SaveOnlyEmbroideryFileFromPath(string pathWithoutExtension)
+        {
+            if (imageAndOperationsData != null && imageAndOperationsData.ResultingImage != null)
+            {
+                imageAndOperationsData.SerializeData(pathWithoutExtension + ".edu");
+
+                EnableDisableQuickSaveButton(false);
+            }
+        }
+
+        private void SaveOnlyMachinePathFileFromPath(string pathWithoutExtension)
+        {
+            if (imageAndOperationsData != null && imageAndOperationsData.ResultingImage != null)
+            {
+                imageAndOperationsData.CreateMachinePath(pathWithoutExtension);
+            }
+        }
+
+        private void SavePdfFile()
+        {
+            if (imageAndOperationsData != null && imageAndOperationsData.ResultingImage != null)
+            {
+                saveImageFileDialog.Filter = "PDF(*.pdf)|*.pdf";
+                string filePathWithoutExtension = "";
+
+                using (SavePdfDialog savePdfDialog = new SavePdfDialog(collection, title, subtitle, alternativeTitle))
+                {
+                    if(savePdfDialog.ShowDialog() == DialogResult.OK)
+                    {
+                        collection = savePdfDialog.collection;
+                        title = savePdfDialog.title;
+                        subtitle = savePdfDialog.subtitle;
+                        alternativeTitle = savePdfDialog.alternativeTitle;
+
+                        if (saveImageFileDialog.ShowDialog() == DialogResult.OK)
+                        {
+                            if (saveImageFileDialog.FileNames[0].LastIndexOf(".") != -1)
+                            {
+                                int lengthOfSubstring = saveImageFileDialog.FileNames[0].LastIndexOf(".");
+                                filePathWithoutExtension = saveImageFileDialog.FileNames[0].Substring(0, lengthOfSubstring);
+                                pathToSaveFileWithoutExtension = filePathWithoutExtension;
+                                //quickSaveButton.Enabled = true;
+                                //quickSaveButton.BackgroundImage = Properties.Resources.QuickSaveIcon;
+
+                                lengthOfSubstring = filePathWithoutExtension.LastIndexOf(Path.DirectorySeparatorChar);
+                                string title = filePathWithoutExtension.Substring(lengthOfSubstring + 1, filePathWithoutExtension.Length - lengthOfSubstring - 1);
+                                imageAndOperationsData.SavePdf(filePathWithoutExtension + ".pdf", Properties.Resources.PhinaliaLogo, title, "", "COLORED CROSS STITCH", "2022 | Phinalia", "Phinalia Library Collection",
+                                    "Visit our website: ", "https://phinalia.com", "Join our community:",
+                                    new string[] { "https://facebook.com", "https://instagram.com", "https://youtube.com", "https://pinterest.com" },
+                                    new Bitmap[] { Properties.Resources.FacebookLogo, Properties.Resources.InstagramLogo, Properties.Resources.YouTubeLogo, Properties.Resources.PinterestLogo },
+                                    new string[] { "Facebook", "Instagram", "YouTube", "Pinterest" },
+                                    false);
+                                imageAndOperationsData.SavePdf(filePathWithoutExtension + " - Magazine" + ".pdf", Properties.Resources.PhinaliaLogo, title, "", "COLORED CROSS STITCH", "2022 | Phinalia", "Phinalia Library Collection",
+                                    "Visit our website: ", "https://phinalia.com", "Join our community:",
+                                    new string[] { "https://facebook.com", "https://instagram.com", "https://youtube.com", "https://pinterest.com" },
+                                    new Bitmap[] { Properties.Resources.FacebookLogo, Properties.Resources.InstagramLogo, Properties.Resources.YouTubeLogo, Properties.Resources.PinterestLogo },
+                                    new string[] { "Facebook", "Instagram", "YouTube", "Pinterest" },
+                                    true,
+                                    savePdfDialog.collection,
+                                    savePdfDialog.title,
+                                    savePdfDialog.subtitle,
+                                    savePdfDialog.alternativeTitle);
+
+                                pathToSaveFileWithoutExtension = filePathWithoutExtension;
+                                //quickSaveButton.Enabled = true;
+                                //quickSaveButton.BackgroundImage = Properties.Resources.QuickSaveIcon;
+                            }
+                        }
+                    }
+                }
             }
         }
 
@@ -882,6 +1003,14 @@ namespace EmbroideryCreator
 
                 UndoReset();
                 RegisterChange();
+
+                if (retrieveSavedFileDialog.FileNames[0].LastIndexOf(".") != -1)
+                {
+                    int lengthOfSubstring = retrieveSavedFileDialog.FileNames[0].LastIndexOf(".");
+                    pathToSaveFileWithoutExtension = retrieveSavedFileDialog.FileNames[0].Substring(0, lengthOfSubstring);
+                    //quickSaveButton.Enabled = true;
+                    //quickSaveButton.BackgroundImage = Properties.Resources.QuickSaveIcon;
+                }
             }
         }
 
@@ -1221,6 +1350,10 @@ namespace EmbroideryCreator
 
             SetImageAndData(emptyImage);
             ProcessImage(1);
+
+            pathToSaveFileWithoutExtension = "";
+            //quickSaveButton.Enabled = false;
+            //quickSaveButton.BackgroundImage = Properties.Resources.QuickSaveGrayedIcon;
         }
 
         private void changeCanvasSizeButton_Click(object sender, EventArgs e)
@@ -1312,6 +1445,8 @@ namespace EmbroideryCreator
                     EnableDisableUndoPictureBox(false);
                 }
                 EnableDisableRedoPictureBox(true);
+
+                EnableDisableQuickSaveButton(true);
             }
         }
 
@@ -1327,6 +1462,8 @@ namespace EmbroideryCreator
                     EnableDisableRedoPictureBox(false);
                 }
                 EnableDisableUndoPictureBox(true);
+                
+                EnableDisableQuickSaveButton(true);
             }
         }
 
@@ -1336,6 +1473,8 @@ namespace EmbroideryCreator
 
             EnableDisableUndoPictureBox(false);
             EnableDisableRedoPictureBox(false);
+
+            EnableDisableQuickSaveButton(false);
         }
 
         private void RegisterChange()
@@ -1344,6 +1483,8 @@ namespace EmbroideryCreator
 
             EnableDisableUndoPictureBox(undoStateManager.HasPreviousState());
             EnableDisableRedoPictureBox(false);
+
+            EnableDisableQuickSaveButton(undoStateManager.HasPreviousState());
         }
 
         private void EnableDisableUndoPictureBox(bool newState)
@@ -1356,6 +1497,20 @@ namespace EmbroideryCreator
         {
             redoPictureBox.Enabled = newState;
             redoPictureBox.Image = newState ? Properties.Resources.RedoIcon : Properties.Resources.RedoIconDisabled;
+        }
+
+        private void EnableDisableQuickSaveButton(bool newState)
+        {
+            if (newState)
+            {
+                quickSaveButton.Enabled = true;
+                quickSaveButton.BackgroundImage = Properties.Resources.QuickSaveIcon;
+            }
+            else
+            {
+                quickSaveButton.Enabled = false;
+                quickSaveButton.BackgroundImage = Properties.Resources.QuickSaveGrayedIcon;
+            }
         }
     }
 

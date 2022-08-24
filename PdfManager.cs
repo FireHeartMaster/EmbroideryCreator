@@ -766,7 +766,20 @@ namespace EmbroideryCreator
 
             //summary
             pageGraphics.DrawString("DESIGN SIZE: " + matrixOfNewColors.GetLength(0).ToString() + " x " + matrixOfNewColors.GetLength(1).ToString() + " stitches", summaryFontAlternativeDesign, pageSetupBrush, new XRect(summaryPositionAlternativeDesign, new XSize(summaryFontAlternativeDesign.Size, summaryFontAlternativeDesign.Size)), XStringFormats.TopLeft);
-            pageGraphics.DrawString("COLORS: " + positionsOfEachColor.Count.ToString() + " colors", summaryFontAlternativeDesign, pageSetupBrush, new XRect(new XPoint(summaryPositionAlternativeDesign.X, summaryPositionAlternativeDesign.Y + summaryFontAlternativeDesign.Size + summaryVerticalPaddingSizeAlternativeDesign), new XSize(summaryFontAlternativeDesign.Size, summaryFontAlternativeDesign.Size)), XStringFormats.TopLeft);
+            string colorsText = "COLORS: ";
+            if(colorMeans.Count > 0)
+            {
+                colorsText += positionsOfEachColor.Count.ToString() + " colors";
+                if(backstitchColors.Count > 0)
+                {
+                    colorsText += " + ";
+                }
+            }
+            if (backstitchColors.Count > 0)
+            {
+                colorsText += backstitchColors.Count.ToString() + " colors (backstitch)";
+            }
+            pageGraphics.DrawString(colorsText, summaryFontAlternativeDesign, pageSetupBrush, new XRect(new XPoint(summaryPositionAlternativeDesign.X, summaryPositionAlternativeDesign.Y + summaryFontAlternativeDesign.Size + summaryVerticalPaddingSizeAlternativeDesign), new XSize(summaryFontAlternativeDesign.Size, summaryFontAlternativeDesign.Size)), XStringFormats.TopLeft);
             pageGraphics.DrawString("CANVAS: " + "16-count Aida", summaryFontAlternativeDesign, pageSetupBrush, new XRect(new XPoint(summaryPositionAlternativeDesign.X, summaryPositionAlternativeDesign.Y + 2 * (summaryFontAlternativeDesign.Size + summaryVerticalPaddingSizeAlternativeDesign)), new XSize(summaryFontAlternativeDesign.Size, summaryFontAlternativeDesign.Size)), XStringFormats.TopLeft);
             pageGraphics.DrawString("PALETTES: " + "DMC", summaryFontAlternativeDesign, pageSetupBrush, new XRect(new XPoint(summaryPositionAlternativeDesign.X, summaryPositionAlternativeDesign.Y + 3 * (summaryFontAlternativeDesign.Size + summaryVerticalPaddingSizeAlternativeDesign)), new XSize(summaryFontAlternativeDesign.Size, summaryFontAlternativeDesign.Size)), XStringFormats.TopLeft);
 

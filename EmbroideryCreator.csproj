@@ -100,6 +100,12 @@
     <Compile Include="ReducedColorControl.Designer.cs">
       <DependentUpon>ReducedColorControl.cs</DependentUpon>
     </Compile>
+    <Compile Include="SavePdfDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="SavePdfDialog.Designer.cs">
+      <DependentUpon>SavePdfDialog.cs</DependentUpon>
+    </Compile>
     <Compile Include="SerializerHelper.cs" />
     <Compile Include="UndoStateManager.cs" />
     <EmbeddedResource Include="BackstitchColorControl.resx">
@@ -122,6 +128,9 @@
     <EmbeddedResource Include="ReducedColorControl.resx">
       <DependentUpon>ReducedColorControl.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="SavePdfDialog.resx">
+      <DependentUpon>SavePdfDialog.cs</DependentUpon>
+    </EmbeddedResource>
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -137,6 +146,8 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Resources\QuickSaveGrayedIcon.png" />
+    <None Include="Resources\QuickSaveIcon.png" />
     <None Include="Resources\UndoIconDisabled.png" />
     <None Include="Resources\RedoIconDisabled.png" />
     <None Include="Resources\RedoIcon.png" />

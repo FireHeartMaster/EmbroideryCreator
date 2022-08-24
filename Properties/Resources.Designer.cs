@@ -1276,6 +1276,26 @@ namespace EmbroideryCreator.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap QuickSaveGrayedIcon {
+            get {
+                object obj = ResourceManager.GetObject("QuickSaveGrayedIcon", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap QuickSaveIcon {
+            get {
+                object obj = ResourceManager.GetObject("QuickSaveIcon", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap RedoIcon {
             get {
                 object obj = ResourceManager.GetObject("RedoIcon", resourceCulture);

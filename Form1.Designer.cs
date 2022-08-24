@@ -89,6 +89,9 @@ namespace EmbroideryCreator
             this.deleteCrossStitchColorButton = new System.Windows.Forms.Button();
             this.undoPictureBox = new System.Windows.Forms.PictureBox();
             this.redoPictureBox = new System.Windows.Forms.PictureBox();
+            this.savePdfButton = new System.Windows.Forms.Button();
+            this.saveMachinePathFileButton = new System.Windows.Forms.Button();
+            this.quickSaveButton = new System.Windows.Forms.Button();
             this.drawingToolsControl = new EmbroideryCreator.DrawingToolsControl();
             ((System.ComponentModel.ISupportInitialize)(this.widthSizeTrackBar)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numberOfColorsTrackBar)).BeginInit();
@@ -141,7 +144,7 @@ namespace EmbroideryCreator
             // 
             // processImageButton
             // 
-            this.processImageButton.Location = new System.Drawing.Point(158, 518);
+            this.processImageButton.Location = new System.Drawing.Point(157, 545);
             this.processImageButton.Name = "processImageButton";
             this.processImageButton.Size = new System.Drawing.Size(137, 23);
             this.processImageButton.TabIndex = 4;
@@ -177,7 +180,7 @@ namespace EmbroideryCreator
             // 
             this.saveImageButton.Location = new System.Drawing.Point(158, 489);
             this.saveImageButton.Name = "saveImageButton";
-            this.saveImageButton.Size = new System.Drawing.Size(137, 23);
+            this.saveImageButton.Size = new System.Drawing.Size(86, 23);
             this.saveImageButton.TabIndex = 7;
             this.saveImageButton.Text = "Save Image";
             this.saveImageButton.UseVisualStyleBackColor = true;
@@ -599,7 +602,7 @@ namespace EmbroideryCreator
             // processImageExactToSourceCheckBox
             // 
             this.processImageExactToSourceCheckBox.AutoSize = true;
-            this.processImageExactToSourceCheckBox.Location = new System.Drawing.Point(158, 547);
+            this.processImageExactToSourceCheckBox.Location = new System.Drawing.Point(158, 574);
             this.processImageExactToSourceCheckBox.Name = "processImageExactToSourceCheckBox";
             this.processImageExactToSourceCheckBox.Size = new System.Drawing.Size(106, 17);
             this.processImageExactToSourceCheckBox.TabIndex = 44;
@@ -709,6 +712,38 @@ namespace EmbroideryCreator
             this.redoPictureBox.TabStop = false;
             this.redoPictureBox.Click += new System.EventHandler(this.redoPictureBox_Click);
             // 
+            // savePdfButton
+            // 
+            this.savePdfButton.Location = new System.Drawing.Point(250, 489);
+            this.savePdfButton.Name = "savePdfButton";
+            this.savePdfButton.Size = new System.Drawing.Size(45, 23);
+            this.savePdfButton.TabIndex = 55;
+            this.savePdfButton.Text = "PDF";
+            this.savePdfButton.UseVisualStyleBackColor = true;
+            this.savePdfButton.Click += new System.EventHandler(this.savePdfButton_Click);
+            // 
+            // saveMachinePathFileButton
+            // 
+            this.saveMachinePathFileButton.Location = new System.Drawing.Point(159, 516);
+            this.saveMachinePathFileButton.Name = "saveMachinePathFileButton";
+            this.saveMachinePathFileButton.Size = new System.Drawing.Size(136, 23);
+            this.saveMachinePathFileButton.TabIndex = 56;
+            this.saveMachinePathFileButton.Text = "Save Machine Path File";
+            this.saveMachinePathFileButton.UseVisualStyleBackColor = true;
+            this.saveMachinePathFileButton.Click += new System.EventHandler(this.saveMachinePathFileButton_Click);
+            // 
+            // quickSaveButton
+            // 
+            this.quickSaveButton.BackgroundImage = global::EmbroideryCreator.Properties.Resources.QuickSaveGrayedIcon;
+            this.quickSaveButton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
+            this.quickSaveButton.Enabled = false;
+            this.quickSaveButton.Location = new System.Drawing.Point(159, 447);
+            this.quickSaveButton.Name = "quickSaveButton";
+            this.quickSaveButton.Size = new System.Drawing.Size(36, 36);
+            this.quickSaveButton.TabIndex = 57;
+            this.quickSaveButton.UseVisualStyleBackColor = true;
+            this.quickSaveButton.Click += new System.EventHandler(this.quickSaveButton_Click);
+            // 
             // drawingToolsControl
             // 
             this.drawingToolsControl.BackColor = System.Drawing.SystemColors.ActiveBorder;
@@ -723,6 +758,9 @@ namespace EmbroideryCreator
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1153, 603);
+            this.Controls.Add(this.quickSaveButton);
+            this.Controls.Add(this.saveMachinePathFileButton);
+            this.Controls.Add(this.savePdfButton);
             this.Controls.Add(this.redoPictureBox);
             this.Controls.Add(this.undoPictureBox);
             this.Controls.Add(this.deleteCrossStitchColorButton);
@@ -862,6 +900,9 @@ namespace EmbroideryCreator
         private System.Windows.Forms.Button deleteCrossStitchColorButton;
         private System.Windows.Forms.PictureBox undoPictureBox;
         private System.Windows.Forms.PictureBox redoPictureBox;
+        private System.Windows.Forms.Button savePdfButton;
+        private System.Windows.Forms.Button saveMachinePathFileButton;
+        private System.Windows.Forms.Button quickSaveButton;
     }
 }
 
