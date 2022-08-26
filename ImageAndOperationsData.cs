@@ -9,7 +9,7 @@ namespace EmbroideryCreator
 {
     public class ImageAndOperationsData
     {
-        private Bitmap originalImage;
+        public Bitmap OriginalImage { get; private set; }
         //private Bitmap pixelatedImage;
         //private Bitmap colorReducedImage;
         //private Bitmap augmentedImage;
@@ -49,6 +49,30 @@ namespace EmbroideryCreator
         public Tuple<int, int> GetSizeInPixels() => new Tuple<int, int>(matrixOfNewColors.GetLength(0), matrixOfNewColors.GetLength(1));
 
         IconImagesManager iconsManager = new IconImagesManager();
+
+        public int GetIndexFromPosition(int i, int j)
+        {
+            if (i >= 0 && i < matrixOfNewColors.GetLength(0) && j >= 0 && j < matrixOfNewColors.GetLength(1))
+            {
+                return matrixOfNewColors[i, j];
+            }
+            else
+            {
+                return 0; //empty color
+            }
+        }
+
+        public int GetIndexFromColor(Color color)
+        {
+            if (colorMeans.Count == 0) return -1;
+
+            for (int i = 0; i < colorMeans.Count; i++)
+            {
+                if (colorMeans[i].A == color.A && colorMeans[i].R == color.R && colorMeans[i].G == color.G && colorMeans[i].B == color.B) return i;
+            }
+
+            return 0;
+        }
 
         public void ChangeColorByIndex(int indexToUpdate, Color newColor)
         {
@@ -388,7 +412,7 @@ namespace EmbroideryCreator
 
         public ImageAndOperationsData(Bitmap importedImage)
         {
-            originalImage = new Bitmap(importedImage);
+            OriginalImage = new Bitmap(importedImage);
         }
 
         public ImageAndOperationsData(Bitmap originalImage, Bitmap resultingImage, Bitmap threadImage, Bitmap symbolsImage, Bitmap backstitchImage, Bitmap gridImage, Bitmap borderImage, int newWidth, int numberOfColors, int numberOfIterations, int newPixelSize, List<Color> colorMeans, Dictionary<int, List<Tuple<int, int>>> positionsOfEachColor, int[,] matrixOfNewColors, List<bool> colorIsBackgroundList, Dictionary<int, HashSet<BackstitchLine>> backstitchLines, Dictionary<int, Color> backstitchColors, int borderThicknessInNumberOfPixels, int gridThicknessInNumberOfPixels) : this(originalImage)
@@ -422,7 +446,7 @@ namespace EmbroideryCreator
         
         public ImageAndOperationsData(ImageAndOperationsData imageAndOperationsData)
         {
-            this.originalImage = (Bitmap)imageAndOperationsData.originalImage.Clone();
+            this.OriginalImage = (Bitmap)imageAndOperationsData.OriginalImage.Clone();
             this.ResultingImage = (Bitmap)imageAndOperationsData.ResultingImage.Clone();
             this.ThreadImage = (Bitmap)imageAndOperationsData.ThreadImage.Clone();
             this.SymbolsImage = (Bitmap)imageAndOperationsData.SymbolsImage.Clone();
@@ -500,7 +524,7 @@ namespace EmbroideryCreator
 
         public void SerializeData(string filePath)
         {
-            ImageAndOperationsDataSerialized serializableData = new ImageAndOperationsDataSerialized(originalImage, ResultingImage, ThreadImage, SymbolsImage, BackstitchImage, GridImage, BorderImage, newWidth, numberOfColors, numberOfIterations, NewPixelSize, colorMeans, positionsOfEachColor, matrixOfNewColors, colorIsBackgroundList, backstitchLines, backstitchColors, BorderThicknessInNumberOfPixels, GridThicknessInNumberOfPixels);
+            ImageAndOperationsDataSerialized serializableData = new ImageAndOperationsDataSerialized(OriginalImage, ResultingImage, ThreadImage, SymbolsImage, BackstitchImage, GridImage, BorderImage, newWidth, numberOfColors, numberOfIterations, NewPixelSize, colorMeans, positionsOfEachColor, matrixOfNewColors, colorIsBackgroundList, backstitchLines, backstitchColors, BorderThicknessInNumberOfPixels, GridThicknessInNumberOfPixels);
 
             SerializerHelper.WriteToFile<ImageAndOperationsDataSerialized>(filePath, serializableData);
         }
@@ -532,9 +556,9 @@ namespace EmbroideryCreator
             return colorReducedImage;
         }
 
-        private Bitmap SetColorsWithoutReducingNumberOfColors(Bitmap pixelatedImage, int numberOfIterations = 10)
+        private Bitmap SetColorsWithoutReducingNumberOfColors(Bitmap pixelatedImage, double minDistanceBetweenColorsToConsiderDifferent = 5, int numberOfIterations = 10)
         {
-            Bitmap colorReducedImage = ImageTransformations.SetColorsWithoutReducingNumberOfColors(pixelatedImage, out colorMeans, out positionsOfEachColor, out matrixOfNewColors);
+            Bitmap colorReducedImage = ImageTransformations.SetColorsWithoutReducingNumberOfColors(pixelatedImage, out colorMeans, out positionsOfEachColor, out matrixOfNewColors, minDistanceBetweenColorsToConsiderDifferent);
             AddEmptyColor();
             return colorReducedImage;
         }
@@ -753,7 +777,7 @@ namespace EmbroideryCreator
 
         public void ProcessImage()
         {
-            Bitmap processedImage = originalImage;
+            Bitmap processedImage = OriginalImage;
             processedImage = PixelateImage(processedImage);
             processedImage = ReduceNumberOfColors(processedImage);
             processedImage = AddGridResizingImage(processedImage);
@@ -770,7 +794,7 @@ namespace EmbroideryCreator
         //extremmely long time to execute and resource consuming
         public void ProcessImageAlternateOrder()
         {
-            Bitmap processedImage = originalImage;
+            Bitmap processedImage = OriginalImage;
             processedImage = ReduceNumberOfColors(processedImage);
             processedImage = PixelateImageAlternateOrder(processedImage);
             processedImage = AddGridResizingImage(processedImage);
@@ -783,11 +807,11 @@ namespace EmbroideryCreator
             }
         }
 
-        public void ProcessImageInSeparateLayers(int newPixelSize = 10, bool exactToSource = false)
+        public void ProcessImageInSeparateLayers(int newPixelSize = 10, double minDistanceBetweenColorsToConsiderDifferent = 5, bool exactToSource = false)
         {
             this.NewPixelSize = newPixelSize;
 
-            Bitmap processedImage = originalImage;
+            Bitmap processedImage = OriginalImage;
             if (!exactToSource)
             {
                 processedImage = PixelateImage(processedImage);
@@ -796,7 +820,7 @@ namespace EmbroideryCreator
             else
             {
                 processedImage = PixelateImageExactlyAccordingToOriginal(processedImage);
-                processedImage = SetColorsWithoutReducingNumberOfColors(processedImage);
+                processedImage = SetColorsWithoutReducingNumberOfColors(processedImage, minDistanceBetweenColorsToConsiderDifferent);
             }
             //processedImage = AddGridResizingImage(processedImage);
             //processedImage = AddBorderIncreasingSizeOfOriginalImageByAddingPadding(processedImage);
@@ -916,7 +940,7 @@ namespace EmbroideryCreator
 
         private void RepaintMainImage(bool paintColors = true, bool paintCrosses = true, bool paintSymbols = true)
         {
-            float aspectRatio = ((float)originalImage.Height) / originalImage.Width;
+            float aspectRatio = ((float)OriginalImage.Height) / OriginalImage.Width;
             ImageTransformations.GetNewSize(newWidth, (int)(newWidth * aspectRatio), NewPixelSize, out int resultingImageWidth, out int resultingImageHeight);
             if (paintColors)
             {
@@ -1302,7 +1326,7 @@ namespace EmbroideryCreator
             
             newWidth = newCanvasWidth;
 
-            originalImage = ImageTransformations.CropOrAddPadding(originalImage, newCanvasWidth, newCanvasHeight);
+            OriginalImage = ImageTransformations.CropOrAddPadding(OriginalImage, newCanvasWidth, newCanvasHeight);
 
             Bitmap pixelatedImage = new Bitmap(newCanvasWidth, newCanvasHeight);
             int[,] newMatrixOfNewColors = new int[newCanvasWidth, newCanvasHeight];
@@ -1418,7 +1442,12 @@ namespace EmbroideryCreator
             return positionsOfEachColor[index].Count;
         }
 
-        public void SavePdf(string pathToSave, Bitmap topLogo, string title, string secondTitle, string subtitle, string leftText, string rightText, string footerText, string footerLink, string secondFooterText, string[] socialMediaLinks, Bitmap[] socialMediaImages, string[] socialMediaNames, bool isAlternativeDesign = false, string collectionTextFirstPage = "", string titleFirstPage = "", string subtitleFirstPage = "", string subTitleAlternativeDesignListOfColors = "")
+        public void SavePdf(string pathToSave, Bitmap topLogo, string title, string secondTitle, string subtitle, string leftText, string rightText, string footerText, string footerLink, string secondFooterText, string[] socialMediaLinks, Bitmap[] socialMediaImages, string[] socialMediaNames, bool isAlternativeDesign = false, string collectionTextFirstPage = "", string titleFirstPage = "", string subtitleFirstPage = "", string subTitleAlternativeDesignListOfColors = "",
+            double collectionTextFormattingFactor = 7,
+            double titleFirstPageFormattingFactor = 7,
+            double subtitleFirstPageFormattingFactor = 7,
+            double collectionCharacterLengthToCheck = 9,
+            double titleCharacterLengthToCheck = 18)
         {
             FillAllNotFilledSymbols();
             FillAllNotFilledThreadColoredCrosses();
@@ -1430,7 +1459,12 @@ namespace EmbroideryCreator
             }
             else
             {
-                pdfManager.CreatePdfStitchesAlternativeDesign(pathToSave, matrixOfNewColors, colorMeans, positionsOfEachColor, backstitchLines, backstitchColors, dictionaryOfSymbolByIndex, dictionaryOfColoredCrossByIndex, collectionTextFirstPage, titleFirstPage, subtitleFirstPage, subTitleAlternativeDesignListOfColors);
+                pdfManager.CreatePdfStitchesAlternativeDesign(pathToSave, matrixOfNewColors, colorMeans, positionsOfEachColor, backstitchLines, backstitchColors, dictionaryOfSymbolByIndex, dictionaryOfColoredCrossByIndex, collectionTextFirstPage, titleFirstPage, subtitleFirstPage, subTitleAlternativeDesignListOfColors,
+                    collectionTextFormattingFactor,
+                    titleFirstPageFormattingFactor,
+                    subtitleFirstPageFormattingFactor,
+                    collectionCharacterLengthToCheck,
+                    titleCharacterLengthToCheck);
             }
         }
 

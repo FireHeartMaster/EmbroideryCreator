@@ -60,6 +60,12 @@ namespace EmbroideryCreator
         private string alternativeTitle = "";
         private string pathToSaveFileWithoutExtension = "";
 
+        private int collectionTextFormattingFactor = 7;
+        private int titleFirstPageFormattingFactor = 7;
+        private int subtitleFirstPageFormattingFactor = 7;
+        private int collectionCharacterLengthToCheck = 9;
+        private int titleCharacterLengthToCheck = 18;
+
         public MainForm()
         {
             InitializeComponent();
@@ -72,14 +78,16 @@ namespace EmbroideryCreator
             backStitchColorsRadioButton.Checked = false;
 
             pictureBoxesByVisibilityOrder.Add(baseLayerPictureBox);
+            pictureBoxesByVisibilityOrder.Add(originalImagePictureBox);
             pictureBoxesByVisibilityOrder.Add(mainPictureBox);
             pictureBoxesByVisibilityOrder.Add(threadPictureBox);
             pictureBoxesByVisibilityOrder.Add(symbolsPictureBox);
             pictureBoxesByVisibilityOrder.Add(gridPictureBox);
             pictureBoxesByVisibilityOrder.Add(borderPictureBox);
             pictureBoxesByVisibilityOrder.Add(backstitchPictureBox);
+            pictureBoxesByVisibilityOrder.Add(selectionToolPictureBox);
 
-            if(pictureBoxesByVisibilityOrder.Count != 0)
+            if (pictureBoxesByVisibilityOrder.Count != 0)
             {
                 pictureBoxUnscaledSize = pictureBoxesByVisibilityOrder[0].Size;
             }
@@ -121,9 +129,10 @@ namespace EmbroideryCreator
         private Bitmap CombineImagesWithVisibilityOfPictureBoxes(List<PictureBox> pictureBoxesToCombine)
         {
             Bitmap imagesCombined = new Bitmap(pictureBoxesToCombine[0].Image);
+            var images = pictureBoxesToCombine.Select(pictureBox => pictureBox.Image).ToList();
             for (int i = 1; i < pictureBoxesToCombine.Count; i++)
             {
-                if (pictureBoxesToCombine[i].Visible)
+                if (pictureBoxesToCombine[i].Visible && pictureBoxesToCombine[i].Image != null)
                 {
                     imagesCombined = ImageTransformations.CombineImages(imagesCombined, new Bitmap(pictureBoxesToCombine[i].Image));
                 }
@@ -649,6 +658,7 @@ namespace EmbroideryCreator
         private void SetImageAndData(Bitmap originalImage)
         {
             mainPictureBox.Image = originalImage;
+            originalImagePictureBox.Image = new Bitmap(originalImage);
             threadPictureBox.Image = new Bitmap(mainPictureBox.Image.Width, mainPictureBox.Image.Height);
             symbolsPictureBox.Image = new Bitmap(mainPictureBox.Image.Width, mainPictureBox.Image.Height);
             gridPictureBox.Image = new Bitmap(mainPictureBox.Image.Width, mainPictureBox.Image.Height);
@@ -658,6 +668,8 @@ namespace EmbroideryCreator
             baseLayerPictureBox.Image = ImageTransformations.CreateSolidColorBitmap(Color.White, mainPictureBox.Image.Width, mainPictureBox.Image.Height);
 
             imageAndOperationsData = new ImageAndOperationsData(new Bitmap(mainPictureBox.Image));
+
+            ResetOrderOfVisibilityOfPictureBoxes();
         }
 
         private void processImageButton_Click(object sender, EventArgs e)
@@ -674,7 +686,7 @@ namespace EmbroideryCreator
             imageAndOperationsData.numberOfIterations = numberOfIterationsTrackBar.Value;
 
             //imageAndOperationsData.ProcessImage();
-            imageAndOperationsData.ProcessImageInSeparateLayers(newPixelSizeTrackBar.Value, processImageExactToSourceCheckBox.Checked);
+            imageAndOperationsData.ProcessImageInSeparateLayers(newPixelSizeTrackBar.Value, minDistanceBetweenColorsTrackBar.Value, processImageExactToSourceCheckBox.Checked);
             //int newImageWidth = imageAndOperationsData.ResultingImage.Width;
             //int newImageHeight = imageAndOperationsData.ResultingImage.Height;
             ResetImagesAfterProcessing(true);
@@ -692,6 +704,8 @@ namespace EmbroideryCreator
             symbolsPictureBox.Image = imageAndOperationsData.SymbolsImage;
             gridPictureBox.Image = imageAndOperationsData.GridImage;
             borderPictureBox.Image = imageAndOperationsData.BorderImage;
+            PrepareOriginalImageLayer();
+
             if (clearBackstitchImage)
             {
                 backstitchPictureBox.Image = new Bitmap(mainPictureBox.Image.Width, mainPictureBox.Image.Height);
@@ -707,6 +721,23 @@ namespace EmbroideryCreator
             FillListsOfColors(clearBackgroundList);
 
             ResetOrderOfVisibilityOfPictureBoxes();
+        }
+
+        private void PrepareOriginalImageLayer()
+        {
+            if (imageAndOperationsData == null || imageAndOperationsData.ResultingImage == null) return;
+
+            originalImagePictureBox.Image = new Bitmap(imageAndOperationsData.ResultingImage.Width, imageAndOperationsData.ResultingImage.Height);
+            using (var graphics = Graphics.FromImage(originalImagePictureBox.Image))
+            {
+                graphics.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.NearestNeighbor;
+                graphics.PixelOffsetMode = System.Drawing.Drawing2D.PixelOffsetMode.HighQuality;
+
+                //Let's add this offset to hide the first top horizontal and the first left vertical lines of the grid, otherwise we end up with an asymmetric grid
+                //starting with black lines at the top and at the left but with no lines on the right and at the bottom
+                int offset = imageAndOperationsData.GridThicknessInNumberOfPixels;
+                graphics.DrawImage(imageAndOperationsData.OriginalImage, imageAndOperationsData.BorderThicknessInNumberOfPixels - offset, imageAndOperationsData.BorderThicknessInNumberOfPixels - offset, imageAndOperationsData.ResultingImage.Width - (2 * imageAndOperationsData.BorderThicknessInNumberOfPixels - imageAndOperationsData.GridThicknessInNumberOfPixels), imageAndOperationsData.ResultingImage.Height - (2 * imageAndOperationsData.BorderThicknessInNumberOfPixels - imageAndOperationsData.GridThicknessInNumberOfPixels));
+            }
         }
 
         private void FillListsOfColors(bool clearBackgroundList = true)
@@ -917,7 +948,12 @@ namespace EmbroideryCreator
                 saveImageFileDialog.Filter = "PDF(*.pdf)|*.pdf";
                 string filePathWithoutExtension = "";
 
-                using (SavePdfDialog savePdfDialog = new SavePdfDialog(collection, title, subtitle, alternativeTitle))
+                using (SavePdfDialog savePdfDialog = new SavePdfDialog(collection, title, subtitle, alternativeTitle,
+                    collectionTextFormattingFactor,
+                    titleFirstPageFormattingFactor,
+                    subtitleFirstPageFormattingFactor,
+                    collectionCharacterLengthToCheck,
+                    titleCharacterLengthToCheck))
                 {
                     if(savePdfDialog.ShowDialog() == DialogResult.OK)
                     {
@@ -925,6 +961,12 @@ namespace EmbroideryCreator
                         title = savePdfDialog.title;
                         subtitle = savePdfDialog.subtitle;
                         alternativeTitle = savePdfDialog.alternativeTitle;
+
+                        collectionTextFormattingFactor = savePdfDialog.collectionTextFormattingFactor;
+                        titleFirstPageFormattingFactor = savePdfDialog.titleFirstPageFormattingFactor;
+                        subtitleFirstPageFormattingFactor = savePdfDialog.subtitleFirstPageFormattingFactor;
+                        collectionCharacterLengthToCheck = savePdfDialog.collectionCharacterLengthToCheck;
+                        titleCharacterLengthToCheck = savePdfDialog.titleCharacterLengthToCheck;
 
                         if (saveImageFileDialog.ShowDialog() == DialogResult.OK)
                         {
@@ -953,7 +995,12 @@ namespace EmbroideryCreator
                                     savePdfDialog.collection,
                                     savePdfDialog.title,
                                     savePdfDialog.subtitle,
-                                    savePdfDialog.alternativeTitle);
+                                    savePdfDialog.alternativeTitle,
+                                    savePdfDialog.collectionTextFormattingFactor,
+                                    savePdfDialog.titleFirstPageFormattingFactor,
+                                    savePdfDialog.subtitleFirstPageFormattingFactor,
+                                    savePdfDialog.collectionCharacterLengthToCheck,
+                                    savePdfDialog.titleCharacterLengthToCheck);
 
                                 pathToSaveFileWithoutExtension = filePathWithoutExtension;
                                 //quickSaveButton.Enabled = true;
@@ -1010,6 +1057,8 @@ namespace EmbroideryCreator
                 borderPictureBox.Image = imageAndOperationsData.BorderImage;
 
                 baseLayerPictureBox.Image = ImageTransformations.CreateSolidColorBitmap(Color.White, mainPictureBox.Image.Width, mainPictureBox.Image.Height);
+
+                PrepareOriginalImageLayer();
 
                 FillListsOfColors();
                 ResetOrderOfVisibilityOfPictureBoxes();
@@ -1265,6 +1314,10 @@ namespace EmbroideryCreator
             return ModifierKeys.HasFlag(multipleSelectionKeyboardKey);
         }
 
+        private void originalImageVisibleCheckBox_CheckedChanged(object sender, EventArgs e)
+        {
+            ChangeVisibilityOfPictureBox(originalImageVisibleCheckBox, originalImagePictureBox);
+        }
         private void mainImageVisibleCheckBox_CheckedChanged(object sender, EventArgs e)
         {
             ChangeVisibilityOfPictureBox(mainImageVisibleCheckBox, mainPictureBox);
@@ -1524,6 +1577,17 @@ namespace EmbroideryCreator
                 quickSaveButton.Enabled = false;
                 quickSaveButton.BackgroundImage = Properties.Resources.QuickSaveGrayedIcon;
             }
+        }
+
+        private void minDistanceBetweenColorsTrackBar_Scroll(object sender, EventArgs e)
+        {
+            minDistanceBetweenColorsLabel.Text = minDistanceBetweenColorsTrackBar.Value.ToString();
+        }
+
+        private void processImageExactToSourceCheckBox_CheckedChanged(object sender, EventArgs e)
+        {
+            minDistanceBetweenColorsTrackBar.Visible = processImageExactToSourceCheckBox.Checked;
+            minDistanceBetweenColorsLabel.Visible = processImageExactToSourceCheckBox.Checked;
         }
     }
 

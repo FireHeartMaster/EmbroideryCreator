@@ -21,16 +21,16 @@ namespace EmbroideryCreator
 
         public static Bitmap PixelateExactlyAccordingToOriginal(Bitmap originalImage, int newWidthSize)
         {
-            float aspectRatio = ((float)originalImage.Height) / originalImage.Width;
+            double aspectRatio = ((double)originalImage.Height) / originalImage.Width;
             Bitmap pixelatedImage = new Bitmap(newWidthSize, (int)(newWidthSize * aspectRatio));
 
-            int step = originalImage.Width / newWidthSize;
+            double step = ((double)originalImage.Width) / newWidthSize;
 
             for (int x = 0; x < newWidthSize; x++)
             {
                 for (int y = 0; y < pixelatedImage.Height; y++)
                 {
-                    pixelatedImage.SetPixel(x, y, originalImage.GetPixel(x * step, y * step));
+                    pixelatedImage.SetPixel(x, y, originalImage.GetPixel((int)(x * step), (int)(y * step)));
                 }
             }
 
@@ -106,6 +106,16 @@ namespace EmbroideryCreator
             return closestIndex;
         }
         
+        public static double DistanceBetweenTwoColors(Color firstColor, Color secondColor)
+        {
+            int redDistance = firstColor.R - secondColor.R;
+            int greenDistance = firstColor.G - secondColor.G;
+            int blueDistance = firstColor.B - secondColor.B;
+
+            int squaredDistance = redDistance * redDistance + greenDistance * greenDistance + blueDistance * blueDistance;
+            return Math.Sqrt(squaredDistance);
+        }
+
         public static Bitmap ReduceNumberOfColors(Bitmap imageToReduceColors, int newNumberOfColors, int numberOfIterations, out List<Color> means, 
             out Dictionary<int, List<Tuple<int, int>>> clustersOfColors, out int[,] matrixOfNewColors)
         {
@@ -163,7 +173,7 @@ namespace EmbroideryCreator
         }
 
         public static Bitmap SetColorsWithoutReducingNumberOfColors(Bitmap imageToReduceColors, out List<Color> means,
-            out Dictionary<int, List<Tuple<int, int>>> clustersOfColors, out int[,] matrixOfNewColors)
+            out Dictionary<int, List<Tuple<int, int>>> clustersOfColors, out int[,] matrixOfNewColors, double minDistanceBetweenColorsToConsiderDifferent = 5)
         {
             matrixOfNewColors = new int[imageToReduceColors.Width, imageToReduceColors.Height];
             means = new List<Color>();
@@ -181,10 +191,20 @@ namespace EmbroideryCreator
 
                     if (!dictionaryOfColorsAndIndexes.ContainsKey(tupleKeyForCurrentColor))
                     {
-                        int newIndex = dictionaryOfColorsAndIndexes.Count;
-                        dictionaryOfColorsAndIndexes.Add(tupleKeyForCurrentColor, newIndex);
-                        means.Add(currentColor);
-                        clustersOfColors.Add(newIndex, new List<Tuple<int, int>>());
+                        List<(double, Color color)> colorsSortedByDistance = means.Select(color => (DistanceBetweenTwoColors(color, currentColor), color)).OrderBy(distanceAndColor => distanceAndColor.Item1).ToList();
+                        if(dictionaryOfColorsAndIndexes.Count == 0 || colorsSortedByDistance.First().Item1 > minDistanceBetweenColorsToConsiderDifferent)
+                        {
+                            int newIndex = dictionaryOfColorsAndIndexes.Count;
+                            dictionaryOfColorsAndIndexes.Add(tupleKeyForCurrentColor, newIndex);
+                            means.Add(currentColor);
+                            clustersOfColors.Add(newIndex, new List<Tuple<int, int>>());
+                        }
+                        else
+                        {
+                            currentColor = colorsSortedByDistance.First().Item2;
+                            tupleKeyForCurrentColor = new Tuple<int, int, int>(currentColor.R, currentColor.G, currentColor.B);
+                            imageToReduceColors.SetPixel(x, y, currentColor);
+                        }
                     }
                     matrixOfNewColors[x, y] = dictionaryOfColorsAndIndexes[tupleKeyForCurrentColor];
                     clustersOfColors[dictionaryOfColorsAndIndexes[tupleKeyForCurrentColor]].Add(new Tuple<int, int>(x, y));

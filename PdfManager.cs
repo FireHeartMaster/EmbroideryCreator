@@ -178,9 +178,14 @@ namespace EmbroideryCreator
         private readonly int maxHorizontalNumberOfSquaresAlternativeDesignFirstPage = 151;
         private readonly int maxVerticalNumberOfSquaresAlternativeDesignFirstPage = 200;
 
-        double collectionTextFormattingFactor = 10;
-        double titleFirstPageFormattingFactor = 8;
+        double collectionTextFormattingFactor = 7;
+        double titleFirstPageFormattingFactor = 7;
         double subtitleFirstPageFormattingFactor = 7;
+
+        private double collectionCharacterLengthToCheck = 9;
+        private double titleCharacterLengthToCheck = 18;
+
+        private double fontSizeMultiplier = 1.2;
 
         private readonly double widthAlternativeDesign = 595;
         private readonly double heightAlternativeDesign = 744;
@@ -321,13 +326,24 @@ namespace EmbroideryCreator
             }
         }
 
-        public void CreatePdfStitchesAlternativeDesign(string pathToSave, int[,] matrixOfNewColors, List<Color> colorMeans, Dictionary<int, List<Tuple<int, int>>> positionsOfEachColor, Dictionary<int, HashSet<BackstitchLine>> backstitchLines, Dictionary<int, Color> backstitchColors, Dictionary<int, Bitmap> dictionaryOfSymbolByColor, Dictionary<int, Bitmap> dictionaryOfColoredCrossByIndex, string collectionTextFirstPage, string titleFirstPage, string subtitleFirstPage, string titleFollowingPages)
+        public void CreatePdfStitchesAlternativeDesign(string pathToSave, int[,] matrixOfNewColors, List<Color> colorMeans, Dictionary<int, List<Tuple<int, int>>> positionsOfEachColor, Dictionary<int, HashSet<BackstitchLine>> backstitchLines, Dictionary<int, Color> backstitchColors, Dictionary<int, Bitmap> dictionaryOfSymbolByColor, Dictionary<int, Bitmap> dictionaryOfColoredCrossByIndex, string collectionTextFirstPage, string titleFirstPage, string subtitleFirstPage, string titleFollowingPages,
+            double collectionTextFormattingFactor = 7,
+            double titleFirstPageFormattingFactor = 7,
+            double subtitleFirstPageFormattingFactor = 7,
+            double collectionCharacterLengthToCheck = 9,
+            double titleCharacterLengthToCheck = 18)
         {
             PdfDocument document = new PdfDocument();
 
             this.titleAlternativeDesign = titleFollowingPages;
 
             document.Info.Title = title;
+
+            this.collectionTextFormattingFactor = collectionTextFormattingFactor;
+            this.titleFirstPageFormattingFactor = titleFirstPageFormattingFactor;
+            this.subtitleFirstPageFormattingFactor = subtitleFirstPageFormattingFactor;
+            this.collectionCharacterLengthToCheck = collectionCharacterLengthToCheck;
+            this.titleCharacterLengthToCheck = titleCharacterLengthToCheck;
 
             dictionaryOfXimageByIndex = new Dictionary<int, XImage>();
 
@@ -353,9 +369,23 @@ namespace EmbroideryCreator
 
             XTextFormatter textFormatter = new XTextFormatter(firstPageGraphics);
 
-            textFormatter.DrawString(collectionTextFirstPage, collectionTextFirstPageFont, new XSolidBrush(collectionTextFirstPageColor), new XRect(collectionTextPosition, new XSize(collectionTextFormattingFactor * collectionTextFirstPageFont.Size, 3 * collectionTextFirstPageFont.Size)), XStringFormats.TopLeft);
-            textFormatter.DrawString(titleFirstPage, titleFirstPageFont, new XSolidBrush(titleFirstPageColor), new XRect(titleFirstPagePosition, new XSize(titleFirstPageFormattingFactor * titleFirstPageFont.Size, 3 * titleFirstPageFont.Size)), XStringFormats.TopLeft);
-            textFormatter.DrawString(subtitleFirstPage, subtitleFirstPageFont, new XSolidBrush(subtitleFirstPageColor), new XRect(subtitleFirstPagePosition, new XSize(subtitleFirstPageFormattingFactor * subtitleFirstPageFont.Size, 3 * subtitleFirstPageFont.Size)), XStringFormats.TopLeft);
+            XPoint collectionTemporaryPosition = collectionTextPosition;
+            if (collectionTextFirstPage.Length > collectionCharacterLengthToCheck)
+            {
+                int collectionNumberOfAdditonalRows = (int)(collectionTextFirstPage.Length / collectionCharacterLengthToCheck);
+                collectionTemporaryPosition = new XPoint(collectionTextPosition.X, collectionTextPosition.Y - collectionNumberOfAdditonalRows * fontSizeMultiplier * collectionTextFirstPageFont.Size);
+            }
+
+            XPoint subtitleFirstPageTemporaryPosition = subtitleFirstPagePosition;
+            if (titleFirstPage.Length > titleCharacterLengthToCheck)
+            {
+                int subtitleAmountToDescend = (int)(titleFirstPage.Length / titleCharacterLengthToCheck);
+                subtitleFirstPageTemporaryPosition = new XPoint(subtitleFirstPagePosition.X, subtitleFirstPagePosition.Y + subtitleAmountToDescend * fontSizeMultiplier * titleFirstPageFont.Size);
+            }
+
+            textFormatter.DrawString(collectionTextFirstPage, collectionTextFirstPageFont, new XSolidBrush(collectionTextFirstPageColor), new XRect(collectionTemporaryPosition, new XSize(collectionTextFormattingFactor * collectionTextFirstPageFont.Size, 5 * collectionTextFirstPageFont.Size)), XStringFormats.TopLeft);
+            textFormatter.DrawString(titleFirstPage, titleFirstPageFont, new XSolidBrush(titleFirstPageColor), new XRect(titleFirstPagePosition, new XSize(titleFirstPageFormattingFactor * titleFirstPageFont.Size, 5 * titleFirstPageFont.Size)), XStringFormats.TopLeft);
+            textFormatter.DrawString(subtitleFirstPage, subtitleFirstPageFont, new XSolidBrush(subtitleFirstPageColor), new XRect(subtitleFirstPageTemporaryPosition, new XSize(subtitleFirstPageFormattingFactor * subtitleFirstPageFont.Size, 5 * subtitleFirstPageFont.Size)), XStringFormats.TopLeft);
 
 
             firstPageGraphics.RotateAtTransform(90, new XPoint(297.5, 372));
@@ -769,10 +799,10 @@ namespace EmbroideryCreator
             string colorsText = "COLORS: ";
             if(colorMeans.Count > 0)
             {
-                colorsText += positionsOfEachColor.Count.ToString() + " colors";
+                colorsText += (colorMeans[0].A == 0 ? (colorMeans.Count - 1) : colorMeans.Count).ToString() + " colors";
                 if(backstitchColors.Count > 0)
                 {
-                    colorsText += " + ";
+                    colorsText += "(cross stitch) + ";
                 }
             }
             if (backstitchColors.Count > 0)
@@ -805,7 +835,7 @@ namespace EmbroideryCreator
             int totalAmountOfColors = isCrossStitchAndNotBackstitch ? colorMeans.Count : backstitchColors.Count;
 
             int indexOfTheFirstColorOfTheCurrentPage = 0;
-            if(colorMeans.Count > 0 && colorMeans[0].A == 0)
+            if(isCrossStitchAndNotBackstitch && colorMeans.Count > 0 && colorMeans[0].A == 0)
             {
                 indexOfTheFirstColorOfTheCurrentPage = 1; //skip the first color because it is the empty color
             }
