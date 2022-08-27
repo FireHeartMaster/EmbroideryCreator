@@ -1323,10 +1323,12 @@ namespace EmbroideryCreator
         public void ChangeCanvasSize(int newCanvasWidth, int newCanvasHeight, int newPixelWidthUpdated = 10)
         {
             NewPixelSize = newPixelWidthUpdated;
-            
+
+            int oldWidth = newWidth;
+            int oldHeight = matrixOfNewColors.GetLength(1);
             newWidth = newCanvasWidth;
 
-            OriginalImage = ImageTransformations.CropOrAddPadding(OriginalImage, newCanvasWidth, newCanvasHeight);
+            OriginalImage = ImageTransformations.CropOrAddPadding(OriginalImage, newCanvasWidth * OriginalImage.Width / oldWidth, newCanvasHeight * OriginalImage.Height / oldHeight);
 
             Bitmap pixelatedImage = new Bitmap(newCanvasWidth, newCanvasHeight);
             int[,] newMatrixOfNewColors = new int[newCanvasWidth, newCanvasHeight];

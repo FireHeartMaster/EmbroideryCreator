@@ -1184,7 +1184,7 @@ namespace EmbroideryCreator
             MergeTwoColorsByTheirIndexes(0, index, reducedColorControlToRemove);
         }
 
-        private void AddNewColor(Color newColor)
+        public void AddNewColor(Color newColor)
         {
             ReducedColorControl colorControl = new ReducedColorControl();
             colorControl.InitializeReducedColorControl(newColor, flowLayoutPanelListOfCrossStitchColors.Controls.Count + 1, /*colorControl,*/ this);    //the "+1" here it to take the empty color into account

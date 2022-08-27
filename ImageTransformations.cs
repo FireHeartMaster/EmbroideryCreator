@@ -373,6 +373,17 @@ namespace EmbroideryCreator
             return imagesCombined;
         }
 
+        public static Bitmap CombineImagesFromList(List<Bitmap> images)
+        {
+            Bitmap imagesCombined = new Bitmap(images[0]);
+            for (int i = 1; i < images.Count; i++)
+            {
+                imagesCombined = CombineImages(imagesCombined, new Bitmap(images[i]));
+            }
+
+            return imagesCombined;
+        }
+
         public static Bitmap CreateSolidColorBitmap(Color color, int width, int height)
         {
             Bitmap bitmap = new Bitmap(width, height);

@@ -132,6 +132,22 @@ namespace EmbroideryCreator
         public Tuple<int, int> topLeftPoint { get; private set; }
         public Tuple<int, int> bottomRightPoint { get; private set; }
 
+        public Bitmap GenerateDashedRectangle(ImageAndOperationsData imageAndOperationsData, int width, int height)
+        {
+            float[] dashValues = { imageAndOperationsData.NewPixelSize * 0.3f, imageAndOperationsData.NewPixelSize * 0.15f };
+            Pen dashedPen = new Pen(Color.Yellow, imageAndOperationsData.GridThicknessInNumberOfPixels);
+            dashedPen.DashPattern = dashValues;
+
+            Bitmap dashedRectangleImage = new Bitmap(width * imageAndOperationsData.NewPixelSize, height * imageAndOperationsData.NewPixelSize);
+
+            using(Graphics graphics = Graphics.FromImage(dashedRectangleImage))
+            {
+                graphics.DrawRectangle(dashedPen, 0, 0, width * imageAndOperationsData.NewPixelSize - dashedPen.Width, height * imageAndOperationsData.NewPixelSize - dashedPen.Width);
+            }
+
+            return dashedRectangleImage;
+        }
+
         public void SetData(ImageAndOperationsData imageAndOperationsData, Tuple<int, int> firstPoint, Tuple<int, int> secondPoint)
         {
             //Here I assume that both first and second points are diagonally opposed
@@ -177,7 +193,34 @@ namespace EmbroideryCreator
             }
         }
 
-        public void PaintMatrix(ImageAndOperationsData imageAndOperationsData, Tuple<int, int> topLeftPointOfTheSelection)
+        public Bitmap GenerateSelectionImage(ImageAndOperationsData imageAndOperationsData, List<Bitmap> images)
+        {
+            Bitmap combinedImage = ImageTransformations.CombineImagesFromList(images);
+
+            //Bitmap selectionImage = new Bitmap((bottomRightPoint.Item1 - topLeftPoint.Item1) * imageAndOperationsData.NewPixelSize, (bottomRightPoint.Item2 - topLeftPoint.Item2) * imageAndOperationsData.NewPixelSize);
+
+            Bitmap selectionImage = new Bitmap(combinedImage);
+
+            int displacement = imageAndOperationsData.BorderThicknessInNumberOfPixels - imageAndOperationsData.GridThicknessInNumberOfPixels;
+            Rectangle rectangleToCrop = new Rectangle(  displacement + topLeftPoint.Item1 * imageAndOperationsData.NewPixelSize,
+                                                        displacement + topLeftPoint.Item2 * imageAndOperationsData.NewPixelSize,
+                                                        (bottomRightPoint.Item1 - topLeftPoint.Item1) * imageAndOperationsData.NewPixelSize,
+                                                        (bottomRightPoint.Item2 - topLeftPoint.Item2) * imageAndOperationsData.NewPixelSize);
+
+            selectionImage = selectionImage.Clone(rectangleToCrop, selectionImage.PixelFormat);
+
+            Bitmap dashedRectangle = GenerateDashedRectangle(imageAndOperationsData, (bottomRightPoint.Item1 - topLeftPoint.Item1), (bottomRightPoint.Item2 - topLeftPoint.Item2));
+
+            using(Graphics graphics = Graphics.FromImage(selectionImage))
+            {
+                graphics.DrawImage(dashedRectangle, 0, 0, dashedRectangle.Width, dashedRectangle.Height);
+            }
+
+            //This result must then be put in the right position, otherwise it will simply appear at top left corner
+            return selectionImage;
+        }
+
+        public void PaintMatrix(MainForm mainForm, ImageAndOperationsData imageAndOperationsData, Tuple<int, int> topLeftPointOfTheSelection)
         {
             int localI = topLeftPointOfTheSelection.Item1;
             for (int i = 0; i < MatrixOfIndexesAndColors.GetLength(0); i++, localI++)
@@ -193,10 +236,17 @@ namespace EmbroideryCreator
                     Color colorFromTheList = imageAndOperationsData.GetCrossStitchColors()[indexToPaint];
                     if(registeredColor.A != colorFromTheList.A || registeredColor.R != colorFromTheList.R || registeredColor.G != colorFromTheList.G || registeredColor.B != colorFromTheList.B)
                     {
-                        indexToPaint = imageAndOperationsData.GetIndexFromColor(registeredColor);                        
+                        indexToPaint = imageAndOperationsData.GetIndexFromColor(registeredColor);                    
                     }
 
-                    if(indexToPaint != -1)
+                    if(i == 0 && registeredColor.A != 0)
+                    {
+                        //Add color that currently isn't in the list of colors, after that retrieve the index of the newly added color
+                        mainForm.AddNewColor(registeredColor);
+                        indexToPaint = imageAndOperationsData.GetIndexFromColor(registeredColor);
+                    }
+
+                    if(indexToPaint != -1 /*list of colors would be empty*/ && indexToPaint != 0 /*do not paint empty pixels from the selected rectangle onto other pixels*/)
                     {
                         imageAndOperationsData.PaintPixelInPositionWithColorOfIndex(new Tuple<int, int>(localI, localJ), indexToPaint);
                     }
