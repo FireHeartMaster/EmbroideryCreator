@@ -42,6 +42,10 @@ namespace EmbroideryCreator
         private Tuple<int, int> roundedRealImagePositionMouseUp = new Tuple<int, int>(0, 0);
         private Tuple<int, int> lastBackstitchRoundedRealImagePositionMouseUp = new Tuple<int, int>(0, 0);
 
+        private Point selectionToolFirstPointMouseDown = new Point(0, 0);
+        private Tuple<int, int> selectionToolFirstRealImagePositionMouseDown = new Tuple<int, int>(0, 0);
+        private Tuple<int, int> selectionToolFirstRoundedRealImagePositionMouseDown = new Tuple<int, int>(0, 0);
+
         private Keys multipleSelectionKeyboardKey = Keys.Control;
 
         private List<PictureBox> pictureBoxesByVisibilityOrder = new List<PictureBox>();
@@ -100,7 +104,10 @@ namespace EmbroideryCreator
         private void SetTransparentPictureBox(PictureBox transparentPictureBox, PictureBox solidPictureBox)
         {
             solidPictureBox.Controls.Add(transparentPictureBox);
-            transparentPictureBox.Location = new Point(0, 0);
+            if(transparentPictureBox != selectionToolPictureBox)
+            {
+                transparentPictureBox.Location = new Point(0, 0);
+            }            
             transparentPictureBox.BackColor = Color.Transparent;
         }
 
@@ -277,6 +284,62 @@ namespace EmbroideryCreator
                                 break;
                             case DrawingToolInUse.Eraser:
                                 DrawOnPictureBox(e.Location);
+                                break;
+                            case DrawingToolInUse.SelectionTool:
+                                switch (drawingToolsControl.currentSelectionToolState)
+                                {
+                                    case SelectionToolState.Selecting:
+                                        pointMouseUp = e.Location;
+                                        realImagePositionMouseUp = ImageTransformations.ConvertFromPictureBoxToRealImage(baseLayerPictureBox, new Tuple<int, int>(pointMouseUp.X, pointMouseUp.Y));
+                                        roundedRealImagePositionMouseUp = imageAndOperationsData.ConvertFromGeneralPositionOnImageToCoordinates(realImagePositionMouseUp);
+
+                                        if(roundedRealImagePositionMouseUp.Item1 != roundedRealImagePositionMouseDown.Item1 && roundedRealImagePositionMouseUp.Item2 != roundedRealImagePositionMouseDown.Item2)
+                                        {
+                                            ImageTransformations.GetTopLeftAndBottomRight(roundedRealImagePositionMouseDown, roundedRealImagePositionMouseUp, out Tuple<int, int> topLeftPointFound, out Tuple<int, int> bottomRightPointFound);
+
+                                            selectionToolPictureBox.Image = drawingToolsControl.selectionToolData.GenerateDashedRectangle(imageAndOperationsData, 
+                                                                                                                                            bottomRightPointFound.Item1 - topLeftPointFound.Item1, 
+                                                                                                                                            bottomRightPointFound.Item2 - topLeftPointFound.Item2,
+                                                                                                                                            topLeftPointFound.Item1,
+                                                                                                                                            topLeftPointFound.Item2);
+                                            selectionToolPictureBox.Location = new Point(0, 0); //reset picture box position
+                                        }
+                                        else
+                                        {
+                                            selectionToolPictureBox.Image = new Bitmap(imageAndOperationsData.ResultingImage.Width, imageAndOperationsData.ResultingImage.Height);
+                                        }
+
+                                        break;
+                                    case SelectionToolState.Moving:
+                                        pointMouseUp = e.Location;
+                                        realImagePositionMouseUp = ImageTransformations.ConvertFromPictureBoxToRealImage(baseLayerPictureBox, new Tuple<int, int>(pointMouseUp.X, pointMouseUp.Y));
+                                        roundedRealImagePositionMouseUp = imageAndOperationsData.ConvertFromGeneralPositionOnImageToCoordinates(realImagePositionMouseUp);
+
+                                        //if(roundedRealImagePositionMouseUp.Item1 != roundedRealImagePositionMouseDown.Item1 || roundedRealImagePositionMouseUp.Item2 != roundedRealImagePositionMouseDown.Item2)
+                                        //{
+                                        //    differenceInCoordinateSystem = new Tuple<int, int>(roundedRealImagePositionMouseUp.Item1 - roundedRealImagePositionMouseDown.Item1,
+                                        //                                                                        roundedRealImagePositionMouseUp.Item2 - roundedRealImagePositionMouseDown.Item2);
+                                        //    differenceInRealImageSystem = imageAndOperationsData.ConvertFromCoordinatesWithoutHalfValuesToGeneralPositionOnImageWithoutOffset(differenceInCoordinateSystem);
+                                        //    differenceInPictureBoxSystem = ImageTransformations.ConvertFromRealImageToPictureBox(baseLayerPictureBox, differenceInRealImageSystem);
+
+                                        //    selectionToolPictureBox.Location = new Point(differenceInPictureBoxSystem.Item1, differenceInPictureBoxSystem.Item2);
+                                        //    drawingToolsControl.selectionToolData.currentPositionPoint = new Tuple<int, int>(drawingToolsControl.selectionToolData.currentPositionPoint.Item1 + differenceInPictureBoxSystem.Item1,
+                                        //                                                                                        drawingToolsControl.selectionToolData.currentPositionPoint.Item2 + differenceInPictureBoxSystem.Item2);
+                                        //}
+                                        Tuple<int, int> differenceInCoordinateSystem = new Tuple<int, int>(roundedRealImagePositionMouseUp.Item1 - roundedRealImagePositionMouseDown.Item1,
+                                                                                                                roundedRealImagePositionMouseUp.Item2 - roundedRealImagePositionMouseDown.Item2);
+                                        Tuple<int, int> differenceInRealImageSystem = imageAndOperationsData.ConvertFromCoordinatesWithoutHalfValuesToGeneralPositionOnImageWithoutOffset(differenceInCoordinateSystem);
+                                        Tuple<int, int> differenceInPictureBoxSystem = ImageTransformations.ConvertFromRealImageToPictureBox(baseLayerPictureBox, differenceInRealImageSystem);
+
+                                        selectionToolPictureBox.Location = new Point(differenceInPictureBoxSystem.Item1, differenceInPictureBoxSystem.Item2);
+                                        //drawingToolsControl.selectionToolData.currentPositionPoint = new Tuple<int, int>(drawingToolsControl.selectionToolData.currentPositionPoint.Item1 + differenceInCoordinateSystem.Item1,
+                                        //                                                                                    drawingToolsControl.selectionToolData.currentPositionPoint.Item2 + differenceInCoordinateSystem.Item2);
+                                        drawingToolsControl.selectionToolData.currentPositionPoint = new Tuple<int, int>(drawingToolsControl.selectionToolData.topLeftPoint.Item1 + differenceInCoordinateSystem.Item1,
+                                                                                                                            drawingToolsControl.selectionToolData.topLeftPoint.Item2 + differenceInCoordinateSystem.Item2);
+                                        break;
+                                    default:
+                                        break;
+                                }
                                 break;
 
                             default:
@@ -467,6 +530,34 @@ namespace EmbroideryCreator
                 case DrawingToolInUse.Eraser:
                     if(crossStitchChangesSinceMouseDown) RegisterChange();
                     break;
+                case DrawingToolInUse.SelectionTool:
+                    switch (drawingToolsControl.currentSelectionToolState)
+                    {
+                        case SelectionToolState.Selecting:
+                            if (roundedRealImagePositionMouseUp.Item1 != roundedRealImagePositionMouseDown.Item1 && roundedRealImagePositionMouseUp.Item2 != roundedRealImagePositionMouseDown.Item2)
+                            {
+                                drawingToolsControl.selectionToolData.bottomRightPoint = roundedRealImagePositionMouseUp;
+
+                                ImageTransformations.GetTopLeftAndBottomRight(drawingToolsControl.selectionToolData.topLeftPoint, drawingToolsControl.selectionToolData.bottomRightPoint, out Tuple<int, int> topLeftPoint, out Tuple<int, int> bottomRightPoint);
+                                drawingToolsControl.selectionToolData.topLeftPoint = topLeftPoint;
+                                drawingToolsControl.selectionToolData.bottomRightPoint = bottomRightPoint;
+                                drawingToolsControl.selectionToolData.currentPositionPoint = topLeftPoint;
+
+                                drawingToolsControl.currentSelectionToolState = SelectionToolState.Selected;
+                            }
+                            else
+                            {
+                                drawingToolsControl.currentSelectionToolState = SelectionToolState.NothingSelected;
+                            }
+                            break;
+
+                        case SelectionToolState.Moving:
+                            drawingToolsControl.currentSelectionToolState = SelectionToolState.Selected;
+                            break;
+                        default:
+                            break;
+                    }
+                    break;
 
                 default:
                     break;
@@ -574,6 +665,64 @@ namespace EmbroideryCreator
                 case DrawingToolInUse.ColorPicker:
                     PickColor(realImagePosition, false);
                     isDrawing = false;
+                    break;
+                case DrawingToolInUse.SelectionTool:
+                     switch (drawingToolsControl.currentSelectionToolState)
+                    {
+                        case SelectionToolState.NothingSelected:
+                            pointMouseDown = positionOnImage;
+                            realImagePositionMouseDown = ImageTransformations.ConvertFromPictureBoxToRealImage(baseLayerPictureBox, new Tuple<int, int>(pointMouseDown.X, pointMouseDown.Y));
+                            roundedRealImagePositionMouseDown = imageAndOperationsData.ConvertFromGeneralPositionOnImageToCoordinates(realImagePositionMouseDown);
+
+                            pointMouseUp = pointMouseDown;
+                            realImagePositionMouseUp = realImagePositionMouseDown;
+                            roundedRealImagePositionMouseUp = roundedRealImagePositionMouseDown;
+
+                            drawingToolsControl.selectionToolData.topLeftPoint = roundedRealImagePositionMouseDown;
+                            drawingToolsControl.selectionToolData.bottomRightPoint = roundedRealImagePositionMouseDown;
+                            drawingToolsControl.selectionToolData.currentPositionPoint = roundedRealImagePositionMouseDown;                            
+
+                            drawingToolsControl.currentSelectionToolState = SelectionToolState.Selecting;
+                            break;
+                        case SelectionToolState.Selected:
+                            //ImageTransformations.GetTopLeftAndBottomRight(new Tuple<int, int>(pointMouseDown.X, pointMouseDown.Y), new Tuple<int, int>(pointMouseUp.X, pointMouseUp.Y), out Tuple<int, int> topLeftPointFound, out Tuple<int, int> bottomRightPointFound);
+                            Tuple<int, int> topLeftPoint = drawingToolsControl.selectionToolData.topLeftPoint;
+                            Tuple<int, int> bottomRightPoint = drawingToolsControl.selectionToolData.bottomRightPoint;
+                            var oldPointMouseDown = new Point(pointMouseDown.X, pointMouseDown.Y);
+                            //Tuple<int, int> differenceInPictureBoxSystem = new Tuple<int, int>(bottomRightPoint.Item1 - topLeftPoint.Item1, bottomRightPoint.Item2 - topLeftPoint.Item2);
+                            //Tuple<int, int> differenceInRealImageSystem = ImageTransformations.ConvertFromPictureBoxToRealImage(baseLayerPictureBox, differenceInPictureBoxSystem);
+                            //Tuple<int, int> differenceInCoordinateSystem = imageAndOperationsData.ConvertFromGeneralPositionOnImageToCoordinates(differenceInRealImageSystem);
+
+                            //double selectionRectangleWidth = Math.Abs(differenceInCoordinateSystem.Item1);
+                            //double selectionRectangleHeight = Math.Abs(differenceInCoordinateSystem.Item2);
+
+                            //selectionToolFirstPointMouseDown = new Point(topLeftPoint.Item1, topLeftPoint.Item2);
+                            //selectionToolFirstRealImagePositionMouseDown = ImageTransformations.ConvertFromPictureBoxToRealImage(baseLayerPictureBox, new Tuple<int, int>(selectionToolFirstPointMouseDown.X, selectionToolFirstPointMouseDown.Y));
+                            //selectionToolFirstRoundedRealImagePositionMouseDown = imageAndOperationsData.ConvertFromGeneralPositionOnImageToCoordinates(selectionToolFirstRealImagePositionMouseDown);
+
+                            pointMouseDown = positionOnImage;
+                            realImagePositionMouseDown = ImageTransformations.ConvertFromPictureBoxToRealImage(baseLayerPictureBox, new Tuple<int, int>(pointMouseDown.X, pointMouseDown.Y));
+                            roundedRealImagePositionMouseDown = imageAndOperationsData.ConvertFromGeneralPositionOnImageToCoordinates(realImagePositionMouseDown);
+
+                            bool isInsideSelectionBox = ImageTransformations.IsPointInsideRectangle(ImageTransformations.ConvertPairType(roundedRealImagePositionMouseDown),
+                                                                                                    ImageTransformations.ConvertPairType(drawingToolsControl.selectionToolData.currentPositionPoint),
+                                                                                                    bottomRightPoint.Item1 - topLeftPoint.Item1,
+                                                                                                    bottomRightPoint.Item2 - topLeftPoint.Item2);
+                            if (!isInsideSelectionBox)
+                            {
+                                //selectionToolFirstRealImagePositionMouseDown = ImageTransformations.ConvertFromPictureBoxToRealImage(baseLayerPictureBox, new Tuple<int, int>(selectionToolFirstPointMouseDown.X, selectionToolFirstPointMouseDown.Y));
+                                drawingToolsControl.currentSelectionToolState = SelectionToolState.NothingSelected;
+                                selectionToolPictureBox.Image = new Bitmap(imageAndOperationsData.ResultingImage.Width, imageAndOperationsData.ResultingImage.Height);
+                            }
+                            else
+                            {
+                                drawingToolsControl.currentSelectionToolState = SelectionToolState.Moving;
+                            }
+
+                            break;
+                        default:
+                            break;
+                    }
                     break;
                 default:
                     break;

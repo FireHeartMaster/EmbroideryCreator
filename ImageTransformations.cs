@@ -417,6 +417,32 @@ namespace EmbroideryCreator
             return new Tuple<int, int>(horizontalPositionRounded, verticalPositionRounded);
         }
 
+        public static Tuple<int, int> ConvertFromRealImageToPictureBox(PictureBox pictureBox, Tuple<int, int> realImagePosition)
+        {
+            bool biggerIsWidth = pictureBox.Image.Width > pictureBox.Image.Height;
+
+            float ratio;
+            if (biggerIsWidth)
+            {
+                ratio = ((float)pictureBox.Image.Width) / pictureBox.Size.Width;
+            }
+            else
+            {
+                ratio = ((float)pictureBox.Image.Height) / pictureBox.Size.Height;
+            }
+
+            double horizontalPosition = realImagePosition.Item1;
+            double verticalPosition = realImagePosition.Item2;
+
+
+            Tuple<double, double> pictureBoxPosition = new Tuple<double, double>(
+                ((horizontalPosition - pictureBox.Image.Width * 0.5f) / ratio) + (pictureBox.Size.Width * 0.5f),
+                ((verticalPosition - pictureBox.Image.Height * 0.5f) / ratio) + (pictureBox.Size.Height * 0.5f)
+                );
+
+            return new Tuple<int, int>((int)pictureBoxPosition.Item1, (int)pictureBoxPosition.Item2);
+        }
+
         public static float CalculateDistanceOfPointToLine(Tuple<float, float> referencePoint, Tuple<float, float> lineStartingPoint, Tuple<float, float> lineEndingPoint)
         {
             float numerator = (lineEndingPoint.Item1 - lineStartingPoint.Item1) * (referencePoint.Item2 - lineStartingPoint.Item2) - (lineEndingPoint.Item2 - lineStartingPoint.Item2) * (referencePoint.Item1 - lineStartingPoint.Item1);
@@ -863,6 +889,23 @@ namespace EmbroideryCreator
         public static Tuple<float, float> ConvertPairType(Tuple<double, double> pair)
         {
             return new Tuple<float, float>((float)pair.Item1, (float)pair.Item2);
+        }
+
+        public static Tuple<double, double> ConvertPairType(Tuple<int, int> pair)
+        {
+            return new Tuple<double, double>((double)pair.Item1, (double)pair.Item2);
+        }
+
+        public static void GetTopLeftAndBottomRight(Tuple<int, int> firstPoint, Tuple<int, int> secondPoint, out Tuple<int, int> topLeftPoint, out Tuple<int, int> bottomRightPoint)
+        {
+            int topLeftX = firstPoint.Item1 < secondPoint.Item1 ? firstPoint.Item1 : secondPoint.Item1;
+            int topLeftY = firstPoint.Item2 < secondPoint.Item2 ? firstPoint.Item2 : secondPoint.Item2;
+
+            int bottomRightX = firstPoint.Item1 > secondPoint.Item1 ? firstPoint.Item1 : secondPoint.Item1;
+            int bottomRightY = firstPoint.Item2 > secondPoint.Item2 ? firstPoint.Item2 : secondPoint.Item2;
+
+            topLeftPoint = new Tuple<int, int>(topLeftX, topLeftY);
+            bottomRightPoint = new Tuple<int, int>(bottomRightX, bottomRightY);
         }
     }
 }

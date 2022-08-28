@@ -35,12 +35,14 @@ namespace EmbroideryCreator
             this.selectedToolpictureBox = new System.Windows.Forms.PictureBox();
             this.movePictureBox = new System.Windows.Forms.PictureBox();
             this.colorPickerPictureBox = new System.Windows.Forms.PictureBox();
+            this.selectionToolPictureBox = new System.Windows.Forms.PictureBox();
             ((System.ComponentModel.ISupportInitialize)(this.eraserPictureBox)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.bucketPictureBox)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pencilPictureBox)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.selectedToolpictureBox)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.movePictureBox)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.colorPickerPictureBox)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.selectionToolPictureBox)).BeginInit();
             this.SuspendLayout();
             // 
             // eraserPictureBox
@@ -113,11 +115,24 @@ namespace EmbroideryCreator
             this.colorPickerPictureBox.TabStop = false;
             this.colorPickerPictureBox.Click += new System.EventHandler(this.colorPickerPictureBox_Click);
             // 
+            // selectionToolPictureBox
+            // 
+            this.selectionToolPictureBox.Image = global::EmbroideryCreator.Properties.Resources.SelectionIcon;
+            this.selectionToolPictureBox.Location = new System.Drawing.Point(218, 6);
+            this.selectionToolPictureBox.Margin = new System.Windows.Forms.Padding(6);
+            this.selectionToolPictureBox.Name = "selectionToolPictureBox";
+            this.selectionToolPictureBox.Size = new System.Drawing.Size(30, 30);
+            this.selectionToolPictureBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.selectionToolPictureBox.TabIndex = 6;
+            this.selectionToolPictureBox.TabStop = false;
+            this.selectionToolPictureBox.Click += new System.EventHandler(this.selectionToolPictureBox_Click);
+            // 
             // DrawingToolsControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.ActiveBorder;
+            this.Controls.Add(this.selectionToolPictureBox);
             this.Controls.Add(this.colorPickerPictureBox);
             this.Controls.Add(this.movePictureBox);
             this.Controls.Add(this.eraserPictureBox);
@@ -126,13 +141,14 @@ namespace EmbroideryCreator
             this.Controls.Add(this.selectedToolpictureBox);
             this.Name = "DrawingToolsControl";
             this.Padding = new System.Windows.Forms.Padding(3);
-            this.Size = new System.Drawing.Size(215, 45);
+            this.Size = new System.Drawing.Size(257, 45);
             ((System.ComponentModel.ISupportInitialize)(this.eraserPictureBox)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.bucketPictureBox)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pencilPictureBox)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.selectedToolpictureBox)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.movePictureBox)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.colorPickerPictureBox)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.selectionToolPictureBox)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -145,5 +161,6 @@ namespace EmbroideryCreator
         private System.Windows.Forms.PictureBox eraserPictureBox;
         private System.Windows.Forms.PictureBox movePictureBox;
         private System.Windows.Forms.PictureBox colorPickerPictureBox;
+        private System.Windows.Forms.PictureBox selectionToolPictureBox;
     }
 }

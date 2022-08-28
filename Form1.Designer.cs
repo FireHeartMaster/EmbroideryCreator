@@ -96,8 +96,8 @@ namespace EmbroideryCreator
             this.quickSaveButton = new System.Windows.Forms.Button();
             this.minDistanceBetweenColorsTrackBar = new System.Windows.Forms.TrackBar();
             this.minDistanceBetweenColorsLabel = new System.Windows.Forms.Label();
-            this.drawingToolsControl = new EmbroideryCreator.DrawingToolsControl();
             this.originalImageVisibleCheckBox = new System.Windows.Forms.CheckBox();
+            this.drawingToolsControl = new EmbroideryCreator.DrawingToolsControl();
             ((System.ComponentModel.ISupportInitialize)(this.widthSizeTrackBar)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numberOfColorsTrackBar)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numberOfIterationsTrackBar)).BeginInit();
@@ -799,15 +799,6 @@ namespace EmbroideryCreator
             this.minDistanceBetweenColorsLabel.Text = "6";
             this.minDistanceBetweenColorsLabel.Visible = false;
             // 
-            // drawingToolsControl
-            // 
-            this.drawingToolsControl.BackColor = System.Drawing.SystemColors.ActiveBorder;
-            this.drawingToolsControl.Location = new System.Drawing.Point(848, 13);
-            this.drawingToolsControl.Name = "drawingToolsControl";
-            this.drawingToolsControl.Padding = new System.Windows.Forms.Padding(3);
-            this.drawingToolsControl.Size = new System.Drawing.Size(215, 45);
-            this.drawingToolsControl.TabIndex = 18;
-            // 
             // originalImageVisibleCheckBox
             // 
             this.originalImageVisibleCheckBox.AutoSize = true;
@@ -820,6 +811,15 @@ namespace EmbroideryCreator
             this.originalImageVisibleCheckBox.Text = "Original";
             this.originalImageVisibleCheckBox.UseVisualStyleBackColor = true;
             this.originalImageVisibleCheckBox.CheckedChanged += new System.EventHandler(this.originalImageVisibleCheckBox_CheckedChanged);
+            // 
+            // drawingToolsControl
+            // 
+            this.drawingToolsControl.BackColor = System.Drawing.SystemColors.ActiveBorder;
+            this.drawingToolsControl.Location = new System.Drawing.Point(848, 13);
+            this.drawingToolsControl.Name = "drawingToolsControl";
+            this.drawingToolsControl.Padding = new System.Windows.Forms.Padding(3);
+            this.drawingToolsControl.Size = new System.Drawing.Size(256, 45);
+            this.drawingToolsControl.TabIndex = 18;
             // 
             // MainForm
             // 

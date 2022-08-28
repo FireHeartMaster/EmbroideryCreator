@@ -13,6 +13,8 @@ namespace EmbroideryCreator
     public partial class DrawingToolsControl : UserControl
     {
         public DrawingToolInUse currentDrawingTool { get; private set; } = DrawingToolInUse.Pencil;
+        public SelectionToolData selectionToolData = new SelectionToolData();
+        public SelectionToolState currentSelectionToolState = SelectionToolState.NothingSelected;
 
         PictureBox currentActiveToolPictureBox;
 
@@ -48,6 +50,11 @@ namespace EmbroideryCreator
             EnableNewTool(DrawingToolInUse.ColorPicker);
         }
 
+        private void selectionToolPictureBox_Click(object sender, EventArgs e)
+        {
+            EnableNewTool(DrawingToolInUse.SelectionTool);
+        }
+
         public void EnableNewTool(DrawingToolInUse newSelectedDrawingTool)
         {
             DisableOtherTools(newSelectedDrawingTool);
@@ -77,7 +84,8 @@ namespace EmbroideryCreator
                     currentActiveToolPictureBox = colorPickerPictureBox;
                     break;
                 case DrawingToolInUse.SelectionTool:
-                    throw new NotImplementedException();
+                    currentDrawingTool = DrawingToolInUse.SelectionTool;
+                    currentActiveToolPictureBox = selectionToolPictureBox;
                     break;
 
                 default:
@@ -105,7 +113,7 @@ namespace EmbroideryCreator
             //currentActiveToolPictureBox.Invalidate();
             selectedToolpictureBox.Location = new Point((int)(currentActiveToolPictureBox.Location.X - (selectedToolpictureBox.Size.Width - currentActiveToolPictureBox.Size.Width) * 0.5),
                                                         (int)(currentActiveToolPictureBox.Location.Y - (selectedToolpictureBox.Size.Height - currentActiveToolPictureBox.Size.Height) * 0.5));
-        }        
+        }
     }
 
     public enum DrawingToolInUse
@@ -122,20 +130,23 @@ namespace EmbroideryCreator
     {
         NothingSelected,
         Selecting,
-        MovingSelected
+        Moving,
+        Selected
     }
 
     public class SelectionToolData
     {
         public Tuple<int, Color>[,] MatrixOfIndexesAndColors { get; private set; }
 
-        public Tuple<int, int> topLeftPoint { get; private set; }
-        public Tuple<int, int> bottomRightPoint { get; private set; }
+        public Tuple<int, int> topLeftPoint;
+        public Tuple<int, int> bottomRightPoint;
 
-        public Bitmap GenerateDashedRectangle(ImageAndOperationsData imageAndOperationsData, int width, int height)
+        public Tuple<int, int> currentPositionPoint;
+
+        public Bitmap GenerateDashedRectangle(ImageAndOperationsData imageAndOperationsData, int width, int height, int positionX, int positionY)
         {
             float[] dashValues = { imageAndOperationsData.NewPixelSize * 0.3f, imageAndOperationsData.NewPixelSize * 0.15f };
-            Pen dashedPen = new Pen(Color.Yellow, imageAndOperationsData.GridThicknessInNumberOfPixels);
+            Pen dashedPen = new Pen(Color.Blue, imageAndOperationsData.GridThicknessInNumberOfPixels);
             dashedPen.DashPattern = dashValues;
 
             Bitmap dashedRectangleImage = new Bitmap(width * imageAndOperationsData.NewPixelSize, height * imageAndOperationsData.NewPixelSize);
@@ -145,21 +156,27 @@ namespace EmbroideryCreator
                 graphics.DrawRectangle(dashedPen, 0, 0, width * imageAndOperationsData.NewPixelSize - dashedPen.Width, height * imageAndOperationsData.NewPixelSize - dashedPen.Width);
             }
 
-            return dashedRectangleImage;
+            Bitmap dashedRectangleCompleteImage = new Bitmap(imageAndOperationsData.ResultingImage.Width, imageAndOperationsData.ResultingImage.Height);
+
+            int gap = imageAndOperationsData.BorderThicknessInNumberOfPixels/* - imageAndOperationsData.GridThicknessInNumberOfPixels*/;
+            using(Graphics graphics = Graphics.FromImage(dashedRectangleCompleteImage))
+            {
+                graphics.DrawImage(dashedRectangleImage, gap + positionX * imageAndOperationsData.NewPixelSize,
+                                                         gap + positionY * imageAndOperationsData.NewPixelSize,
+                                                         width * imageAndOperationsData.NewPixelSize - dashedPen.Width,
+                                                         height * imageAndOperationsData.NewPixelSize - dashedPen.Width);
+            }
+
+            return dashedRectangleCompleteImage;
         }
 
         public void SetData(ImageAndOperationsData imageAndOperationsData, Tuple<int, int> firstPoint, Tuple<int, int> secondPoint)
         {
             //Here I assume that both first and second points are diagonally opposed
 
-            int topLeftX = firstPoint.Item1 < secondPoint.Item1 ? firstPoint.Item1 : secondPoint.Item1;
-            int topLeftY = firstPoint.Item2 < secondPoint.Item2 ? firstPoint.Item2 : secondPoint.Item2;
-
-            int bottomRightX = firstPoint.Item1 > secondPoint.Item1 ? firstPoint.Item1 : secondPoint.Item1;
-            int bottomRightY = firstPoint.Item2 > secondPoint.Item2 ? firstPoint.Item2 : secondPoint.Item2;
-
-            topLeftPoint = new Tuple<int, int>(topLeftX, topLeftY);
-            bottomRightPoint = new Tuple<int, int>(bottomRightX, bottomRightY);
+            ImageTransformations.GetTopLeftAndBottomRight(firstPoint, secondPoint, out Tuple<int, int> topLeftPointFound, out Tuple<int, int> bottomRightPointFound);
+            topLeftPoint = topLeftPointFound;
+            bottomRightPoint = bottomRightPointFound;
 
             var colors = imageAndOperationsData.GetCrossStitchColors();
 
@@ -176,6 +193,8 @@ namespace EmbroideryCreator
                 }
             }
         }
+
+        
 
         public void PaintSelectedRegionWithEmptyColor(ImageAndOperationsData imageAndOperationsData, Tuple<int, int> topLeftPointOfTheSelection)
         {
@@ -209,15 +228,25 @@ namespace EmbroideryCreator
 
             selectionImage = selectionImage.Clone(rectangleToCrop, selectionImage.PixelFormat);
 
-            Bitmap dashedRectangle = GenerateDashedRectangle(imageAndOperationsData, (bottomRightPoint.Item1 - topLeftPoint.Item1), (bottomRightPoint.Item2 - topLeftPoint.Item2));
+            Bitmap dashedRectangle = GenerateDashedRectangle(imageAndOperationsData, (bottomRightPoint.Item1 - topLeftPoint.Item1), (bottomRightPoint.Item2 - topLeftPoint.Item2), topLeftPoint.Item1, topLeftPoint.Item2);
 
-            using(Graphics graphics = Graphics.FromImage(selectionImage))
+            Bitmap selectionImageComplete = new Bitmap(imageAndOperationsData.ResultingImage.Width, imageAndOperationsData.ResultingImage.Height);
+
+            int gap = imageAndOperationsData.BorderThicknessInNumberOfPixels/* - imageAndOperationsData.GridThicknessInNumberOfPixels*/;
+            using (Graphics graphics = Graphics.FromImage(selectionImageComplete))
             {
-                graphics.DrawImage(dashedRectangle, 0, 0, dashedRectangle.Width, dashedRectangle.Height);
+                graphics.DrawImage(selectionImage,  gap + topLeftPoint.Item1 * imageAndOperationsData.NewPixelSize,
+                                                    gap + topLeftPoint.Item2 * imageAndOperationsData.NewPixelSize,
+                                                    (bottomRightPoint.Item1 - topLeftPoint.Item1) * imageAndOperationsData.NewPixelSize,
+                                                    (bottomRightPoint.Item2 - topLeftPoint.Item2) * imageAndOperationsData.NewPixelSize);
             }
 
-            //This result must then be put in the right position, otherwise it will simply appear at top left corner
-            return selectionImage;
+            using (Graphics graphics = Graphics.FromImage(selectionImageComplete))
+            {
+                graphics.DrawImage(dashedRectangle, 0, 0, selectionImageComplete.Width, selectionImageComplete.Height);
+            }
+
+            return selectionImageComplete;
         }
 
         public void PaintMatrix(MainForm mainForm, ImageAndOperationsData imageAndOperationsData, Tuple<int, int> topLeftPointOfTheSelection)

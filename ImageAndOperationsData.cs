@@ -1052,7 +1052,7 @@ namespace EmbroideryCreator
             RepaintMainImage(true, true, true);
         }
 
-        private Tuple<int, int> ConvertFromGeneralPositionOnImageToCoordinates(Tuple<int, int> generalPosition, bool roundToClosest = true)
+        public Tuple<int, int> ConvertFromGeneralPositionOnImageToCoordinates(Tuple<int, int> generalPosition, bool roundToClosest = true)
         {
             double x = (((float)(generalPosition.Item1 - BorderThicknessInNumberOfPixels)) / NewPixelSize);
             double y = (((float)(generalPosition.Item2 - BorderThicknessInNumberOfPixels)) / NewPixelSize);
@@ -1079,10 +1079,26 @@ namespace EmbroideryCreator
             return new Tuple<float, float>((float)x, (float)y);
         }
 
-        private Tuple<int, int> ConvertFromCoordinatesIncludingHalfValuesToGeneralPositionOnImage(Tuple<float, float> coordinates)
+        public Tuple<int, int> ConvertFromCoordinatesIncludingHalfValuesToGeneralPositionOnImage(Tuple<float, float> coordinates)
         {
             int x = (int)Math.Round(coordinates.Item1 * NewPixelSize + BorderThicknessInNumberOfPixels);
             int y = (int)Math.Round(coordinates.Item2 * NewPixelSize + BorderThicknessInNumberOfPixels);
+
+            return new Tuple<int, int>(x, y);
+        }
+
+        public Tuple<int, int> ConvertFromCoordinatesWithoutHalfValuesToGeneralPositionOnImage(Tuple<int, int> coordinates)
+        {
+            int x = coordinates.Item1 * NewPixelSize + BorderThicknessInNumberOfPixels;
+            int y = coordinates.Item2 * NewPixelSize + BorderThicknessInNumberOfPixels;
+
+            return new Tuple<int, int>(x, y);
+        }
+
+        public Tuple<int, int> ConvertFromCoordinatesWithoutHalfValuesToGeneralPositionOnImageWithoutOffset(Tuple<int, int> coordinates)
+        {
+            int x = coordinates.Item1 * NewPixelSize;
+            int y = coordinates.Item2 * NewPixelSize;
 
             return new Tuple<int, int>(x, y);
         }
