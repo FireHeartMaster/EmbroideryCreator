@@ -66,7 +66,7 @@ namespace EmbroideryCreator
         {
             if (colorMeans.Count == 0) return -1;
 
-            for (int i = 0; i < colorMeans.Count; i++)
+            for (int i = colorMeans.Count - 1; i >= 0; i--)
             {
                 if (colorMeans[i].A == color.A && colorMeans[i].R == color.R && colorMeans[i].G == color.G && colorMeans[i].B == color.B) return i;
             }

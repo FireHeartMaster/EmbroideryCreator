@@ -146,6 +146,7 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Resources\SocialMedia\EtsyLogo.png" />
     <None Include="Resources\SelectionIcon.png" />
     <None Include="Resources\QuickSaveGrayedIcon.png" />
     <None Include="Resources\QuickSaveIcon.png" />

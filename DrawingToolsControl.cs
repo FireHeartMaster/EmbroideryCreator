@@ -249,12 +249,12 @@ namespace EmbroideryCreator
             return selectionImageComplete;
         }
 
-        public void PaintMatrix(MainForm mainForm, ImageAndOperationsData imageAndOperationsData, Tuple<int, int> topLeftPointOfTheSelection)
+        public void PaintMatrix(MainForm mainForm, ImageAndOperationsData imageAndOperationsData, Tuple<int, int> currentPopLeftPositionOfTheSelection)
         {
-            int localI = topLeftPointOfTheSelection.Item1;
+            int localI = currentPopLeftPositionOfTheSelection.Item1;
             for (int i = 0; i < MatrixOfIndexesAndColors.GetLength(0); i++, localI++)
             {
-                int localJ = topLeftPointOfTheSelection.Item2;
+                int localJ = currentPopLeftPositionOfTheSelection.Item2;
                 for (int j = 0; j < MatrixOfIndexesAndColors.GetLength(1); j++, localJ++)
                 {
                     Tuple<int, int> size = imageAndOperationsData.GetSizeInPixels();
@@ -262,13 +262,23 @@ namespace EmbroideryCreator
 
                     int indexToPaint = MatrixOfIndexesAndColors[i,j].Item1;
                     Color registeredColor = MatrixOfIndexesAndColors[i, j].Item2;
-                    Color colorFromTheList = imageAndOperationsData.GetCrossStitchColors()[indexToPaint];
-                    if(registeredColor.A != colorFromTheList.A || registeredColor.R != colorFromTheList.R || registeredColor.G != colorFromTheList.G || registeredColor.B != colorFromTheList.B)
+                    //Color colorFromTheList = imageAndOperationsData.GetCrossStitchColors()[indexToPaint];
+                    //Color colorFromTheList = Color.FromArgb(0, 0, 0, 0);
+
+                    if (imageAndOperationsData.GetCrossStitchColors().Count <= indexToPaint)
                     {
-                        indexToPaint = imageAndOperationsData.GetIndexFromColor(registeredColor);                    
+                        indexToPaint = imageAndOperationsData.GetIndexFromColor(registeredColor);
+                    }
+                    else
+                    {
+                        Color colorFromTheList = imageAndOperationsData.GetCrossStitchColors()[indexToPaint];
+                        if (registeredColor.A != colorFromTheList.A || registeredColor.R != colorFromTheList.R || registeredColor.G != colorFromTheList.G || registeredColor.B != colorFromTheList.B)
+                        {
+                            indexToPaint = imageAndOperationsData.GetIndexFromColor(registeredColor);
+                        }
                     }
 
-                    if(i == 0 && registeredColor.A != 0)
+                    if (indexToPaint == 0 && registeredColor.A != 0)
                     {
                         //Add color that currently isn't in the list of colors, after that retrieve the index of the newly added color
                         mainForm.AddNewColor(registeredColor);

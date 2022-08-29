@@ -46,6 +46,9 @@ namespace EmbroideryCreator
         private Tuple<int, int> selectionToolFirstRealImagePositionMouseDown = new Tuple<int, int>(0, 0);
         private Tuple<int, int> selectionToolFirstRoundedRealImagePositionMouseDown = new Tuple<int, int>(0, 0);
 
+        private Point selectionToolPictureBoxLocationWhenMouseDownMoving = new Point(0, 0);
+        private Tuple<int, int> selectionToolCurrentPositionWhenMouseDownMoving = new Tuple<int, int>(0, 0);
+
         private Keys multipleSelectionKeyboardKey = Keys.Control;
 
         private List<PictureBox> pictureBoxesByVisibilityOrder = new List<PictureBox>();
@@ -103,11 +106,18 @@ namespace EmbroideryCreator
 
         private void SetTransparentPictureBox(PictureBox transparentPictureBox, PictureBox solidPictureBox)
         {
+            Point locationBeforeParenting = transparentPictureBox.Location;
+
             solidPictureBox.Controls.Add(transparentPictureBox);
             if(transparentPictureBox != selectionToolPictureBox)
             {
                 transparentPictureBox.Location = new Point(0, 0);
-            }            
+            }
+            else
+            {
+                transparentPictureBox.Location = locationBeforeParenting;
+
+            }       
             transparentPictureBox.BackColor = Color.Transparent;
         }
 
@@ -313,7 +323,7 @@ namespace EmbroideryCreator
                                     case SelectionToolState.Moving:
                                         pointMouseUp = e.Location;
                                         realImagePositionMouseUp = ImageTransformations.ConvertFromPictureBoxToRealImage(baseLayerPictureBox, new Tuple<int, int>(pointMouseUp.X, pointMouseUp.Y));
-                                        roundedRealImagePositionMouseUp = imageAndOperationsData.ConvertFromGeneralPositionOnImageToCoordinates(realImagePositionMouseUp);
+                                        Tuple<int, int> newRoundedRealImagePositionMouseUp = imageAndOperationsData.ConvertFromGeneralPositionOnImageToCoordinates(realImagePositionMouseUp);
 
                                         //if(roundedRealImagePositionMouseUp.Item1 != roundedRealImagePositionMouseDown.Item1 || roundedRealImagePositionMouseUp.Item2 != roundedRealImagePositionMouseDown.Item2)
                                         //{
@@ -326,16 +336,22 @@ namespace EmbroideryCreator
                                         //    drawingToolsControl.selectionToolData.currentPositionPoint = new Tuple<int, int>(drawingToolsControl.selectionToolData.currentPositionPoint.Item1 + differenceInPictureBoxSystem.Item1,
                                         //                                                                                        drawingToolsControl.selectionToolData.currentPositionPoint.Item2 + differenceInPictureBoxSystem.Item2);
                                         //}
-                                        Tuple<int, int> differenceInCoordinateSystem = new Tuple<int, int>(roundedRealImagePositionMouseUp.Item1 - roundedRealImagePositionMouseDown.Item1,
-                                                                                                                roundedRealImagePositionMouseUp.Item2 - roundedRealImagePositionMouseDown.Item2);
-                                        Tuple<int, int> differenceInRealImageSystem = imageAndOperationsData.ConvertFromCoordinatesWithoutHalfValuesToGeneralPositionOnImageWithoutOffset(differenceInCoordinateSystem);
-                                        Tuple<int, int> differenceInPictureBoxSystem = ImageTransformations.ConvertFromRealImageToPictureBox(baseLayerPictureBox, differenceInRealImageSystem);
+                                        if(newRoundedRealImagePositionMouseUp.Item1 != roundedRealImagePositionMouseUp.Item1 || newRoundedRealImagePositionMouseUp.Item2 != roundedRealImagePositionMouseUp.Item2)
+                                        {
+                                            Tuple<int, int> differenceInCoordinateSystem = new Tuple<int, int>(newRoundedRealImagePositionMouseUp.Item1 - roundedRealImagePositionMouseDown.Item1,
+                                                                                                                newRoundedRealImagePositionMouseUp.Item2 - roundedRealImagePositionMouseDown.Item2);
+                                            Tuple<int, int> differenceInRealImageSystem = imageAndOperationsData.ConvertFromCoordinatesWithoutHalfValuesToGeneralPositionOnImageWithoutOffset(differenceInCoordinateSystem);
+                                            Tuple<int, int> differenceInPictureBoxSystem = ImageTransformations.ConvertFromRealImageToPictureBox(baseLayerPictureBox, differenceInRealImageSystem);
 
-                                        selectionToolPictureBox.Location = new Point(differenceInPictureBoxSystem.Item1, differenceInPictureBoxSystem.Item2);
-                                        //drawingToolsControl.selectionToolData.currentPositionPoint = new Tuple<int, int>(drawingToolsControl.selectionToolData.currentPositionPoint.Item1 + differenceInCoordinateSystem.Item1,
-                                        //                                                                                    drawingToolsControl.selectionToolData.currentPositionPoint.Item2 + differenceInCoordinateSystem.Item2);
-                                        drawingToolsControl.selectionToolData.currentPositionPoint = new Tuple<int, int>(drawingToolsControl.selectionToolData.topLeftPoint.Item1 + differenceInCoordinateSystem.Item1,
-                                                                                                                            drawingToolsControl.selectionToolData.topLeftPoint.Item2 + differenceInCoordinateSystem.Item2);
+                                            selectionToolPictureBox.Location = new Point(selectionToolPictureBoxLocationWhenMouseDownMoving.X + differenceInPictureBoxSystem.Item1,
+                                                                                        selectionToolPictureBoxLocationWhenMouseDownMoving.Y + differenceInPictureBoxSystem.Item2);
+                                            //drawingToolsControl.selectionToolData.currentPositionPoint = new Tuple<int, int>(drawingToolsControl.selectionToolData.currentPositionPoint.Item1 + differenceInCoordinateSystem.Item1,
+                                            //                                                                                    drawingToolsControl.selectionToolData.currentPositionPoint.Item2 + differenceInCoordinateSystem.Item2);
+                                            drawingToolsControl.selectionToolData.currentPositionPoint = new Tuple<int, int>(selectionToolCurrentPositionWhenMouseDownMoving.Item1 + differenceInCoordinateSystem.Item1,
+                                                                                                                                selectionToolCurrentPositionWhenMouseDownMoving.Item2 + differenceInCoordinateSystem.Item2);
+
+                                            roundedRealImagePositionMouseUp = newRoundedRealImagePositionMouseUp;
+                                        }
                                         break;
                                     default:
                                         break;
@@ -543,6 +559,10 @@ namespace EmbroideryCreator
                                 drawingToolsControl.selectionToolData.bottomRightPoint = bottomRightPoint;
                                 drawingToolsControl.selectionToolData.currentPositionPoint = topLeftPoint;
 
+                                drawingToolsControl.selectionToolData.SetData(imageAndOperationsData, topLeftPoint, bottomRightPoint);
+                                selectionToolPictureBox.Image = drawingToolsControl.selectionToolData.GenerateSelectionImage(imageAndOperationsData, pictureBoxesByVisibilityOrder.Where(pictureBox => pictureBox.Visible).Select(pictureBox => pictureBox.Image as Bitmap).ToList());
+                                drawingToolsControl.selectionToolData.PaintSelectedRegionWithEmptyColor(imageAndOperationsData, topLeftPoint);
+
                                 drawingToolsControl.currentSelectionToolState = SelectionToolState.Selected;
                             }
                             else
@@ -703,6 +723,7 @@ namespace EmbroideryCreator
                             pointMouseDown = positionOnImage;
                             realImagePositionMouseDown = ImageTransformations.ConvertFromPictureBoxToRealImage(baseLayerPictureBox, new Tuple<int, int>(pointMouseDown.X, pointMouseDown.Y));
                             roundedRealImagePositionMouseDown = imageAndOperationsData.ConvertFromGeneralPositionOnImageToCoordinates(realImagePositionMouseDown);
+                            roundedRealImagePositionMouseUp = roundedRealImagePositionMouseDown;
 
                             bool isInsideSelectionBox = ImageTransformations.IsPointInsideRectangle(ImageTransformations.ConvertPairType(roundedRealImagePositionMouseDown),
                                                                                                     ImageTransformations.ConvertPairType(drawingToolsControl.selectionToolData.currentPositionPoint),
@@ -710,12 +731,21 @@ namespace EmbroideryCreator
                                                                                                     bottomRightPoint.Item2 - topLeftPoint.Item2);
                             if (!isInsideSelectionBox)
                             {
-                                //selectionToolFirstRealImagePositionMouseDown = ImageTransformations.ConvertFromPictureBoxToRealImage(baseLayerPictureBox, new Tuple<int, int>(selectionToolFirstPointMouseDown.X, selectionToolFirstPointMouseDown.Y));
+                                
+                                if(drawingToolsControl.selectionToolData.MatrixOfIndexesAndColors != null)
+                                {
+                                    drawingToolsControl.selectionToolData.PaintMatrix(this, imageAndOperationsData, drawingToolsControl.selectionToolData.currentPositionPoint);
+                                    RegisterChange();
+                                }
+
                                 drawingToolsControl.currentSelectionToolState = SelectionToolState.NothingSelected;
                                 selectionToolPictureBox.Image = new Bitmap(imageAndOperationsData.ResultingImage.Width, imageAndOperationsData.ResultingImage.Height);
                             }
                             else
                             {
+                                selectionToolPictureBoxLocationWhenMouseDownMoving = selectionToolPictureBox.Location;
+                                selectionToolCurrentPositionWhenMouseDownMoving = drawingToolsControl.selectionToolData.currentPositionPoint;
+
                                 drawingToolsControl.currentSelectionToolState = SelectionToolState.Moving;
                             }
 
@@ -1131,15 +1161,15 @@ namespace EmbroideryCreator
                                 string title = filePathWithoutExtension.Substring(lengthOfSubstring + 1, filePathWithoutExtension.Length - lengthOfSubstring - 1);
                                 imageAndOperationsData.SavePdf(filePathWithoutExtension + ".pdf", Properties.Resources.PhinaliaLogo, title, "", "COLORED CROSS STITCH", "2022 | Phinalia", "Phinalia Library Collection",
                                     "Visit our website: ", "https://phinalia.com", "Join our community:",
-                                    new string[] { "https://facebook.com", "https://instagram.com", "https://youtube.com", "https://pinterest.com" },
-                                    new Bitmap[] { Properties.Resources.FacebookLogo, Properties.Resources.InstagramLogo, Properties.Resources.YouTubeLogo, Properties.Resources.PinterestLogo },
-                                    new string[] { "Facebook", "Instagram", "YouTube", "Pinterest" },
+                                    new string[] { /*"https://facebook.com", */"https://www.etsy.com/shop/Phinalia", "https://www.instagram.com/phinaliacross/", "https://www.youtube.com/channel/UCbNbXXbPjG7RZUH3hNVTaoQ", "https://www.pinterest.fr/phinaliacross/" },
+                                    new Bitmap[] { /*Properties.Resources.FacebookLogo, */Properties.Resources.EtsyLogo, Properties.Resources.InstagramLogo, Properties.Resources.YouTubeLogo, Properties.Resources.PinterestLogo },
+                                    new string[] { /*"Facebook", */"Etsy", "Instagram", "YouTube", "Pinterest" },
                                     false);
                                 imageAndOperationsData.SavePdf(filePathWithoutExtension + " - Magazine" + ".pdf", Properties.Resources.PhinaliaLogo, title, "", "COLORED CROSS STITCH", "2022 | Phinalia", "Phinalia Library Collection",
                                     "Visit our website: ", "https://phinalia.com", "Join our community:",
-                                    new string[] { "https://facebook.com", "https://instagram.com", "https://youtube.com", "https://pinterest.com" },
-                                    new Bitmap[] { Properties.Resources.FacebookLogo, Properties.Resources.InstagramLogo, Properties.Resources.YouTubeLogo, Properties.Resources.PinterestLogo },
-                                    new string[] { "Facebook", "Instagram", "YouTube", "Pinterest" },
+                                    new string[] { /*"https://facebook.com", */"https://www.etsy.com/shop/Phinalia", "https://www.instagram.com/phinaliacross/", "https://www.youtube.com/channel/UCbNbXXbPjG7RZUH3hNVTaoQ", "https://www.pinterest.fr/phinaliacross/" },
+                                    new Bitmap[] { /*Properties.Resources.FacebookLogo, */Properties.Resources.EtsyLogo, Properties.Resources.InstagramLogo, Properties.Resources.YouTubeLogo, Properties.Resources.PinterestLogo },
+                                    new string[] { /*"Facebook", */"Etsy", "Instagram", "YouTube", "Pinterest" },
                                     true,
                                     savePdfDialog.collection,
                                     savePdfDialog.title,
