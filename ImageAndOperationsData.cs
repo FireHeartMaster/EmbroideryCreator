@@ -1460,7 +1460,7 @@ namespace EmbroideryCreator
             return positionsOfEachColor[index].Count;
         }
 
-        public void SavePdf(string pathToSave, Bitmap topLogo, string title, string secondTitle, string subtitle, string leftText, string rightText, string footerText, string footerLink, string secondFooterText, string[] socialMediaLinks, Bitmap[] socialMediaImages, string[] socialMediaNames, bool isAlternativeDesign = false, string collectionTextFirstPage = "", string titleFirstPage = "", string subtitleFirstPage = "", string subTitleAlternativeDesignListOfColors = "",
+        public void SavePdf(string pathToSave, Bitmap topLogo, string title, string secondTitle, string subtitle, string leftText, string rightText, string footerText, string footerLink, string secondFooterText, string[] socialMediaLinks, Bitmap[] socialMediaImages, string[] socialMediaNames, ColorFamily colorFamilyConversion, bool isAlternativeDesign = false, string collectionTextFirstPage = "", string titleFirstPage = "", string subtitleFirstPage = "", string subTitleAlternativeDesignListOfColors = "",
             double collectionTextFormattingFactor = 7,
             double titleFirstPageFormattingFactor = 7,
             double subtitleFirstPageFormattingFactor = 7,
@@ -1473,11 +1473,11 @@ namespace EmbroideryCreator
             PdfManager pdfManager = new PdfManager(topLogo, title, secondTitle, subtitle, leftText, rightText, footerText, footerLink, secondFooterText, socialMediaLinks, socialMediaImages, socialMediaNames);
             if (!isAlternativeDesign)
             {
-                pdfManager.CreatePdfStitches(pathToSave, matrixOfNewColors, colorMeans, positionsOfEachColor, backstitchLines, backstitchColors, dictionaryOfSymbolByIndex);
+                pdfManager.CreatePdfStitches(pathToSave, matrixOfNewColors, colorMeans, positionsOfEachColor, backstitchLines, backstitchColors, dictionaryOfSymbolByIndex, colorFamilyConversion);
             }
             else
             {
-                pdfManager.CreatePdfStitchesAlternativeDesign(pathToSave, matrixOfNewColors, colorMeans, positionsOfEachColor, backstitchLines, backstitchColors, dictionaryOfSymbolByIndex, dictionaryOfColoredCrossByIndex, collectionTextFirstPage, titleFirstPage, subtitleFirstPage, subTitleAlternativeDesignListOfColors,
+                pdfManager.CreatePdfStitchesAlternativeDesign(pathToSave, matrixOfNewColors, colorMeans, positionsOfEachColor, backstitchLines, backstitchColors, dictionaryOfSymbolByIndex, dictionaryOfColoredCrossByIndex, colorFamilyConversion, collectionTextFirstPage, titleFirstPage, subtitleFirstPage, subTitleAlternativeDesignListOfColors,
                     collectionTextFormattingFactor,
                     titleFirstPageFormattingFactor,
                     subtitleFirstPageFormattingFactor,

@@ -1,0 +1,490 @@
+number;name;r;g;b;hex
+1020;Salmon Very Light;255;226;226;ffe2e2
+1021;Salmon Light;255;201;201;ffc9c9
+1022;Salmon;245;173;173;f5adad
+1023;Salmon Medium;241;135;135;f18787
+1024;Salmon Dark;227;109;109;e36d6d
+1025;Salmon Very Dark;191;45;45;bf2d2d
+6;Peach;254;215;204;fed7cc
+9;Coral Light;253;156;151;fd9c97
+10;Coral;233;106;103;e96a67
+11;Coral Medium;224;72;72;e04848
+13;Coral Dark;210;16;53;d21035
+13;Coral Red Very Dark;187;5;31;bb051f
+31;Melon Light;255;203;213;ffcbd5
+33;Melon Medium;255;173;188;ffadbc
+35;Melon Dark;255;121;146;ff7992
+1098;Melon Very Dark;231;73;103;e74967
+46;Bright Red;227;29;66;e31d42
+9046;Red;199;43;59;c72b3b
+1006;Red Medium;183;31;51;b71f33
+1005;Red Dark;167;19;43;a7132b
+43;Garnet;151;11;35;970b23
+44;Garnet Medium;135;7;31;87071f
+45;Garnet Dark;123;0;27;7b001b
+27;Carnation Very Light;255;178;187;ffb2bb
+33;Carnation Light;252;144;162;fc90a2
+35;Carnation Medium;255;121;140;ff798c
+35;Carnation Dark;255;87;115;ff5773
+23;Baby Pink;255;223;217;ffdfd9
+50;Geranium Pale;253;181;181;fdb5b5
+40;Geranium;255;145;145;ff9191
+42;Rose Dark;186;74;74;ba4a4a
+73;Dusty Rose Ultra Very Light;255;215;215;ffd7d7
+25;Dusty Rose Medium Very Light;255;189;189;ffbdbd
+75;Dusty Rose Medium;230;138;138;e68a8a
+76;Dusty Rose Dark;207;115;115;cf7373
+26;Raspberry Light;234;134;153;ea8699
+28;Raspberry Medium;219;85;110;db556e
+29;Raspberry Dark;179;47;72;b32f48
+897;Raspberry Very Dark;145;53;70;913546
+271;Baby Pink Light;255;238;235;ffeeeb
+36;Rose Light;251;173;180;fbadb4
+24;Pink Medium;252;176;185;fcb0b9
+52;Rose Medium;242;118;136;f27688
+38;Rose;238;84;110;ee546e
+59;Rose Very Dark;179;59;75;b33b4b
+73;Dusty Rose Very Light;240;206;212;f0ced4
+74;Dusty Rose Light;228;166;172;e4a6ac
+75;Dusty Rose;232;135;155;e8879b
+76;Dusty Rose Very Dark;218;103;131;da6783
+59;Dusty Rose Ultra Dark;188;67;101;bc4365
+89;Dusty Rose Ultra Very Dark;171;2;73;ab0249
+49;Mauve Light;251;191;194;fbbfc2
+66;Mauve Medium;231;169;172;e7a9ac
+68;Mauve;201;107;112;c96b70
+69;Mauve Dark;171;51;87;ab3357
+1028;Mauve Very Dark;136;21;49;881531
+1094;Cranberry Very Light;255;192;205;ffc0cd
+55;Cranberry Light;255;176;190;ffb0be
+33;Cranberry;255;164;190;ffa4be
+57;Cranberry Medium;226;72;116;e24874
+63;Cranberry Dark;209;40;106;d1286a
+59;Cranberry Very Dark;205;47;99;cd2f63
+62;Cyclamen Pink Light;255;140;174;ff8cae
+62;Cyclamen Pink;243;71;139;f3478b
+63;Cyclamen Pink Dark;224;40;118;e02876
+85;Plum Ultra Light;244;174;215;f4aed7
+86;Plum Very Light;234;156;196;ea9cc4
+87;Plum Light;197;73;137;c54989
+88;Plum;156;36;98;9c2462
+89;Plum Medium;155;19;89;9b1359
+1029;Plum Dark;130;0;67;820043
+1026;Shell Pink Ultra Very Light;255;223;215;ffdfd7
+893;Shell Pink Very Light;235;183;175;ebb7af
+893;Shell Pink Medium Light;226;160;153;e2a099
+895;Shell Pink Light;204;132;124;cc847c
+1027;Shell Pink Medium;188;108;100;bc6c64
+896;Shell Pink Dark;161;75;81;a14b51
+897;Shell Pink Very Dark;136;62;67;883e43
+968;Antique Mauve Very Light;223;179;187;dfb3bb
+1016;Antique Mauve Light;219;169;178;dba9b2
+1017;Antique Mauve Medium;183;115;127;b7737f
+1018;Antique Mauve Dark;155;91;102;9b5b66
+1019;Antique Mauve Medium Dark;129;73;82;814952
+1019;Antique Mauve Very Darkv;113;65;73;714149
+897;Garnet Very Dark;130;38;55;822637
+869;Antique Violet Very Light;215;203;211;d7cbd3
+870;Antique Violet Light;183;157;167;b79da7
+871;Antique Violet Medium;149;111;124;956f7c
+873;Antique Violet Dark;120;87;98;785762
+90;Grape Light;186;145;170;ba91aa
+98;Grape Medium;148;96;131;946083
+100;Grape Dark;114;55;93;72375d
+936;Grape Very Dark;87;36;51;572433
+342;Lavender Light;227;203;227;e3cbe3
+108;Lavender Medium;210;159;195;d29fc3
+109;Lavender Dark;163;123;167;a37ba7
+110;Lavender Very Dark;131;91;139;835b8b
+101;Lavender Ultra Dark;108;58;110;6c3a6e
+100;Violet Dark;99;54;102;633666
+342;Violet Very Light;230;204;217;e6ccd9
+96;Violet Light;219;179;203;dbb3cb
+98;Violet;163;99;139;a3638b
+101;Violet Medium;128;58;107;803a6b
+102;Violet Very Dark;92;24;78;5c184e
+120;Blue Violet Very Light;211;215;237;d3d7ed
+117;Blue Violet Light;183;191;221;b7bfdd
+117;Blue Violet Medium Light;163;174;209;a3aed1
+118;Blue Violet Medium;173;167;199;ada7c7
+118;Blue Violet Medium Dark;152;145;182;9891b6
+1030;Blue Violet Dark;119;107;152;776b98
+119;Blue Violet Very Dark;92;84;120;5c5478
+117;Cornflower Blue Very Light;187;195;217;bbc3d9
+175;Cornflower Blue Light;143;156;193;8f9cc1
+176;Cornflower Blue Medium;112;125;162;707da2
+122;Cornflower Blue;96;103;140;60678c
+941;Cornflower Blue Dark;85;91;123;555b7b
+941;Cornflower Blue Very Dark;76;82;110;4c526e
+178;Cornflower Blue Very Dark;70;69;99;464563
+117;Lavender Blue Light;176;192;218;b0c0da
+176;Lavender Blue Medium;123;142;171;7b8eab
+177;Lavender Blue Dark;92;114;148;5c7294
+144;Delft Blue Pale;192;204;222;c0ccde
+130;Delft Blue;148;168;198;94a8c6
+145;Delft Blue Medium;116;142;182;748eb6
+146;Delft Blue Dark;70;106;142;466a8e
+132;Royal Blue;19;71;125;13477d
+133;Royal Blue Dark;17;65;109;11416d
+134;Royal Blue Very Dark;14;54;92;0e365c
+128;Blue Ultra Very Light;219;236;245;dbecf5
+160;Blue Very Light;189;221;237;bddded
+161;Blue Light;161;194;215;a1c2d7
+161;Blue Medium;107;158;191;6b9ebf
+162;Blue Dark;71;129;165;4781a5
+164;Blue Very Dark;57;105;135;396987
+433;Electric Blue Medium;48;194;236;30c2ec
+1089;Electric Blue;20;170;208;14aad0
+410;Electric Blue Dark;38;150;182;2696b6
+1090;Turquoise Bright Light;6;227;230;06e3e6
+1089;Turquoise Bright Medium;4;196;202;04c4ca
+410;Turquoise Bright Dark;18;174;186;12aeba
+389;Blue Gray Light;199;202;215;c7cad7
+175;Blue Gray Medium;153;159;183;999fb7
+176;Blue Gray;120;128;164;7880a4
+1037;Baby Blue Ultra Very Light;238;252;252;eefcfc
+128;Baby Blue Very Light;217;235;241;d9ebf1
+9159;Baby Blue Pale;205;223;237;cddfed
+129;Baby Blue Light;184;210;230;b8d2e6
+140;Baby Blue;146;180;206;92b4ce
+977;Baby Blue Medium;115;159;193;739fc1
+978;Baby Blue Dark;90;143;184;5a8fb8
+979;Baby Blue Very Dark;53;102;139;35668b
+979;Baby Blue Ultra Very Dark;44;89;124;2c597c
+150;Navy Blue;37;59;115;253b73
+152;Navy Blue Dark;33;48;99;213063
+152;Navy Blue Very Dark;27;40;83;1b2853
+1031;Antique Blue Ultra Very Light;219;226;233;dbe2e9
+1032;Antique Blue Very Light;199;209;219;c7d1db
+1033;Antique Blue Light;162;181;198;a2b5c6
+1034;Antique Blue Medium;106;133;158;6a859e
+1035;Antique Blue Dark;69;92;113;455c71
+1036;Antique Blue Very Dark;56;76;94;384c5e
+9159;Sky Blue Very Light;197;232;237;c5e8ed
+928;Sky Blue Light;172;216;226;acd8e2
+1038;Sky Blue;126;177;200;7eb1c8
+1039;Wedgewood Light;79;147;167;4f93a7
+162;Wedgewood Medium;62;133;162;3e85a2
+162;Wedgewood Dark;59;118;143;3b768f
+164;Wedgewood Very Dark;50;102;124;32667c
+148;Wedgewood Ultra Very Dark;28;80;102;1c5066
+158;Peacock Blue Very Light;229;252;253;e5fcfd
+167;Peacock Blue Light;153;207;217;99cfd9
+168;Peacock Blue;100;171;186;64abba
+169;Peacock Blue Dark;61;149;165;3d95a5
+170;Peacock Blue Very Dark;52;127;140;347f8c
+1060;Turquoise Very Light;188;227;230;bce3e6
+1062;Turquoise Light;144;195;204;90c3cc
+1064;Turquoise;91;163;179;5ba3b3
+1066;Turquoise Dark;72;142;154;488e9a
+1066;Turquoise Vy Dark;63;124;133;3f7c85
+1068;Turquoise Ultra Very Dark;54;105;112;366970
+274;Gray Green Very Light;221;227;227;dde3e3
+849;Gray Green Light;189;203;203;bdcbcb
+850;Gray Green Medium;152;174;174;98aeae
+779;Gray Green Dark;101;127;127;657f7f
+851;Gray Green Vy Dark;86;106;106;566a6a
+1070;Teal Green Light;82;179;174;52b3ae
+1074;Teal Green Medium;65;147;146;419392
+1076;Teal Green Dark;52;125;117;347d75
+185;Sea Green Light;169;226;216;a9e2d8
+186;Sea Green Medium;89;199;180;59c7b4
+187;Sea Green Dark;62;182;161;3eb6a1
+188;Sea Green Very Dark;47;140;132;2f8c84
+187;Green Bright Light;73;179;161;49b3a1
+189;Green Bright Medium;61;147;132;3d9384
+189;Green Bright Dark;55;132;119;378477
+1070;Aquamarine Very Light;144;192;180;90c0b4
+1072;Aquamarine Light;111;174;159;6fae9f
+1074;Aquamarine;80;139;125;508b7d
+1076;Aquamarine Dark;71;123;110;477b6e
+240;Jade Ultra Very Light;185;215;192;b9d7c0
+206;Jade Very Light;167;205;175;a7cdaf
+208;Jade Light;143;192;152;8fc098
+210;Jade Medium;83;151;106;53976a
+1076;Jade Green;51;131;98;338362
+875;Celadon Green Light;153;195;170;99c3aa
+876;Celadon Green;101;165;125;65a57d
+877;Celadon Green Medium;77;131;97;4d8361
+877;Celadon Green Dark;71;119;89;477759
+212;Celadon Green VD;44;106;69;2c6a45
+1042;Blue Green Very Light;196;222;204;c4decc
+875;Blue Green Light;178;212;189;b2d4bd
+876;Blue Green Medium;123;172;148;7bac94
+877;Blue Green;91;144;113;5b9071
+878;Blue Green Dark;57;111;82;396f52
+683;Blue Green Very Dark;4;77;51;044d33
+206;Nile Green Light;162;214;173;a2d6ad
+203;Nile Green;136;186;145;88ba91
+204;Nile Green Medium;109;171;119;6dab77
+209;Emerald Green Light;27;157;107;1b9d6b
+205;Emerald Green Medium;24;144;101;189065
+230;Emerald Green Dark;24;126;86;187e56
+923;Emerald Green Very Dark;21;111;73;156f49
+923;Emerald Green Ultra Very Dark;17;90;59;115a3b
+1043;Pistachio Green Very Light;215;237;204;d7edcc
+214;Pistachio Green Light;166;194;152;a6c298
+215;Pistachio Green Medium;105;136;90;69885a
+216;Pistachio Green Dark;97;122;82;617a52
+218;Pistachio Grn Very Dark;32;95;46;205f2e
+218;Pistachio Grn Ultra Very Dark;24;73;35;184923
+264;Forest Green Light;200;216;184;c8d8b8
+242;Forest Green;141;166;117;8da675
+243;Forest Green Medium;115;139;91;738b5b
+244;Forest Green Dark;88;113;65;587141
+246;Forest Green Very Dark;64;82;48;405230
+259;Yellow Green Very Light;228;236;212;e4ecd4
+264;Yellow Green Light;204;217;177;ccd9b1
+266;Yellow Green Medium;113;147;92;71935c
+267;Hunter Green;64;106;58;406a3a
+268;Hunter Green Dark;27;89;21;1b5915
+1044;Hunter Green Very Dark;27;83;0;1b5300
+256;Chartreuse Bright;158;207;52;9ecf34
+238;Chartreuse;123;181;71;7bb547
+226;Kelly Green;71;167;47;47a72f
+227;Green Light;63;143;41;3f8f29
+228;Green Bright;7;115;27;07731b
+923;Green;5;101;23;056517
+255;Parrot Green Light;199;230;102;c7e666
+256;Parrot Green Medium;127;179;53;7fb335
+257;Parrot Green Dark;98;138;40;628a28
+258;Parrot Green Very Dark;85;120;34;557822
+253;Avocado Green Ultra Light;216;228;152;d8e498
+266;Avocado Grn Very Light;174;191;121;aebf79
+267;Avocado Grn Light;148;171;79;94ab4f
+267;Avocado Green;114;132;60;72843c
+268;Avocado Green Medium;98;113;51;627133
+846;Avocado Green Very Dark;76;88;38;4c5826
+861;Avocado Green Dark;66;77;33;424d21
+862;Avocado Grn Black;49;57;25;313919
+859;Fern Green Light;171;177;151;abb197
+843;Green Gray;156;164;130;9ca482
+844;Green Gray Medium;136;146;104;889268
+845;Green Gray Dark;95;102;72;5f6648
+858;Fern Green Very Light;196;205;172;c4cdac
+860;Fern Green;150;158;126;969e7e
+862;Fern Green Dark;102;109;79;666d4f
+260;Pine Green;131;151;95;83975f
+262;Pine Green Medium;114;130;86;728256
+263;Pine Green Dark;94;107;71;5e6b47
+253;Moss Green Very Light;239;244;164;eff4a4
+278;Moss Green Light;224;232;104;e0e868
+280;Moss Green Medium Light;192;200;64;c0c840
+280;Moss Green;167;174;56;a7ae38
+281;Moss Green Dark;136;141;51;888d33
+279;Olive Green Light;199;192;119;c7c077
+280;Olive Green Medium;188;179;76;bcb34c
+281;Olive Green;148;140;54;948c36
+924;Olive Green Dark;147;139;55;938b37
+845;Olive Green Very Dark;130;123;48;827b30
+853;Khaki Green Light;185;185;130;b9b982
+855;Khaki Green Medium;166;167;93;a6a75d
+856;Khaki Green Dark;137;138;88;898a58
+887;Mustard Light;204;183;132;ccb784
+887;Mustard;191;166;113;bfa671
+888;Mustard Medium;184;157;100;b89d64
+874;Golden Olive Very Light;219;190;127;dbbe7f
+907;Golden Olive Light;200;171;108;c8ab6c
+907;Golden Olive;189;155;81;bd9b51
+277;Golden Olive Medium;170;143;86;aa8f56
+277;Golden Olive Dark;141;120;75;8d784b
+906;Golden Olive Very Dark;126;107;66;7e6b42
+831;Drab Brown Very Light;220;196;170;dcc4aa
+832;Drab Brown Light;188;154;120;bc9a78
+898;Drab Brown;150;118;86;967656
+889;Drab Brown Dark;121;96;71;796047
+852;Yellow Beige Light;231;214;193;e7d6c1
+887;Yellow Beige Medium;216;188;154;d8bc9a
+888;Yellow Beige Dark;188;150;106;bc966a
+1049;Yellow Beige Very Dark;167;124;73;a77c49
+275;Off White;252;252;238;fcfcee
+361;Old Gold Very Light;245;236;203;f5eccb
+372;Hazelnut Brown Light;198;159;123;c69f7b
+373;Hazelnut Brown;183;139;97;b78b61
+374;Hazelnut Brown Dark;160;112;66;a07042
+944;Hazelnut Brown Very Dark;131;94;57;835e39
+306;Topaz;228;180;104;e4b468
+307;Topaz Medium;206;145;36;ce9124
+308;Topaz Dark;174;119;32;ae7720
+308;Topaz Very Dark;162;109;32;a26d20
+309;Topaz Ultra Very Dark;148;99;26;94631a
+891;Old Gold Light;229;206;151;e5ce97
+890;Old Gold Medium;208;165;62;d0a53e
+901;Old Gold Dark;188;141;14;bc8d0e
+901;Old Gold Vy Dark;169;130;4;a98204
+295;Straw Light;246;220;152;f6dc98
+305;Straw;243;206;117;f3ce75
+306;Straw Dark;223;182;95;dfb65f
+890;Straw Very Dark;205;157;55;cd9d37
+288;Lemon Light;255;251;139;fffb8b
+289;Lemon;253;237;84;fded54
+297;Canary Bright;255;227;0;ffe300
+291;Lemon Dark;255;214;0;ffd600
+292;Golden Yellow Very Light;253;249;205;fdf9cd
+293;Topaz Very Light;255;241;175;fff1af
+291;Topaz Light;253;215;85;fdd755
+305;Topaz Medium Light;255;200;64;ffc840
+298;Canary Deep;255;181;21;ffb515
+300;Yellow Pale Light;255;233;173;ffe9ad
+301;Yellow Pale;255;231;147;ffe793
+302;Yellow Medium;254;211;118;fed376
+303;Tangerine Light;255;191;87;ffbf57
+304;Tangerine Medium;255;163;43;ffa32b
+316;Tangerine;255;139;0;ff8b00
+925;Pumpkin Light;247;139;19;f78b13
+316;Pumpkin;246;127;0;f67f00
+330;Burnt Orange;255;123;77;ff7b4d
+332;Burnt Orange Medium;235;99;7;eb6307
+333;Burnt Orange Dark;209;88;7;d15807
+23;Apricot Very Light;255;222;213;ffded5
+8;Apricot Light;254;205;194;fecdc2
+328;Apricot;252;171;152;fcab98
+329;Apricot Medium;255;131;111;ff836f
+330;Burnt Orange Bright;253;93;53;fd5d35
+334;Orange Red Bright;250;50;3;fa3203
+1010;Tawny Light;255;226;207;ffe2cf
+1010;Mahogany Ultra Very Light;255;211;181;ffd3b5
+323;Orange Spice Light;247;151;111;f7976f
+925;Orange Spice Medium;242;120;66;f27842
+326;Orange Spice Dark;229;92;31;e55c1f
+323;Pumpkin Pale;253;189;150;fdbd96
+1003;Copper Light;226;115;35;e27323
+1003;Copper;198;98;24;c66218
+1004;Copper Medium;172;84;20;ac5414
+340;Red Copper;166;69;16;a64510
+341;Red Copper Dark;130;52;10;82340a
+1009;Tawny Vy Light;255;238;227;ffeee3
+881;Tawny;251;213;187;fbd5bb
+1047;Mahogany Very Light;247;167;119;f7a777
+1048;Mahogany Light;207;121;57;cf7939
+1049;Mahogany Medium;179;95;43;b35f2b
+351;Mahogany Dark;143;67;15;8f430f
+352;Mahogany Very Dark;111;47;0;6f2f00
+386;Yellow Ultra Pale;255;253;227;fffde3
+311;Autumn Gold Light;250;211;150;fad396
+313;Autumn Gold Medium;242;175;104;f2af68
+1003;Autumn Gold Dark;242;151;70;f29746
+311;Golden Brown Pale;247;187;119;f7bb77
+1002;Golden Brown Light;220;156;86;dc9c56
+1001;Golden Brown Medium;194;129;66;c28142
+1049;Golden Brown;173;114;57;ad7239
+355;Golden Brown Dark;145;79;18;914f12
+1011;Peach Very Light;254;231;218;fee7da
+1012;Peach Light;247;203;191;f7cbbf
+868;Terra Cotta Ultra Very Light;244;187;169;f4bba9
+868;Terra Cotta Very Light;238;170;155;eeaa9b
+1013;Terra Cotta Light;217;137;120;d98978
+1027;Terra Cotta Medium;197;106;91;c56a5b
+5975;Terra Cotta;188;85;68;bc5544
+1014;Terra Cotta Dark;152;68;54;984436
+1015;Terra Cotta Very Dark;134;48;34;863022
+868;Rosewood Ultra Very Light;248;202;200;f8cac8
+914;Rosewood Light;186;139;124;ba8b7c
+1007;Rosewood Medium;150;74;63;964a3f
+936;Rosewood Dark;104;37;26;68251a
+778;Desert Sand Very Light;243;225;215;f3e1d7
+4146;Desert Sand Light;238;211;196;eed3c4
+883;Desert Sand;196;142;112;c48e70
+914;Desert Sand Medium;187;129;97;bb8161
+1008;Desert Sand Dark;182;117;82;b67552
+1007;Desert Sand Very Dark;160;108;80;a06c50
+936;Desert Sand Ultra Very Dark;135;85;57;875539
+231;Shell Gray Light;215;206;203;d7cecb
+232;Shell Gray Medium;192;179;174;c0b3ae
+233;Shell Gray Dark;145;123;115;917b73
+378;Cocoa Light;166;136;129;a68881
+379;Cocoa;125;93;87;7d5d57
+1050;Cocoa Dark;98;75;69;624b45
+926;Cream;255;251;239;fffbef
+387;Tan Ultra Very Light;248;228;200;f8e4c8
+361;Tan Very Light;236;204;158;eccc9e
+362;Tan Light;228;187;142;e4bb8e
+363;Tan;203;144;81;cb9051
+365;Brown Very Light;184;119;72;b87748
+310;Brown Light;152;94;51;985e33
+358;Brown Medium;122;69;31;7a451f
+359;Coffee Brown Dark;101;57;25;653919
+360;Coffee Brown Very Dark;73;42;19;492a13
+381;Coffee Brown Ultra Dark;54;31;14;361f0e
+382;Black Brown;30;17;8;1e1108
+933;Beige Brown Ultra Very Light;242;227;206;f2e3ce
+376;Mocha Beige Light;203;182;156;cbb69c
+379;Mocha Beige Medium;164;131;92;a4835c
+358;Mocha Beige Dark;138;110;78;8a6e4e
+905;Mocha Brown Very Dark;75;60;42;4b3c2a
+1;Snow White;255;255;255;ffffff
+2;White;252;251;248;fcfbf8
+2;Winter White;249;247;241;f9f7f1
+387;Ecru;240;234;218;f0eada
+390;Beige Gray Light;231;226;211;e7e2d3
+391;Beige Gray Medium;221;216;203;ddd8cb
+392;Beige Gray Dark;164;152;120;a49878
+393;Beige Gray Very Dark;133;123;97;857b61
+904;Brown Gray Dark;98;93;80;625d50
+905;Brown Gray Very Dark;79;75;65;4f4b41
+388;Brown Gray Very Light;235;234;231;ebeae7
+899;Brown Gray Light;177;170;151;b1aa97
+8581;Brown Gray Medium;142;144;120;8e9078
+401;Ash Gray Very Light;99;100;88;636458
+387;Mocha Brown Very Light;227;216;204;e3d8cc
+831;Mocha Brown Light;210;188;166;d2bca6
+898;Mocha Brown Medium;179;159;139;b39f8b
+904;Beige Gray Ultra Dark;127;106;85;7f6a55
+1050;Mocha Brown Dark;107;87;67;6b5743
+926;Mocha Brown Ultra Very Light;250;246;240;faf6f0
+1080;Beige Brown Very Light;209;186;161;d1baa1
+1082;Beige Brown Light;182;155;126;b69b7e
+1084;Beige Brown Medium;154;124;92;9a7c5c
+1086;Beige Brown Dark;103;85;65;675541
+1088;Beige Brown Very Dark;89;73;55;594937
+397;Beaver Gray Very Light;230;232;232;e6e8e8
+900;Beaver Gray Light;188;180;172;bcb4ac
+1040;Beaver Gray Medium;176;166;156;b0a69c
+8581;Beaver Gray Dark;135;125;115;877d73
+273;Beaver Gray Very Dark;110;101;92;6e655c
+1041;Beaver Gray Ultra Dark;72;72;72;484848
+234;Pearl Gray Very Light;236;236;236;ececec
+389;Pearl Gray;211;211;214;d3d3d6
+399;Steel Gray Light;171;171;171;ababab
+235;Steel Gray Dark;140;140;140;8c8c8c
+389;Pewter Very Light;209;209;209;d1d1d1
+400;Pewter Light;132;132;132;848484
+400;Pewter Gray;108;108;108;6c6c6c
+236;Pewter Gray Dark;86;86;86;565656
+236;Pewter Gray Very Dark;66;66;66;424242
+403;Black;0;0;0;000000
+388;White Tin;227;227;230;e3e3e6
+389;Tin;215;215;216;d7d7d8
+399;Tin Medium;184;184;187;b8b8bb
+399;Tin Dark;174;174;177;aeaeb1
+852;Driftwood Light;227;204;190;e3ccbe
+831;Driftwood Medium Light;220;198;184;dcc6b8
+233;Driftwood;143;123;110;8f7b6e
+1050;Driftwood Dark;106;80;70;6a5046
+360;Cocoa Very Dark;85;32;20;552014
+259;Tender Green Very Light;237;254;217;edfed9
+264;Tender Green Light;226;237;181;e2edb5
+253;Tender Green;205;217;154;cdd99a
+185;Nile Green Medium Light;191;246;224;bff6e0
+266;Apple Green Pale;208;251;178;d0fbb2
+253;Apple Green;209;237;164;d1eda4
+280;Chartreuse Light;201;194;88;c9c258
+278;Yellow Plum Light;229;226;114;e5e272
+278;Yellow Plum;217;213;109;d9d56d
+295;Autumn Gold medium Light;247;201;95;f7c95f
+328;Shrimp;247;175;147;f7af93
+1013;Alizarin Light;215;153;130;d79982
+1027;Alizarin;188;96;78;bc604e
+342;Apple Blossom;237;226;237;ede2ed
+342;White Lavender;224;215;238;e0d7ee
+342;Lavender Ultra Light;218;210;233;dad2e9
+342;Lavender Pale;215;202;230;d7cae6
+342;White Violet;240;238;249;f0eef9
+118;Eggplant Medium Light;144;134;169;9086a9
+100;Eggplant;103;64;118;674076
+1030;Blueberry Medium Light;125;119;165;7d77a5
+122;Blueberry;80;81;141;50518d
+100;Blueberry Dark;77;46;138;4d2e8a
+110;Fuschia;156;89;156;9c599c
+99;Fuschia Dark;125;48;100;7d3064
+102;Fuschia Very Dark;70;5;45;46052d

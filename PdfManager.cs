@@ -197,6 +197,8 @@ namespace EmbroideryCreator
         private XRect blurryImageAlternativeDesignPosition = new XRect(-160, 435, 920, 434);
         private XRect otherBlurryImageAlternativeDesignPosition = new XRect(-313, 177, 1017, 648);
 
+        private ColorFamily colorFamilyConversion;
+
         //private XImage buttonAlternativeDesign;
 
         public PdfManager()
@@ -280,11 +282,13 @@ namespace EmbroideryCreator
             }
         }
 
-        public void CreatePdfStitches(string pathToSave, int[,] matrixOfNewColors, List<Color> colorMeans, Dictionary<int, List<Tuple<int, int>>> positionsOfEachColor, Dictionary<int, HashSet<BackstitchLine>> backstitchLines, Dictionary<int, Color> backstitchColors, Dictionary<int, Bitmap> dictionaryOfSymbolByColor)
+        public void CreatePdfStitches(string pathToSave, int[,] matrixOfNewColors, List<Color> colorMeans, Dictionary<int, List<Tuple<int, int>>> positionsOfEachColor, Dictionary<int, HashSet<BackstitchLine>> backstitchLines, Dictionary<int, Color> backstitchColors, Dictionary<int, Bitmap> dictionaryOfSymbolByColor, ColorFamily colorFamilyConversion)
         {
             PdfDocument document = new PdfDocument();
 
             document.Info.Title = title;
+
+            this.colorFamilyConversion = colorFamilyConversion;
 
             dictionaryOfXimageByIndex = new Dictionary<int, XImage>();
 
@@ -298,7 +302,7 @@ namespace EmbroideryCreator
             CreateAllDrawingPages(document, matrixOfNewColors, colorMeans, backstitchLines, backstitchColors, dictionaryOfXimageByIndex);
 
             //CreatePagesWithListsOfColors(document, colorMeans, backstitchColors, dictionaryOfXimageByIndex);
-            CreatePagesWithListsOfColors(document, colorMeans, positionsOfEachColor, backstitchLines, backstitchColors, dictionaryOfXimageByIndex, true);
+            CreatePagesWithListsOfColors(document, colorMeans, positionsOfEachColor, backstitchLines, backstitchColors, dictionaryOfXimageByIndex);
 
             
             for (int i = 0; i < graphicsOfAllPages.Count; i++)
@@ -326,7 +330,7 @@ namespace EmbroideryCreator
             }
         }
 
-        public void CreatePdfStitchesAlternativeDesign(string pathToSave, int[,] matrixOfNewColors, List<Color> colorMeans, Dictionary<int, List<Tuple<int, int>>> positionsOfEachColor, Dictionary<int, HashSet<BackstitchLine>> backstitchLines, Dictionary<int, Color> backstitchColors, Dictionary<int, Bitmap> dictionaryOfSymbolByColor, Dictionary<int, Bitmap> dictionaryOfColoredCrossByIndex, string collectionTextFirstPage, string titleFirstPage, string subtitleFirstPage, string titleFollowingPages,
+        public void CreatePdfStitchesAlternativeDesign(string pathToSave, int[,] matrixOfNewColors, List<Color> colorMeans, Dictionary<int, List<Tuple<int, int>>> positionsOfEachColor, Dictionary<int, HashSet<BackstitchLine>> backstitchLines, Dictionary<int, Color> backstitchColors, Dictionary<int, Bitmap> dictionaryOfSymbolByColor, Dictionary<int, Bitmap> dictionaryOfColoredCrossByIndex, ColorFamily colorFamilyConversion, string collectionTextFirstPage, string titleFirstPage, string subtitleFirstPage, string titleFollowingPages,
             double collectionTextFormattingFactor = 7,
             double titleFirstPageFormattingFactor = 7,
             double subtitleFirstPageFormattingFactor = 7,
@@ -338,6 +342,8 @@ namespace EmbroideryCreator
             this.titleAlternativeDesign = titleFollowingPages;
 
             document.Info.Title = title;
+
+            this.colorFamilyConversion = colorFamilyConversion;
 
             this.collectionTextFormattingFactor = collectionTextFormattingFactor;
             this.titleFirstPageFormattingFactor = titleFirstPageFormattingFactor;
@@ -392,7 +398,7 @@ namespace EmbroideryCreator
             firstPageGraphics.DrawString(brandNameLateralText, brandNameLateralTextFirstPageFont, brandNameLateralTextBrush, new XRect(0, 0, 297.5, 230), XStringFormats.Center);
             firstPageGraphics.RotateAtTransform(-90, new XPoint(297.5, 372));
 
-            CreatePagesWithListsOfColorsAlternativeDesign(document, matrixOfNewColors, colorMeans, positionsOfEachColor, backstitchLines, backstitchColors, dictionaryOfXimageByIndex, true);
+            CreatePagesWithListsOfColorsAlternativeDesign(document, matrixOfNewColors, colorMeans, positionsOfEachColor, backstitchLines, backstitchColors, dictionaryOfXimageByIndex);
 
             subTitleAlternativeDesignPatternPage = "Colored";
             CreatePageWithCompleteDrawing(document, matrixOfNewColors, colorMeans, backstitchLines, backstitchColors, dictionaryOfXimageByIndex, maxHorizontalNumberOfSquaresAlternativeDesign, maxVerticalNumberOfSquaresAlternativeDesign, sizeOfEachSquareAlternativeDesign, startingPointForDrawingsAlternativeDesign.Y, true, false, true, true, true, false, false, false);
@@ -779,18 +785,18 @@ namespace EmbroideryCreator
             }
         }
 
-        private void CreatePagesWithListsOfColors(PdfDocument document, List<Color> colorMeans, Dictionary<int, List<Tuple<int, int>>> positionsOfEachColor, Dictionary<int, HashSet<BackstitchLine>> backstitchLines, Dictionary<int, Color> backstitchColors, Dictionary<int, XImage> dictionaryOfXimageByIndex, bool convertToDmcColors = true)
+        private void CreatePagesWithListsOfColors(PdfDocument document, List<Color> colorMeans, Dictionary<int, List<Tuple<int, int>>> positionsOfEachColor, Dictionary<int, HashSet<BackstitchLine>> backstitchLines, Dictionary<int, Color> backstitchColors, Dictionary<int, XImage> dictionaryOfXimageByIndex)
         {
             double startingHeight = startingPointForDrawings.Y;
             XGraphics pageGraphics = AddPageAndPrepare(document, out _);
             //cross stitch list
-            DrawListOfColors(document, ref pageGraphics, ref startingHeight, maxVerticalNumberOfSquares, sizeOfEachSquare, startingPointForDrawings, colorMeans, positionsOfEachColor, backstitchLines, backstitchColors, dictionaryOfXimageByIndex, true, convertToDmcColors, true, true);
+            DrawListOfColors(document, ref pageGraphics, ref startingHeight, maxVerticalNumberOfSquares, sizeOfEachSquare, startingPointForDrawings, colorMeans, positionsOfEachColor, backstitchLines, backstitchColors, dictionaryOfXimageByIndex, true, true, true);
             
             //backstitch list
-            DrawListOfColors(document, ref pageGraphics, ref startingHeight, maxVerticalNumberOfSquares, sizeOfEachSquare, startingPointForDrawings, colorMeans, positionsOfEachColor, backstitchLines, backstitchColors, dictionaryOfXimageByIndex, false, convertToDmcColors, true, true);
+            DrawListOfColors(document, ref pageGraphics, ref startingHeight, maxVerticalNumberOfSquares, sizeOfEachSquare, startingPointForDrawings, colorMeans, positionsOfEachColor, backstitchLines, backstitchColors, dictionaryOfXimageByIndex, false, true, true);
         }
 
-        private void CreatePagesWithListsOfColorsAlternativeDesign(PdfDocument document, int[,] matrixOfNewColors, List<Color> colorMeans, Dictionary<int, List<Tuple<int, int>>> positionsOfEachColor, Dictionary<int, HashSet<BackstitchLine>> backstitchLines, Dictionary<int, Color> backstitchColors, Dictionary<int, XImage> dictionaryOfXimageByIndex, bool convertToDmcColors = true)
+        private void CreatePagesWithListsOfColorsAlternativeDesign(PdfDocument document, int[,] matrixOfNewColors, List<Color> colorMeans, Dictionary<int, List<Tuple<int, int>>> positionsOfEachColor, Dictionary<int, HashSet<BackstitchLine>> backstitchLines, Dictionary<int, Color> backstitchColors, Dictionary<int, XImage> dictionaryOfXimageByIndex)
         {
             XGraphics pageGraphics = AddPageAndPrepareAlternativeDesign(document, out _, true, true, logoPositionAlternativeDesignListOfColors, titlePositionAlternativeDesignListOfColors, subtitlePositionAlternativeDesignListOfColors, buttonPositionAlternativeDesignListOfColors, titleAlternativeDesign, subTitleAlternativeDesignListOfColors, siteLinkAlternativeDesign, logoAlternativeDesign, siteLinkButtonAlternativeDesign, titleFontAlternativeDesignListOfColors, subTitleFontAlternativeDesignListOfColors, siteLinkFontAlternativeDesignListOfColors, logoSizeAlternativeDesignListOfColors, siteLinkSizeAlternativeDesignListOfColors, linkBrushAlternativeDesign);
 
@@ -811,18 +817,30 @@ namespace EmbroideryCreator
             }
             pageGraphics.DrawString(colorsText, summaryFontAlternativeDesign, pageSetupBrush, new XRect(new XPoint(summaryPositionAlternativeDesign.X, summaryPositionAlternativeDesign.Y + summaryFontAlternativeDesign.Size + summaryVerticalPaddingSizeAlternativeDesign), new XSize(summaryFontAlternativeDesign.Size, summaryFontAlternativeDesign.Size)), XStringFormats.TopLeft);
             pageGraphics.DrawString("CANVAS: " + "16-count Aida", summaryFontAlternativeDesign, pageSetupBrush, new XRect(new XPoint(summaryPositionAlternativeDesign.X, summaryPositionAlternativeDesign.Y + 2 * (summaryFontAlternativeDesign.Size + summaryVerticalPaddingSizeAlternativeDesign)), new XSize(summaryFontAlternativeDesign.Size, summaryFontAlternativeDesign.Size)), XStringFormats.TopLeft);
-            pageGraphics.DrawString("PALETTES: " + "DMC", summaryFontAlternativeDesign, pageSetupBrush, new XRect(new XPoint(summaryPositionAlternativeDesign.X, summaryPositionAlternativeDesign.Y + 3 * (summaryFontAlternativeDesign.Size + summaryVerticalPaddingSizeAlternativeDesign)), new XSize(summaryFontAlternativeDesign.Size, summaryFontAlternativeDesign.Size)), XStringFormats.TopLeft);
+            string paletteName = "HEX Colors";
+            switch (colorFamilyConversion)
+            {
+                case ColorFamily.Dmc:
+                    paletteName = "DMC";
+                    break;
+                case ColorFamily.Anchor:
+                    paletteName = "Anchor";
+                    break;
+                default:
+                    break;
+            }
+            pageGraphics.DrawString("PALETTES: " + paletteName, summaryFontAlternativeDesign, pageSetupBrush, new XRect(new XPoint(summaryPositionAlternativeDesign.X, summaryPositionAlternativeDesign.Y + 3 * (summaryFontAlternativeDesign.Size + summaryVerticalPaddingSizeAlternativeDesign)), new XSize(summaryFontAlternativeDesign.Size, summaryFontAlternativeDesign.Size)), XStringFormats.TopLeft);
 
             double startingHeight = summaryPositionAlternativeDesign.Y + 4 * (summaryFontAlternativeDesign.Size + summaryVerticalPaddingSizeAlternativeDesign) + additionalVerticalPaddingToListOfColorsAlternativeDesign;
 
             //cross stitch list
-            DrawListOfColors(document, ref pageGraphics, ref startingHeight, maxVerticalNumberOfSquaresListsOfColorsAlternativeDesign, sizeOfEachSquareListOfColorsAlternativeDesign, startingPointForListOfColorsAlternativeDesign, colorMeans, positionsOfEachColor, backstitchLines, backstitchColors, dictionaryOfXimageByIndex, true, convertToDmcColors, true, true, true);
+            DrawListOfColors(document, ref pageGraphics, ref startingHeight, maxVerticalNumberOfSquaresListsOfColorsAlternativeDesign, sizeOfEachSquareListOfColorsAlternativeDesign, startingPointForListOfColorsAlternativeDesign, colorMeans, positionsOfEachColor, backstitchLines, backstitchColors, dictionaryOfXimageByIndex, true, true, true, true);
 
             //backstitch list
-            DrawListOfColors(document, ref pageGraphics, ref startingHeight, maxVerticalNumberOfSquaresListsOfColorsAlternativeDesign, sizeOfEachSquareListOfColorsAlternativeDesign, startingPointForListOfColorsAlternativeDesign, colorMeans, positionsOfEachColor, backstitchLines, backstitchColors, dictionaryOfXimageByIndex, false, convertToDmcColors, true, true, true);
+            DrawListOfColors(document, ref pageGraphics, ref startingHeight, maxVerticalNumberOfSquaresListsOfColorsAlternativeDesign, sizeOfEachSquareListOfColorsAlternativeDesign, startingPointForListOfColorsAlternativeDesign, colorMeans, positionsOfEachColor, backstitchLines, backstitchColors, dictionaryOfXimageByIndex, false, true, true, true);
         }
 
-        private void DrawListOfColors(PdfDocument document, ref XGraphics pageGraphics, ref double startingHeight, int maxVerticalNumberOfSquaresListOfColors, double sizeOfEachSquareListOfColors, XPoint startingPointOfListOfColors, List<Color> colorMeans, Dictionary<int, List<Tuple<int, int>>> positionsOfEachColor, Dictionary<int, HashSet<BackstitchLine>> backstitchLines, Dictionary<int, Color> backstitchColors, Dictionary<int, XImage> dictionaryOfXimageByIndex, bool isCrossStitchAndNotBackstitch = true, bool convertToDmcColors = true, bool includeNumberOfStitches = true, bool includeNumberOfSkeins = true, bool isAlternativeDesign = false)
+        private void DrawListOfColors(PdfDocument document, ref XGraphics pageGraphics, ref double startingHeight, int maxVerticalNumberOfSquaresListOfColors, double sizeOfEachSquareListOfColors, XPoint startingPointOfListOfColors, List<Color> colorMeans, Dictionary<int, List<Tuple<int, int>>> positionsOfEachColor, Dictionary<int, HashSet<BackstitchLine>> backstitchLines, Dictionary<int, Color> backstitchColors, Dictionary<int, XImage> dictionaryOfXimageByIndex, bool isCrossStitchAndNotBackstitch = true, bool includeNumberOfStitches = true, bool includeNumberOfSkeins = true, bool isAlternativeDesign = false)
         {
             double crossStitchListTitleHeight = isCrossStitchAndNotBackstitch ? 135 : crossStitchListOriginalTitleHeight;
 
@@ -895,9 +913,23 @@ namespace EmbroideryCreator
                     //draw column header
                     List<string> headerStrings;
 
-                    if (convertToDmcColors)
+                    string colorFamilyName;
+                    switch (colorFamilyConversion)
                     {
-                        headerStrings = new List<string>() { "Symbol", "Dmc Color", "Name" };
+                        case ColorFamily.Dmc:
+                            colorFamilyName = "Dmc Color";
+                            break;
+                        case ColorFamily.Anchor:
+                            colorFamilyName = "Anchor Color";
+                            break;
+                        default:
+                            colorFamilyName = "Color";
+                            break;
+                    }
+
+                    if (colorFamilyConversion != ColorFamily.None)
+                    {
+                        headerStrings = new List<string>() { "Symbol", colorFamilyName, "Name" };
                     }
                     else
                     {
@@ -924,10 +956,10 @@ namespace EmbroideryCreator
 
                         //get color
                         Color currentColor = isCrossStitchAndNotBackstitch ? colorMeans[i] : backstitchColors[i];
-                        if (convertToDmcColors)
+                        if (colorFamilyConversion != ColorFamily.None)
                         {
-                            DmcColor dmcColor = ColorsConverter.ConvertColorToDmc(currentColor);
-                            rowStrings = new List<string>() { dmcColor.Number, dmcColor.Name };
+                            TableColor tableColor = ColorsConverter.ConvertColorToTableColor(currentColor, colorFamilyConversion);
+                            rowStrings = new List<string>() { tableColor.Number, tableColor.Name };
                         }
                         else
                         {

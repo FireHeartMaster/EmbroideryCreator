@@ -72,6 +72,7 @@ namespace EmbroideryCreator
         private int subtitleFirstPageFormattingFactor = 7;
         private int collectionCharacterLengthToCheck = 9;
         private int titleCharacterLengthToCheck = 18;
+        private ColorFamily colorFamilyConversion = ColorFamily.Dmc;
 
         public MainForm()
         {
@@ -1132,7 +1133,8 @@ namespace EmbroideryCreator
                     titleFirstPageFormattingFactor,
                     subtitleFirstPageFormattingFactor,
                     collectionCharacterLengthToCheck,
-                    titleCharacterLengthToCheck))
+                    titleCharacterLengthToCheck,
+                    colorFamilyConversion))
                 {
                     if(savePdfDialog.ShowDialog() == DialogResult.OK)
                     {
@@ -1146,6 +1148,7 @@ namespace EmbroideryCreator
                         subtitleFirstPageFormattingFactor = savePdfDialog.subtitleFirstPageFormattingFactor;
                         collectionCharacterLengthToCheck = savePdfDialog.collectionCharacterLengthToCheck;
                         titleCharacterLengthToCheck = savePdfDialog.titleCharacterLengthToCheck;
+                        colorFamilyConversion = savePdfDialog.colorFamily;
 
                         if (saveImageFileDialog.ShowDialog() == DialogResult.OK)
                         {
@@ -1164,12 +1167,14 @@ namespace EmbroideryCreator
                                     new string[] { /*"https://facebook.com", */"https://www.etsy.com/shop/Phinalia", "https://www.instagram.com/phinaliacross/", "https://www.youtube.com/channel/UCbNbXXbPjG7RZUH3hNVTaoQ", "https://www.pinterest.fr/phinaliacross/" },
                                     new Bitmap[] { /*Properties.Resources.FacebookLogo, */Properties.Resources.EtsyLogo, Properties.Resources.InstagramLogo, Properties.Resources.YouTubeLogo, Properties.Resources.PinterestLogo },
                                     new string[] { /*"Facebook", */"Etsy", "Instagram", "YouTube", "Pinterest" },
+                                    savePdfDialog.colorFamily,
                                     false);
                                 imageAndOperationsData.SavePdf(filePathWithoutExtension + " - Magazine" + ".pdf", Properties.Resources.PhinaliaLogo, title, "", "COLORED CROSS STITCH", "2022 | Phinalia", "Phinalia Library Collection",
                                     "Visit our website: ", "https://phinalia.com", "Join our community:",
                                     new string[] { /*"https://facebook.com", */"https://www.etsy.com/shop/Phinalia", "https://www.instagram.com/phinaliacross/", "https://www.youtube.com/channel/UCbNbXXbPjG7RZUH3hNVTaoQ", "https://www.pinterest.fr/phinaliacross/" },
                                     new Bitmap[] { /*Properties.Resources.FacebookLogo, */Properties.Resources.EtsyLogo, Properties.Resources.InstagramLogo, Properties.Resources.YouTubeLogo, Properties.Resources.PinterestLogo },
                                     new string[] { /*"Facebook", */"Etsy", "Instagram", "YouTube", "Pinterest" },
+                                    savePdfDialog.colorFamily,
                                     true,
                                     savePdfDialog.collection,
                                     savePdfDialog.title,

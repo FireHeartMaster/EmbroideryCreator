@@ -1101,6 +1101,29 @@ namespace EmbroideryCreator.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to number;name;r;g;b;hex
+        ///1020;Salmon Very Light;255;226;226;ffe2e2
+        ///1021;Salmon Light;255;201;201;ffc9c9
+        ///1022;Salmon;245;173;173;f5adad
+        ///1023;Salmon Medium;241;135;135;f18787
+        ///1024;Salmon Dark;227;109;109;e36d6d
+        ///1025;Salmon Very Dark;191;45;45;bf2d2d
+        ///6;Peach;254;215;204;fed7cc
+        ///9;Coral Light;253;156;151;fd9c97
+        ///10;Coral;233;106;103;e96a67
+        ///11;Coral Medium;224;72;72;e04848
+        ///13;Coral Dark;210;16;53;d21035
+        ///13;Coral Red Very Dark;187;5;31;bb051f
+        ///31;Melon Light;255;203;213;ffcbd5
+        ///33;Melon Medium;255;173;188; [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string AnchorTable {
+            get {
+                return ResourceManager.GetString("AnchorTable", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
         internal static System.Drawing.Bitmap BlackBlur {

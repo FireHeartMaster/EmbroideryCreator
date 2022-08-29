@@ -68,7 +68,6 @@
       <DependentUpon>ChangeCanvasSizeDialog.cs</DependentUpon>
     </Compile>
     <Compile Include="ColorsConverter.cs" />
-    <Compile Include="DmcColor.cs" />
     <Compile Include="DrawingToolsControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -107,6 +106,7 @@
       <DependentUpon>SavePdfDialog.cs</DependentUpon>
     </Compile>
     <Compile Include="SerializerHelper.cs" />
+    <Compile Include="TableColor.cs" />
     <Compile Include="UndoStateManager.cs" />
     <EmbeddedResource Include="BackstitchColorControl.resx">
       <DependentUpon>BackstitchColorControl.cs</DependentUpon>
@@ -146,6 +146,7 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Resources\AnchorTable.csv" />
     <None Include="Resources\SocialMedia\EtsyLogo.png" />
     <None Include="Resources\SelectionIcon.png" />
     <None Include="Resources\QuickSaveGrayedIcon.png" />

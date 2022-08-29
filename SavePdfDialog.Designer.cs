@@ -54,6 +54,10 @@ namespace EmbroideryCreator
             this.subtitleFactorValueLabel = new System.Windows.Forms.Label();
             this.collectionLengthValueLabel = new System.Windows.Forms.Label();
             this.titleLengthValueLabel = new System.Windows.Forms.Label();
+            this.convertColorsLabel = new System.Windows.Forms.Label();
+            this.dmcConvertColorRadioButton = new System.Windows.Forms.RadioButton();
+            this.anchorConvertColorRadioButton = new System.Windows.Forms.RadioButton();
+            this.noConvertColorRadioButton = new System.Windows.Forms.RadioButton();
             ((System.ComponentModel.ISupportInitialize)(this.collectionFactorTrackBar)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.collectionLengthTrackBar)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.titleFactorTrackBar)).BeginInit();
@@ -323,11 +327,61 @@ namespace EmbroideryCreator
             this.titleLengthValueLabel.TabIndex = 29;
             this.titleLengthValueLabel.Text = "18";
             // 
+            // convertColorsLabel
+            // 
+            this.convertColorsLabel.AutoSize = true;
+            this.convertColorsLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.convertColorsLabel.Location = new System.Drawing.Point(336, 156);
+            this.convertColorsLabel.Name = "convertColorsLabel";
+            this.convertColorsLabel.Size = new System.Drawing.Size(117, 20);
+            this.convertColorsLabel.TabIndex = 30;
+            this.convertColorsLabel.Text = "Convert Colors:";
+            // 
+            // dmcConvertColorRadioButton
+            // 
+            this.dmcConvertColorRadioButton.AutoSize = true;
+            this.dmcConvertColorRadioButton.Location = new System.Drawing.Point(340, 180);
+            this.dmcConvertColorRadioButton.Name = "dmcConvertColorRadioButton";
+            this.dmcConvertColorRadioButton.Size = new System.Drawing.Size(49, 17);
+            this.dmcConvertColorRadioButton.TabIndex = 31;
+            this.dmcConvertColorRadioButton.TabStop = true;
+            this.dmcConvertColorRadioButton.Text = "DMC";
+            this.dmcConvertColorRadioButton.UseVisualStyleBackColor = true;
+            this.dmcConvertColorRadioButton.CheckedChanged += new System.EventHandler(this.dmcConvertColorRadioButton_CheckedChanged);
+            // 
+            // anchorConvertColorRadioButton
+            // 
+            this.anchorConvertColorRadioButton.AutoSize = true;
+            this.anchorConvertColorRadioButton.Location = new System.Drawing.Point(408, 180);
+            this.anchorConvertColorRadioButton.Name = "anchorConvertColorRadioButton";
+            this.anchorConvertColorRadioButton.Size = new System.Drawing.Size(59, 17);
+            this.anchorConvertColorRadioButton.TabIndex = 32;
+            this.anchorConvertColorRadioButton.TabStop = true;
+            this.anchorConvertColorRadioButton.Text = "Anchor";
+            this.anchorConvertColorRadioButton.UseVisualStyleBackColor = true;
+            this.anchorConvertColorRadioButton.CheckedChanged += new System.EventHandler(this.anchorConvertColorRadioButton_CheckedChanged);
+            // 
+            // noConvertColorRadioButton
+            // 
+            this.noConvertColorRadioButton.AutoSize = true;
+            this.noConvertColorRadioButton.Location = new System.Drawing.Point(487, 180);
+            this.noConvertColorRadioButton.Name = "noConvertColorRadioButton";
+            this.noConvertColorRadioButton.Size = new System.Drawing.Size(39, 17);
+            this.noConvertColorRadioButton.TabIndex = 33;
+            this.noConvertColorRadioButton.TabStop = true;
+            this.noConvertColorRadioButton.Text = "No";
+            this.noConvertColorRadioButton.UseVisualStyleBackColor = true;
+            this.noConvertColorRadioButton.CheckedChanged += new System.EventHandler(this.noConvertColorRadioButton_CheckedChanged);
+            // 
             // SavePdfDialog
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(334, 209);
+            this.Controls.Add(this.noConvertColorRadioButton);
+            this.Controls.Add(this.anchorConvertColorRadioButton);
+            this.Controls.Add(this.dmcConvertColorRadioButton);
+            this.Controls.Add(this.convertColorsLabel);
             this.Controls.Add(this.titleLengthValueLabel);
             this.Controls.Add(this.collectionLengthValueLabel);
             this.Controls.Add(this.subtitleFactorValueLabel);
@@ -395,5 +449,9 @@ namespace EmbroideryCreator
         private System.Windows.Forms.Label subtitleFactorValueLabel;
         private System.Windows.Forms.Label collectionLengthValueLabel;
         private System.Windows.Forms.Label titleLengthValueLabel;
+        private System.Windows.Forms.Label convertColorsLabel;
+        private System.Windows.Forms.RadioButton dmcConvertColorRadioButton;
+        private System.Windows.Forms.RadioButton anchorConvertColorRadioButton;
+        private System.Windows.Forms.RadioButton noConvertColorRadioButton;
     }
 }

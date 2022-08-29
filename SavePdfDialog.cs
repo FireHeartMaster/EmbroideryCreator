@@ -24,9 +24,16 @@ namespace EmbroideryCreator
         public int collectionCharacterLengthToCheck = 9;
         public int titleCharacterLengthToCheck = 18;
 
+        public ColorFamily colorFamily = ColorFamily.Dmc;
+
+        private List<RadioButton> colorConversionAllRadioButtons;
+
         public SavePdfDialog()
         {
             InitializeComponent();
+
+            colorConversionAllRadioButtons = new List<RadioButton>() { dmcConvertColorRadioButton, anchorConvertColorRadioButton, noConvertColorRadioButton };
+            dmcConvertColorRadioButton.Checked = true;
         }
 
         public SavePdfDialog(string collection, string title, string subtitle, string alternativeTitle,
@@ -34,9 +41,27 @@ namespace EmbroideryCreator
             int titleFirstPageFormattingFactor = 7,
             int subtitleFirstPageFormattingFactor = 7,
             int collectionCharacterLengthToCheck = 9,
-            int titleCharacterLengthToCheck = 18)
+            int titleCharacterLengthToCheck = 18, ColorFamily colorFamilyConversion = ColorFamily.Dmc)
         {
             InitializeComponent();
+
+            colorConversionAllRadioButtons = new List<RadioButton>() { dmcConvertColorRadioButton, anchorConvertColorRadioButton, noConvertColorRadioButton };
+            this.colorFamily = colorFamilyConversion;
+            switch (colorFamilyConversion)
+            {
+                case ColorFamily.Dmc:
+                    dmcConvertColorRadioButton.Checked = true;
+                    break;
+                case ColorFamily.Anchor:
+                    anchorConvertColorRadioButton.Checked = true;
+                    break;
+                case ColorFamily.None:
+                    noConvertColorRadioButton.Checked = true;
+                    break;
+                default:
+                    dmcConvertColorRadioButton.Checked = true;
+                    break;
+            }
 
             collectionTextBox.Text = collection;
             titleTextBox.Text = title;
@@ -103,6 +128,17 @@ namespace EmbroideryCreator
             this.Size = new Size(newWidth, this.Size.Height);
         }
 
+        private void UncheckAllRadioButtons(RadioButton radioButtonToNotUncheck)
+        {
+            foreach (RadioButton radioButton in colorConversionAllRadioButtons)
+            {
+                if(radioButton != radioButtonToNotUncheck)
+                {
+                    radioButton.Checked = false;
+                }
+            }
+        }
+
         private void collectionFactorTrackBar_Scroll(object sender, EventArgs e)
         {
             collectionTextFormattingFactor = collectionFactorTrackBar.Value;
@@ -132,6 +168,30 @@ namespace EmbroideryCreator
         {
             titleCharacterLengthToCheck = titleLengthTrackBar.Value;
             titleLengthValueLabel.Text = titleLengthTrackBar.Value.ToString();
+        }
+
+        private void dmcConvertColorRadioButton_CheckedChanged(object sender, EventArgs e)
+        {
+            if (!dmcConvertColorRadioButton.Checked) return;
+
+            UncheckAllRadioButtons(dmcConvertColorRadioButton);
+            colorFamily = ColorFamily.Dmc;
+        }
+
+        private void anchorConvertColorRadioButton_CheckedChanged(object sender, EventArgs e)
+        {
+            if (!anchorConvertColorRadioButton.Checked) return;
+
+            UncheckAllRadioButtons(anchorConvertColorRadioButton);
+            colorFamily = ColorFamily.Anchor;
+        }
+
+        private void noConvertColorRadioButton_CheckedChanged(object sender, EventArgs e)
+        {
+            if (!noConvertColorRadioButton.Checked) return;
+
+            UncheckAllRadioButtons(noConvertColorRadioButton);
+            colorFamily = ColorFamily.None;
         }
     }
 }
