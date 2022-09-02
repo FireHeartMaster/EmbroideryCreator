@@ -369,13 +369,30 @@ namespace EmbroideryCreator
                                             Tuple<int, int> differenceInRealImageSystem = imageAndOperationsData.ConvertFromCoordinatesWithoutHalfValuesToGeneralPositionOnImageWithoutOffset(differenceInCoordinateSystem);
                                             Tuple<int, int> differenceInPictureBoxSystem = ImageTransformations.ConvertFromRealImageToPictureBoxAlternative(baseLayerPictureBox, differenceInRealImageSystem);
 
-                                            selectionToolPictureBox.Location = new Point(selectionToolPictureBoxLocationWhenMouseDownMoving.X + differenceInPictureBoxSystem.Item1,
-                                                                                        selectionToolPictureBoxLocationWhenMouseDownMoving.Y + differenceInPictureBoxSystem.Item2);
+                                            List<Point> listOfPositions = pictureBoxesByVisibilityOrder.Select(pictureBox => pictureBox.Location).ToList();
+                                            var containerLocation = imagesContainerPanel.Location;
+
+                                            //selectionToolPictureBox.Location = new Point(selectionToolPictureBoxLocationWhenMouseDownMoving.X + differenceInPictureBoxSystem.Item1,
+                                            //                                            selectionToolPictureBoxLocationWhenMouseDownMoving.Y + differenceInPictureBoxSystem.Item2);
+                                            //Removing Selection Tool picture box from its parent's children list before changing its position because 
+                                            //all other parents in the hierarchy would move too. So we remove the Selection Tool picture box from this hierarchy
+                                            //before changing its position.
+                                            //Then we add it back to the hierarchy of parents
+                                            Point newLocationRelativeToParent = new Point(selectionToolPictureBoxLocationWhenMouseDownMoving.X + differenceInPictureBoxSystem.Item1,
+                                                                                            selectionToolPictureBoxLocationWhenMouseDownMoving.Y + differenceInPictureBoxSystem.Item2);
+                                            
+                                            var selectionPictureBoxParent = selectionToolPictureBox.Parent;
+                                            selectionPictureBoxParent.Controls.Remove(selectionToolPictureBox);
+                                            selectionToolPictureBox.Location = new Point(newLocationRelativeToParent.X,
+                                                                                            newLocationRelativeToParent.Y);
+                                            selectionPictureBoxParent.Controls.Add(selectionToolPictureBox);
+
+
                                             //drawingToolsControl.selectionToolData.currentPositionPoint = new Tuple<int, int>(drawingToolsControl.selectionToolData.currentPositionPoint.Item1 + differenceInCoordinateSystem.Item1,
                                             //                                                                                    drawingToolsControl.selectionToolData.currentPositionPoint.Item2 + differenceInCoordinateSystem.Item2);
                                             drawingToolsControl.selectionToolData.currentPositionPoint = new Tuple<int, int>(selectionToolCurrentPositionWhenMouseDownMoving.Item1 + differenceInCoordinateSystem.Item1,
                                                                                                                                 selectionToolCurrentPositionWhenMouseDownMoving.Item2 + differenceInCoordinateSystem.Item2);
-
+                                            
                                             roundedRealImagePositionMouseUp = newRoundedRealImagePositionMouseUp;
                                         }
                                         break;
