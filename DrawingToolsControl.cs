@@ -170,6 +170,38 @@ namespace EmbroideryCreator
             return dashedRectangleCompleteImage;
         }
 
+        public Bitmap GenerateDashedRectangle(int width, int height, int positionX, int positionY,
+                                                                int borderThicknessInNumberOfPixels,
+                                                                int gridThicknessInNumberOfPixels,
+                                                                int newPixelSize,
+                                                                int resultingImageWidth,
+                                                                int resultingImageHeight)
+        {
+            float[] dashValues = { newPixelSize * 0.3f, newPixelSize * 0.15f };
+            Pen dashedPen = new Pen(Color.Blue, gridThicknessInNumberOfPixels);
+            dashedPen.DashPattern = dashValues;
+
+            Bitmap dashedRectangleImage = new Bitmap(width * newPixelSize, height * newPixelSize);
+
+            using (Graphics graphics = Graphics.FromImage(dashedRectangleImage))
+            {
+                graphics.DrawRectangle(dashedPen, 0, 0, width * newPixelSize - dashedPen.Width, height * newPixelSize - dashedPen.Width);
+            }
+
+            Bitmap dashedRectangleCompleteImage = new Bitmap(resultingImageWidth, resultingImageHeight);
+
+            int gap = borderThicknessInNumberOfPixels/* - imageAndOperationsData.GridThicknessInNumberOfPixels*/;
+            using (Graphics graphics = Graphics.FromImage(dashedRectangleCompleteImage))
+            {
+                graphics.DrawImage(dashedRectangleImage, gap + positionX * newPixelSize,
+                                                         gap + positionY * newPixelSize,
+                                                         width * newPixelSize - dashedPen.Width,
+                                                         height * newPixelSize - dashedPen.Width);
+            }
+
+            return dashedRectangleCompleteImage;
+        }
+
         public void SetData(ImageAndOperationsData imageAndOperationsData, Tuple<int, int> firstPoint, Tuple<int, int> secondPoint)
         {
             //Here I assume that both first and second points are diagonally opposed
@@ -214,19 +246,22 @@ namespace EmbroideryCreator
 
         public Bitmap GenerateSelectionImage(ImageAndOperationsData imageAndOperationsData, List<Bitmap> images)
         {
+            GC.Collect();
+
             Bitmap combinedImage = ImageTransformations.CombineImagesFromList(images);
 
             //Bitmap selectionImage = new Bitmap((bottomRightPoint.Item1 - topLeftPoint.Item1) * imageAndOperationsData.NewPixelSize, (bottomRightPoint.Item2 - topLeftPoint.Item2) * imageAndOperationsData.NewPixelSize);
 
-            Bitmap selectionImage = new Bitmap(combinedImage);
+            //Bitmap combinedImageNew = new Bitmap(combinedImage);
 
-            int displacement = imageAndOperationsData.BorderThicknessInNumberOfPixels - imageAndOperationsData.GridThicknessInNumberOfPixels;
+            int displacement = imageAndOperationsData.BorderThicknessInNumberOfPixels/* - imageAndOperationsData.GridThicknessInNumberOfPixels*/;
             Rectangle rectangleToCrop = new Rectangle(  displacement + topLeftPoint.Item1 * imageAndOperationsData.NewPixelSize,
                                                         displacement + topLeftPoint.Item2 * imageAndOperationsData.NewPixelSize,
                                                         (bottomRightPoint.Item1 - topLeftPoint.Item1) * imageAndOperationsData.NewPixelSize,
                                                         (bottomRightPoint.Item2 - topLeftPoint.Item2) * imageAndOperationsData.NewPixelSize);
 
-            selectionImage = selectionImage.Clone(rectangleToCrop, selectionImage.PixelFormat);
+            Bitmap selectionImage = combinedImage.Clone(rectangleToCrop, combinedImage.PixelFormat);
+            combinedImage.Dispose();
 
             Bitmap dashedRectangle = GenerateDashedRectangle(imageAndOperationsData, (bottomRightPoint.Item1 - topLeftPoint.Item1), (bottomRightPoint.Item2 - topLeftPoint.Item2), topLeftPoint.Item1, topLeftPoint.Item2);
 
@@ -241,10 +276,85 @@ namespace EmbroideryCreator
                                                     (bottomRightPoint.Item2 - topLeftPoint.Item2) * imageAndOperationsData.NewPixelSize);
             }
 
+            //combinedImageNew.Dispose();
+
             using (Graphics graphics = Graphics.FromImage(selectionImageComplete))
             {
                 graphics.DrawImage(dashedRectangle, 0, 0, selectionImageComplete.Width, selectionImageComplete.Height);
             }
+
+            dashedRectangle.Dispose();
+
+            return selectionImageComplete;
+        }
+
+        public Bitmap GenerateSelectionImageFromRegisteredData(int positionX, int positionY,
+                                                                int borderThicknessInNumberOfPixels, 
+                                                                int gridThicknessInNumberOfPixels, 
+                                                                int newPixelSize, 
+                                                                int resultingImageWidth,
+                                                                int resultingImageHeight)
+        {
+            GC.Collect();
+
+            if (MatrixOfIndexesAndColors == null) return null;
+
+            //Bitmap combinedImage = ImageTransformations.CombineImagesFromList(images);
+
+            ////Bitmap selectionImage = new Bitmap((bottomRightPoint.Item1 - topLeftPoint.Item1) * imageAndOperationsData.NewPixelSize, (bottomRightPoint.Item2 - topLeftPoint.Item2) * imageAndOperationsData.NewPixelSize);
+
+            //Bitmap combinedImageNew = new Bitmap(combinedImage);
+
+            //int displacement = borderThicknessInNumberOfPixels - gridThicknessInNumberOfPixels;
+            //Rectangle rectangleToCrop = new Rectangle(displacement + topLeftPoint.Item1 * newPixelSize,
+            //                                            displacement + topLeftPoint.Item2 * newPixelSize,
+            //                                            (bottomRightPoint.Item1 - topLeftPoint.Item1) * newPixelSize,
+            //                                            (bottomRightPoint.Item2 - topLeftPoint.Item2) * newPixelSize);
+
+            Bitmap selectionImage = new Bitmap( (bottomRightPoint.Item1 - topLeftPoint.Item1) * newPixelSize,
+                                                (bottomRightPoint.Item2 - topLeftPoint.Item2) * newPixelSize);
+
+            using(Graphics graphics = Graphics.FromImage(selectionImage))
+            {
+                for (int i = 0; i < MatrixOfIndexesAndColors.GetLength(0); i++)
+                {
+                    for (int j = 0; j < MatrixOfIndexesAndColors.GetLength(1); j++)
+                    {
+                        Color currentColor = MatrixOfIndexesAndColors[i, j].Item2;
+                        Brush brush = new SolidBrush(currentColor);
+                        graphics.FillRectangle(brush, i * newPixelSize, j * newPixelSize, newPixelSize, newPixelSize);
+                    }
+                }
+            }
+
+            //combinedImageNew.Dispose();
+
+            Bitmap dashedRectangle = GenerateDashedRectangle((bottomRightPoint.Item1 - topLeftPoint.Item1), (bottomRightPoint.Item2 - topLeftPoint.Item2), positionX, positionY,
+                                                                borderThicknessInNumberOfPixels,
+                                                                gridThicknessInNumberOfPixels,
+                                                                newPixelSize,
+                                                                resultingImageWidth,
+                                                                resultingImageHeight);
+
+            Bitmap selectionImageComplete = new Bitmap(resultingImageWidth, resultingImageHeight);
+
+            int gap = borderThicknessInNumberOfPixels/* - imageAndOperationsData.GridThicknessInNumberOfPixels*/;
+            using (Graphics graphics = Graphics.FromImage(selectionImageComplete))
+            {
+                graphics.DrawImage(selectionImage, gap + positionX * newPixelSize,
+                                                    gap + positionY * newPixelSize,
+                                                    (bottomRightPoint.Item1 - topLeftPoint.Item1) * newPixelSize,
+                                                    (bottomRightPoint.Item2 - topLeftPoint.Item2) * newPixelSize);
+            }
+
+            //combinedImageNew.Dispose();
+
+            using (Graphics graphics = Graphics.FromImage(selectionImageComplete))
+            {
+                graphics.DrawImage(dashedRectangle, 0, 0, selectionImageComplete.Width, selectionImageComplete.Height);
+            }
+
+            dashedRectangle.Dispose();
 
             return selectionImageComplete;
         }

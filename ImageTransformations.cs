@@ -421,14 +421,14 @@ namespace EmbroideryCreator
         {
             bool biggerIsWidth = pictureBox.Image.Width > pictureBox.Image.Height;
 
-            float ratio;
+            double ratio;
             if (biggerIsWidth)
             {
-                ratio = ((float)pictureBox.Image.Width) / pictureBox.Size.Width;
+                ratio = ((double)pictureBox.Image.Width) / pictureBox.Size.Width;
             }
             else
             {
-                ratio = ((float)pictureBox.Image.Height) / pictureBox.Size.Height;
+                ratio = ((double)pictureBox.Image.Height) / pictureBox.Size.Height;
             }
 
             double horizontalPosition = realImagePosition.Item1;
@@ -438,6 +438,26 @@ namespace EmbroideryCreator
             Tuple<double, double> pictureBoxPosition = new Tuple<double, double>(
                 ((horizontalPosition - pictureBox.Image.Width * 0.5f) / ratio) + (pictureBox.Size.Width * 0.5f),
                 ((verticalPosition - pictureBox.Image.Height * 0.5f) / ratio) + (pictureBox.Size.Height * 0.5f)
+                );
+
+            return new Tuple<int, int>((int)pictureBoxPosition.Item1, (int)pictureBoxPosition.Item2);
+        }
+
+        public static Tuple<int, int> ConvertFromRealImageToPictureBoxAlternative(PictureBox pictureBox, Tuple<int, int> realImagePosition)
+        {
+            bool biggerIsWidth = pictureBox.Image.Width > pictureBox.Image.Height;
+
+            double ratio;
+            double ratioForHeight = ((double)pictureBox.Image.Height) / pictureBox.Size.Height;
+            double ratioForWidth = ((double)pictureBox.Image.Width) / pictureBox.Size.Width;
+
+            double horizontalPosition = realImagePosition.Item1;
+            double verticalPosition = realImagePosition.Item2;
+
+
+            Tuple<double, double> pictureBoxPosition = new Tuple<double, double>(
+                ((horizontalPosition - pictureBox.Image.Width * 0.5f) / ratioForWidth) + (pictureBox.Size.Width * 0.5f),
+                ((verticalPosition - pictureBox.Image.Height * 0.5f) / ratioForHeight) + (pictureBox.Size.Height * 0.5f)
                 );
 
             return new Tuple<int, int>((int)pictureBoxPosition.Item1, (int)pictureBoxPosition.Item2);

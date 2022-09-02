@@ -243,6 +243,10 @@ namespace EmbroideryCreator
                                     PaintSelection();
                                     break;
 
+                                case SelectionToolState.NothingSelected:
+                                    RegisteredSelectionToSelectionArea();
+                                    break;
+
                                 default:
                                     break;
                             }
@@ -327,6 +331,7 @@ namespace EmbroideryCreator
                                         {
                                             ImageTransformations.GetTopLeftAndBottomRight(roundedRealImagePositionMouseDown, roundedRealImagePositionMouseUp, out Tuple<int, int> topLeftPointFound, out Tuple<int, int> bottomRightPointFound);
 
+                                            selectionToolPictureBox.Image?.Dispose();
                                             selectionToolPictureBox.Image = drawingToolsControl.selectionToolData.GenerateDashedRectangle(imageAndOperationsData, 
                                                                                                                                             bottomRightPointFound.Item1 - topLeftPointFound.Item1, 
                                                                                                                                             bottomRightPointFound.Item2 - topLeftPointFound.Item2,
@@ -336,6 +341,7 @@ namespace EmbroideryCreator
                                         }
                                         else
                                         {
+                                            selectionToolPictureBox.Image?.Dispose();
                                             selectionToolPictureBox.Image = new Bitmap(imageAndOperationsData.ResultingImage.Width, imageAndOperationsData.ResultingImage.Height);
                                         }
 
@@ -361,7 +367,7 @@ namespace EmbroideryCreator
                                             Tuple<int, int> differenceInCoordinateSystem = new Tuple<int, int>(newRoundedRealImagePositionMouseUp.Item1 - roundedRealImagePositionMouseDown.Item1,
                                                                                                                 newRoundedRealImagePositionMouseUp.Item2 - roundedRealImagePositionMouseDown.Item2);
                                             Tuple<int, int> differenceInRealImageSystem = imageAndOperationsData.ConvertFromCoordinatesWithoutHalfValuesToGeneralPositionOnImageWithoutOffset(differenceInCoordinateSystem);
-                                            Tuple<int, int> differenceInPictureBoxSystem = ImageTransformations.ConvertFromRealImageToPictureBox(baseLayerPictureBox, differenceInRealImageSystem);
+                                            Tuple<int, int> differenceInPictureBoxSystem = ImageTransformations.ConvertFromRealImageToPictureBoxAlternative(baseLayerPictureBox, differenceInRealImageSystem);
 
                                             selectionToolPictureBox.Location = new Point(selectionToolPictureBoxLocationWhenMouseDownMoving.X + differenceInPictureBoxSystem.Item1,
                                                                                         selectionToolPictureBoxLocationWhenMouseDownMoving.Y + differenceInPictureBoxSystem.Item2);
@@ -580,7 +586,9 @@ namespace EmbroideryCreator
                                 drawingToolsControl.selectionToolData.currentPositionPoint = topLeftPoint;
 
                                 drawingToolsControl.selectionToolData.SetData(imageAndOperationsData, topLeftPoint, bottomRightPoint);
+                                var currentSelectionImage = selectionToolPictureBox.Image;
                                 selectionToolPictureBox.Image = drawingToolsControl.selectionToolData.GenerateSelectionImage(imageAndOperationsData, pictureBoxesByVisibilityOrder.Where(pictureBox => pictureBox.Visible).Select(pictureBox => pictureBox.Image as Bitmap).ToList());
+                                currentSelectionImage?.Dispose();
                                 drawingToolsControl.selectionToolData.PaintSelectedRegionWithEmptyColor(imageAndOperationsData, topLeftPoint);
                                 RegisterChange();
 
@@ -755,6 +763,7 @@ namespace EmbroideryCreator
                                 PaintSelection();
 
                                 drawingToolsControl.currentSelectionToolState = SelectionToolState.NothingSelected;
+                                selectionToolPictureBox.Image?.Dispose();
                                 selectionToolPictureBox.Image = new Bitmap(imageAndOperationsData.ResultingImage.Width, imageAndOperationsData.ResultingImage.Height);
                             }
                             else
@@ -787,6 +796,30 @@ namespace EmbroideryCreator
                 drawingToolsControl.selectionToolData.PaintMatrix(this, imageAndOperationsData, drawingToolsControl.selectionToolData.currentPositionPoint);
                 RegisterChange();
             }
+        }
+
+        private void RegisteredSelectionToSelectionArea()
+        {
+            if (imageAndOperationsData == null || imageAndOperationsData.ResultingImage == null) return;
+            if (drawingToolsControl.selectionToolData.MatrixOfIndexesAndColors == null) return;
+
+            ImageTransformations.GetTopLeftAndBottomRight(drawingToolsControl.selectionToolData.topLeftPoint, drawingToolsControl.selectionToolData.bottomRightPoint, out Tuple<int, int> topLeftPointFound, out Tuple<int, int> bottomRightPointFound);
+
+            drawingToolsControl.selectionToolData.currentPositionPoint = new Tuple<int, int>(0, 0);
+
+            selectionToolPictureBox.Image?.Dispose();
+            selectionToolPictureBox.Image = drawingToolsControl.selectionToolData.GenerateSelectionImageFromRegisteredData(0, 0, 
+                                                                                                                            imageAndOperationsData.BorderThicknessInNumberOfPixels,
+                                                                                                                            imageAndOperationsData.GridThicknessInNumberOfPixels,
+                                                                                                                            imageAndOperationsData.NewPixelSize,
+                                                                                                                            imageAndOperationsData.ResultingImage.Width,
+                                                                                                                            imageAndOperationsData.ResultingImage.Height);
+            selectionToolPictureBox.Location = new Point(0, 0); //reset picture box position
+
+            roundedRealImagePositionMouseDown = new Tuple<int, int>(0, 0);
+            roundedRealImagePositionMouseUp = new Tuple<int, int>(0, 0);
+
+            drawingToolsControl.currentSelectionToolState = SelectionToolState.Selected;
         }
 
         private void PickColor(Tuple<int, int> realImagePosition, bool roundToClosest = true)
