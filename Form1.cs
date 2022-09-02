@@ -230,6 +230,25 @@ namespace EmbroideryCreator
                         QuickSaveButtonClicked();
                     }
                     break;
+                case Keys.V:
+                    if (ModifierKeys.HasFlag(Keys.Control))
+                    {
+                        //Ctrl + V
+                        if(drawingToolsControl.currentDrawingTool == DrawingToolInUse.SelectionTool)
+                        {
+                            switch (drawingToolsControl.currentSelectionToolState)
+                            {
+                                case SelectionToolState.Selected:
+                                case SelectionToolState.Moving:
+                                    PaintSelection();
+                                    break;
+
+                                default:
+                                    break;
+                            }
+                        }
+                    }
+                    break;
 
                 default:
                     break;
@@ -563,6 +582,7 @@ namespace EmbroideryCreator
                                 drawingToolsControl.selectionToolData.SetData(imageAndOperationsData, topLeftPoint, bottomRightPoint);
                                 selectionToolPictureBox.Image = drawingToolsControl.selectionToolData.GenerateSelectionImage(imageAndOperationsData, pictureBoxesByVisibilityOrder.Where(pictureBox => pictureBox.Visible).Select(pictureBox => pictureBox.Image as Bitmap).ToList());
                                 drawingToolsControl.selectionToolData.PaintSelectedRegionWithEmptyColor(imageAndOperationsData, topLeftPoint);
+                                RegisterChange();
 
                                 drawingToolsControl.currentSelectionToolState = SelectionToolState.Selected;
                             }
@@ -732,12 +752,7 @@ namespace EmbroideryCreator
                                                                                                     bottomRightPoint.Item2 - topLeftPoint.Item2);
                             if (!isInsideSelectionBox)
                             {
-                                
-                                if(drawingToolsControl.selectionToolData.MatrixOfIndexesAndColors != null)
-                                {
-                                    drawingToolsControl.selectionToolData.PaintMatrix(this, imageAndOperationsData, drawingToolsControl.selectionToolData.currentPositionPoint);
-                                    RegisterChange();
-                                }
+                                PaintSelection();
 
                                 drawingToolsControl.currentSelectionToolState = SelectionToolState.NothingSelected;
                                 selectionToolPictureBox.Image = new Bitmap(imageAndOperationsData.ResultingImage.Width, imageAndOperationsData.ResultingImage.Height);
@@ -763,6 +778,15 @@ namespace EmbroideryCreator
             mainPictureBox.Image = imageAndOperationsData.ResultingImage;
             threadPictureBox.Image = imageAndOperationsData.ThreadImage;
             symbolsPictureBox.Image = imageAndOperationsData.SymbolsImage;
+        }
+
+        private void PaintSelection()
+        {
+            if (drawingToolsControl.selectionToolData.MatrixOfIndexesAndColors != null)
+            {
+                drawingToolsControl.selectionToolData.PaintMatrix(this, imageAndOperationsData, drawingToolsControl.selectionToolData.currentPositionPoint);
+                RegisterChange();
+            }
         }
 
         private void PickColor(Tuple<int, int> realImagePosition, bool roundToClosest = true)
@@ -855,6 +879,7 @@ namespace EmbroideryCreator
         private void processImageButton_Click(object sender, EventArgs e)
         {
             ProcessImage();
+            GC.Collect();
         }
 
         private void ProcessImage(int numberOfColors = -1)
@@ -1290,12 +1315,14 @@ namespace EmbroideryCreator
             mainPictureBox.Image = imageAndOperationsData.ResultingImage;
             threadPictureBox.Image = imageAndOperationsData.ThreadImage;
             symbolsPictureBox.Image = imageAndOperationsData.SymbolsImage;
+            RegisterChange();
         }
 
         public void UpdateBackstitchColorByIndex(int index, Color newColor)
         {
             imageAndOperationsData.UpdateBackstitchColorByIndex(index, newColor);
             backstitchPictureBox.Image = imageAndOperationsData.BackstitchImage;
+            RegisterChange();
         }
 
         private void mergeColorsButton_Click(object sender, EventArgs e)

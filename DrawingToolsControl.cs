@@ -249,12 +249,12 @@ namespace EmbroideryCreator
             return selectionImageComplete;
         }
 
-        public void PaintMatrix(MainForm mainForm, ImageAndOperationsData imageAndOperationsData, Tuple<int, int> currentPopLeftPositionOfTheSelection)
+        public void PaintMatrix(MainForm mainForm, ImageAndOperationsData imageAndOperationsData, Tuple<int, int> currentTopLeftPositionOfTheSelection)
         {
-            int localI = currentPopLeftPositionOfTheSelection.Item1;
+            int localI = currentTopLeftPositionOfTheSelection.Item1;
             for (int i = 0; i < MatrixOfIndexesAndColors.GetLength(0); i++, localI++)
             {
-                int localJ = currentPopLeftPositionOfTheSelection.Item2;
+                int localJ = currentTopLeftPositionOfTheSelection.Item2;
                 for (int j = 0; j < MatrixOfIndexesAndColors.GetLength(1); j++, localJ++)
                 {
                     Tuple<int, int> size = imageAndOperationsData.GetSizeInPixels();
