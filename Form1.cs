@@ -484,6 +484,11 @@ namespace EmbroideryCreator
             int newHeight = (int)((pictureBoxUnscaledSize.Height * (100 + currentScrollAmount)) / 100);
 
             PictureBox parentPictureBox = pictureBoxesByVisibilityOrder[0];
+            int oldWidth = parentPictureBox.Width;
+            int oldHeight = parentPictureBox.Height;
+
+            int selectionToolPictureBoxOldPositionX = selectionToolPictureBox.Location.X;
+            int selectionToolPictureBoxOldPositionY = selectionToolPictureBox.Location.Y;
 
             int newHorizontalPosition = (int)((((double)newWidth) / parentPictureBox.Width) * (parentPictureBox.Left - e.Location.X) + e.Location.X);
             int newVerticalPosition = (int)((((double)newHeight) / parentPictureBox.Height) * (parentPictureBox.Top - e.Location.Y) + e.Location.Y);
@@ -511,6 +516,8 @@ namespace EmbroideryCreator
                 CheckPictureBoxBordersAppearing(parentPictureBox, ref newHorizontalPosition, ref newVerticalPosition);
                 parentPictureBox.Location = new Point(newHorizontalPosition, newVerticalPosition);
             }
+
+            selectionToolPictureBox.Location = new Point((int)((((double)parentPictureBox.Width) / oldWidth) * selectionToolPictureBoxOldPositionX), (int)((((double)parentPictureBox.Height) / oldHeight) * selectionToolPictureBoxOldPositionY));
         }
 
         private void MainForm_Deactivate(object sender, EventArgs e)
