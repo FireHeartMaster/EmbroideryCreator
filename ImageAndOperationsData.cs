@@ -1124,7 +1124,14 @@ namespace EmbroideryCreator
         {
             if (!dictionaryOfSymbolByIndex.ContainsKey(newColorIndex))
             {
-                dictionaryOfSymbolByIndex.Add(newColorIndex, GetNextSymbol());
+                if (colorMeans[newColorIndex].A != 0)
+                {
+                    dictionaryOfSymbolByIndex.Add(newColorIndex, GetNextSymbol());
+                }
+                else
+                {
+                    dictionaryOfSymbolByIndex.Add(newColorIndex, GetSquareOfColor(NewPixelSize, colorMeans[newColorIndex]));
+                }
             }
         }
 
@@ -1132,7 +1139,14 @@ namespace EmbroideryCreator
         {
             if (!dictionaryOfColoredCrossByIndex.ContainsKey(newColorIndex))
             {
-                dictionaryOfColoredCrossByIndex.Add(newColorIndex, GenerateCrossOfSelectedColor(colorMeans[newColorIndex]));
+                if (colorMeans[newColorIndex].A != 0)
+                {
+                    dictionaryOfColoredCrossByIndex.Add(newColorIndex, GenerateCrossOfSelectedColor(colorMeans[newColorIndex]));
+                }
+                else
+                {
+                    dictionaryOfColoredCrossByIndex.Add(newColorIndex, GetSquareOfColor(NewPixelSize, colorMeans[newColorIndex]));
+                }
             }
         }
 
