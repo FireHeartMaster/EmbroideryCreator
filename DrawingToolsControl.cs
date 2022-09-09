@@ -210,6 +210,9 @@ namespace EmbroideryCreator
             topLeftPoint = topLeftPointFound;
             bottomRightPoint = bottomRightPointFound;
 
+            topLeftPoint = new Tuple<int, int>(ImageTransformations.Clamp(topLeftPoint.Item1, 0, imageAndOperationsData.GetSizeInPixels().Item1), ImageTransformations.Clamp(topLeftPoint.Item2, 0, imageAndOperationsData.GetSizeInPixels().Item2));
+            bottomRightPoint = new Tuple<int, int>(ImageTransformations.Clamp(bottomRightPoint.Item1, 0, imageAndOperationsData.GetSizeInPixels().Item1), ImageTransformations.Clamp(bottomRightPoint.Item2, 0, imageAndOperationsData.GetSizeInPixels().Item2));
+
             var colors = imageAndOperationsData.GetCrossStitchColors();
 
             MatrixOfIndexesAndColors = new Tuple<int, Color>[bottomRightPoint.Item1 - topLeftPoint.Item1, bottomRightPoint.Item2 - topLeftPoint.Item2];
@@ -311,10 +314,15 @@ namespace EmbroideryCreator
             //                                            (bottomRightPoint.Item1 - topLeftPoint.Item1) * newPixelSize,
             //                                            (bottomRightPoint.Item2 - topLeftPoint.Item2) * newPixelSize);
 
-            Bitmap selectionImage = new Bitmap( (bottomRightPoint.Item1 - topLeftPoint.Item1) * newPixelSize,
-                                                (bottomRightPoint.Item2 - topLeftPoint.Item2) * newPixelSize);
+            Bitmap selectionImage = new Bitmap( MatrixOfIndexesAndColors.GetLength(0) * newPixelSize,
+                                                MatrixOfIndexesAndColors.GetLength(1) * newPixelSize);
 
-            using(Graphics graphics = Graphics.FromImage(selectionImage))
+            topLeftPoint = new Tuple<int, int>(0, 0);
+            bottomRightPoint = new Tuple<int, int>(MatrixOfIndexesAndColors.GetLength(0), MatrixOfIndexesAndColors.GetLength(1));
+
+            currentPositionPoint = new Tuple<int, int>(0, 0);
+
+            using (Graphics graphics = Graphics.FromImage(selectionImage))
             {
                 for (int i = 0; i < MatrixOfIndexesAndColors.GetLength(0); i++)
                 {

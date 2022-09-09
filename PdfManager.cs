@@ -56,7 +56,7 @@ namespace EmbroideryCreator
         private XFont obesrvationAboutRoundingFont = new XFont("Verdana", 7, XFontStyle.Regular);
         string observationsAboutRoundingNumberOfSkeins = "The number of skeins is an approximated value assuming a 16-count Aida cloth with two strands of floss, it can vary depending on several factors.";
 
-        Dictionary<int, XImage> dictionaryOfXimageByIndex;
+        Dictionary<int, XImage> dictionaryOfXimageSymbolsByIndex;
         Dictionary<int, XImage> dictionaryOfThreadCrossXimageByIndex;
 
         private XPoint startingPointForDrawings = new XPoint(50, 210);
@@ -290,19 +290,19 @@ namespace EmbroideryCreator
 
             this.colorFamilyConversion = colorFamilyConversion;
 
-            dictionaryOfXimageByIndex = new Dictionary<int, XImage>();
+            dictionaryOfXimageSymbolsByIndex = new Dictionary<int, XImage>();
 
             foreach (KeyValuePair<int, Bitmap> pair in dictionaryOfSymbolByColor)
             {
-                dictionaryOfXimageByIndex.Add(pair.Key, PdfManager.ConvertBitmapToXimage(pair.Value));
+                dictionaryOfXimageSymbolsByIndex.Add(pair.Key, PdfManager.ConvertBitmapToXimage(pair.Value));
             }
 
-            CreatePageWithCompleteDrawing(document, matrixOfNewColors, colorMeans, backstitchLines, backstitchColors, dictionaryOfXimageByIndex, maxHorizontalNumberOfSquares, maxVerticalNumberOfSquares, sizeOfEachSquare, startingPointForDrawings.Y);
+            CreatePageWithCompleteDrawing(document, matrixOfNewColors, colorMeans, backstitchLines, backstitchColors, dictionaryOfXimageSymbolsByIndex, maxHorizontalNumberOfSquares, maxVerticalNumberOfSquares, sizeOfEachSquare, startingPointForDrawings.Y);
 
-            CreateAllDrawingPages(document, matrixOfNewColors, colorMeans, backstitchLines, backstitchColors, dictionaryOfXimageByIndex);
+            CreateAllDrawingPages(document, matrixOfNewColors, colorMeans, backstitchLines, backstitchColors, dictionaryOfXimageSymbolsByIndex);
 
             //CreatePagesWithListsOfColors(document, colorMeans, backstitchColors, dictionaryOfXimageByIndex);
-            CreatePagesWithListsOfColors(document, colorMeans, positionsOfEachColor, backstitchLines, backstitchColors, dictionaryOfXimageByIndex);
+            CreatePagesWithListsOfColors(document, colorMeans, positionsOfEachColor, backstitchLines, backstitchColors, dictionaryOfXimageSymbolsByIndex);
 
             
             for (int i = 0; i < graphicsOfAllPages.Count; i++)
@@ -351,11 +351,11 @@ namespace EmbroideryCreator
             this.collectionCharacterLengthToCheck = collectionCharacterLengthToCheck;
             this.titleCharacterLengthToCheck = titleCharacterLengthToCheck;
 
-            dictionaryOfXimageByIndex = new Dictionary<int, XImage>();
+            dictionaryOfXimageSymbolsByIndex = new Dictionary<int, XImage>();
 
             foreach (KeyValuePair<int, Bitmap> pair in dictionaryOfSymbolByColor)
             {
-                dictionaryOfXimageByIndex.Add(pair.Key, PdfManager.ConvertBitmapToXimage(pair.Value));
+                dictionaryOfXimageSymbolsByIndex.Add(pair.Key, PdfManager.ConvertBitmapToXimage(pair.Value));
             }
 
             dictionaryOfThreadCrossXimageByIndex = new Dictionary<int, XImage>();
@@ -368,7 +368,7 @@ namespace EmbroideryCreator
             allPages.Clear();
             graphicsOfAllPages.Clear();
 
-            XGraphics firstPageGraphics = CreatePageWithCompleteDrawing(document, matrixOfNewColors, colorMeans, backstitchLines, backstitchColors, dictionaryOfXimageByIndex, maxHorizontalNumberOfSquaresAlternativeDesignFirstPage, maxVerticalNumberOfSquaresAlternativeDesignFirstPage, sizeOfEachSquareAlternativeDesignFirstPage, verticalStartingPointFirstPage, true, false, false, true, false, true, true);
+            XGraphics firstPageGraphics = CreatePageWithCompleteDrawing(document, matrixOfNewColors, colorMeans, backstitchLines, backstitchColors, dictionaryOfXimageSymbolsByIndex, maxHorizontalNumberOfSquaresAlternativeDesignFirstPage, maxVerticalNumberOfSquaresAlternativeDesignFirstPage, sizeOfEachSquareAlternativeDesignFirstPage, verticalStartingPointFirstPage, true, false, false, true, false, true, true);
 
             firstPageGraphics.DrawImage(ConvertBitmapToXimage(Properties.Resources.BlackBlur), blurryImageAlternativeDesignPosition);
             firstPageGraphics.DrawImage(ConvertBitmapToXimage(Properties.Resources.BlackBlur2), otherBlurryImageAlternativeDesignPosition);
@@ -398,14 +398,14 @@ namespace EmbroideryCreator
             firstPageGraphics.DrawString(brandNameLateralText, brandNameLateralTextFirstPageFont, brandNameLateralTextBrush, new XRect(0, 0, 297.5, 230), XStringFormats.Center);
             firstPageGraphics.RotateAtTransform(-90, new XPoint(297.5, 372));
 
-            CreatePagesWithListsOfColorsAlternativeDesign(document, matrixOfNewColors, colorMeans, positionsOfEachColor, backstitchLines, backstitchColors, dictionaryOfXimageByIndex);
+            CreatePagesWithListsOfColorsAlternativeDesign(document, matrixOfNewColors, colorMeans, positionsOfEachColor, backstitchLines, backstitchColors, dictionaryOfXimageSymbolsByIndex);
 
             subTitleAlternativeDesignPatternPage = "Colored";
-            CreatePageWithCompleteDrawing(document, matrixOfNewColors, colorMeans, backstitchLines, backstitchColors, dictionaryOfXimageByIndex, maxHorizontalNumberOfSquaresAlternativeDesign, maxVerticalNumberOfSquaresAlternativeDesign, sizeOfEachSquareAlternativeDesign, startingPointForDrawingsAlternativeDesign.Y, true, false, true, true, true, false, false, false);
+            CreatePageWithCompleteDrawing(document, matrixOfNewColors, colorMeans, backstitchLines, backstitchColors, dictionaryOfXimageSymbolsByIndex, maxHorizontalNumberOfSquaresAlternativeDesign, maxVerticalNumberOfSquaresAlternativeDesign, sizeOfEachSquareAlternativeDesign, startingPointForDrawingsAlternativeDesign.Y, true, false, true, true, true, false, false, false);
             subTitleAlternativeDesignPatternPage = "Colored with symbols";
-            CreatePageWithCompleteDrawing(document, matrixOfNewColors, colorMeans, backstitchLines, backstitchColors, dictionaryOfXimageByIndex, maxHorizontalNumberOfSquaresAlternativeDesign, maxVerticalNumberOfSquaresAlternativeDesign, sizeOfEachSquareAlternativeDesign, startingPointForDrawingsAlternativeDesign.Y, true, true, true, true, true, false, false, false);
+            CreatePageWithCompleteDrawing(document, matrixOfNewColors, colorMeans, backstitchLines, backstitchColors, dictionaryOfXimageSymbolsByIndex, maxHorizontalNumberOfSquaresAlternativeDesign, maxVerticalNumberOfSquaresAlternativeDesign, sizeOfEachSquareAlternativeDesign, startingPointForDrawingsAlternativeDesign.Y, true, true, true, true, true, false, false, false);
             subTitleAlternativeDesignPatternPage = "black and white symbols";
-            CreatePageWithCompleteDrawing(document, matrixOfNewColors, colorMeans, backstitchLines, backstitchColors, dictionaryOfXimageByIndex, maxHorizontalNumberOfSquaresAlternativeDesign, maxVerticalNumberOfSquaresAlternativeDesign, sizeOfEachSquareAlternativeDesign, startingPointForDrawingsAlternativeDesign.Y, false, true, true, true, true, false, false, false);
+            CreatePageWithCompleteDrawing(document, matrixOfNewColors, colorMeans, backstitchLines, backstitchColors, dictionaryOfXimageSymbolsByIndex, maxHorizontalNumberOfSquaresAlternativeDesign, maxVerticalNumberOfSquaresAlternativeDesign, sizeOfEachSquareAlternativeDesign, startingPointForDrawingsAlternativeDesign.Y, false, true, true, true, true, false, false, false);
 
             //CreateFirstPage(document, matrixOfNewColors, colorMeans, backstitchLines, backstitchColors, dictionaryOfXimageByIndex);
 
@@ -805,7 +805,8 @@ namespace EmbroideryCreator
             string colorsText = "COLORS: ";
             if(colorMeans.Count > 0)
             {
-                colorsText += (colorMeans[0].A == 0 ? (colorMeans.Count - 1) : colorMeans.Count).ToString() + " colors";
+                int numberOfCrossStitchColors = (colorMeans[0].A == 0 ? (colorMeans.Count - 1) : colorMeans.Count);
+                colorsText += numberOfCrossStitchColors.ToString() + " color" + (numberOfCrossStitchColors > 1 ? "s" : "");
                 if(backstitchColors.Count > 0)
                 {
                     colorsText += "(cross stitch) + ";
@@ -813,7 +814,7 @@ namespace EmbroideryCreator
             }
             if (backstitchColors.Count > 0)
             {
-                colorsText += backstitchColors.Count.ToString() + " colors (backstitch)";
+                colorsText += backstitchColors.Count.ToString() + " color" + (backstitchColors.Count > 1 ? "s" : "") + " (backstitch)";
             }
             pageGraphics.DrawString(colorsText, summaryFontAlternativeDesign, pageSetupBrush, new XRect(new XPoint(summaryPositionAlternativeDesign.X, summaryPositionAlternativeDesign.Y + summaryFontAlternativeDesign.Size + summaryVerticalPaddingSizeAlternativeDesign), new XSize(summaryFontAlternativeDesign.Size, summaryFontAlternativeDesign.Size)), XStringFormats.TopLeft);
             pageGraphics.DrawString("CANVAS: " + "16-count Aida", summaryFontAlternativeDesign, pageSetupBrush, new XRect(new XPoint(summaryPositionAlternativeDesign.X, summaryPositionAlternativeDesign.Y + 2 * (summaryFontAlternativeDesign.Size + summaryVerticalPaddingSizeAlternativeDesign)), new XSize(summaryFontAlternativeDesign.Size, summaryFontAlternativeDesign.Size)), XStringFormats.TopLeft);
