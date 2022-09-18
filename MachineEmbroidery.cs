@@ -107,6 +107,9 @@ namespace EmbroideryCreator
                     }
                     else
                     {
+                        //Trim before changing color, this might be done through several jumps that lead to nowhere
+                        TrimThread(bytesFromStitch);
+
                         //This is the usual color change command
                         bytesFromStitch.Add(0);
                         bytesFromStitch.Add(0);
@@ -117,7 +120,11 @@ namespace EmbroideryCreator
                 case StitchType.JumpStitch:
                     positionToJumpToX = currentStitch.Item2.Item1;
                     positionToJumpToY = currentStitch.Item2.Item2;
-                    JumpToPositionAndGetBytes(currentStitch, sizeOfEachPixel, ref currentPositionX, ref currentPositionY, maxJumpSize, bytesFromStitch, positionToJumpToX, positionToJumpToY);
+                    if (currentPositionX != positionToJumpToX && currentPositionY != positionToJumpToY) //otherwise it will be a jump of delta of (0,0)
+                    {
+                        TrimThread(bytesFromStitch);
+                    }
+                        JumpToPositionAndGetBytes(currentStitch, sizeOfEachPixel, ref currentPositionX, ref currentPositionY, maxJumpSize, bytesFromStitch, positionToJumpToX, positionToJumpToY);
                     break;
                 case StitchType.SequinMode:
                     StitchAtPosition(currentStitch, sizeOfEachPixel, ref currentPositionX, ref currentPositionY, bytesFromStitch);
@@ -128,6 +135,14 @@ namespace EmbroideryCreator
             }
 
             return bytesFromStitch;
+        }
+
+        private void TrimThread(List<byte> bytesFromStitch)
+        {
+            //These jumps go around and come back to the same spot, this is just to make the machine hit its jump limit and then trim the thread
+            ConvertCommandToByte(StitchType.JumpStitch, bytesFromStitch, 2, 2);
+            ConvertCommandToByte(StitchType.JumpStitch, bytesFromStitch, -4, -4);
+            ConvertCommandToByte(StitchType.JumpStitch, bytesFromStitch, 2, 2);
         }
 
         private void StitchAtPosition(Tuple<StitchType, Tuple<int, int>> currentStitch, int sizeOfEachPixel, ref int currentPositionX, ref int currentPositionY, List<byte> bytesFromStitch)
@@ -469,6 +484,10 @@ namespace EmbroideryCreator
 
         private void CreateStitchForColorPathStartingByCertainTypeOfDiagonal(List<Tuple<int, int>> positionsForTheSpecifiedColor, LinkedList<Tuple<StitchType, Tuple<int, int>>> listOfStitches, bool startsAtEvenDiagonalParity, int horizontalSize, int verticalSize)
         {
+            listOfStitches.AddLast(new Tuple<StitchType, Tuple<int, int>>(StitchType.JumpStitch, new Tuple<int, int>(0, 0)));
+            listOfStitches.AddLast(new Tuple<StitchType, Tuple<int, int>>(StitchType.JumpStitch, new Tuple<int, int>(10, 0)));
+            listOfStitches.AddLast(new Tuple<StitchType, Tuple<int, int>>(StitchType.JumpStitch, new Tuple<int, int>(0, 0)));
+
             //Create dictionary/hashset of positions of each color
             HashSet<Tuple<int, int>> allPositionsForCurrentColor = new HashSet<Tuple<int, int>>();//positionsForTheSpecifiedColor.ToHashSet<Tuple<int, int>>();
             int halfHorizontalSize = (int)(horizontalSize * 0.5);
@@ -503,6 +522,8 @@ namespace EmbroideryCreator
                     listOfStitches.AddLast(new Tuple<StitchType, Tuple<int, int>>(StitchType.NormalStitch, node));
                 }
             }
+
+            //listOfStitches.AddLast(new Tuple<StitchType, Tuple<int, int>>(StitchType.JumpStitch, new Tuple<int, int>(0, 0)));
         }
 
         private LinkedList<Tuple<int, int>> CreateShortestPath(HashSet<Tuple<int, int>> currentConnectedRegion, bool startsAtRightDiagonal)

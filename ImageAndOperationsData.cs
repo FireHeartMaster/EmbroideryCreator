@@ -1524,7 +1524,7 @@ namespace EmbroideryCreator
 
             //}
 
-            machineEmbroidery.CreatePathAndDstFile(pathToSaveWithoutExtension, positionsOfEachColorToEmbroider, 30, matrixOfNewColors.GetLength(0), matrixOfNewColors.GetLength(1));
+            machineEmbroidery.CreatePathAndDstFile(pathToSaveWithoutExtension, positionsOfEachColorToEmbroider, 18, matrixOfNewColors.GetLength(0), matrixOfNewColors.GetLength(1));
         }
     }
 
