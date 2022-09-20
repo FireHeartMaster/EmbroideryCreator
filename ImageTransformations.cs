@@ -463,6 +463,11 @@ namespace EmbroideryCreator
             return new Tuple<int, int>((int)pictureBoxPosition.Item1, (int)pictureBoxPosition.Item2);
         }
 
+        public static float CalculateDistanceBetweenPoints(Tuple<float, float> firstPoint, Tuple<float, float> secondPoint)
+        {
+            return NormOfVector(new Tuple<float, float>(firstPoint.Item1 - secondPoint.Item1, firstPoint.Item2 - secondPoint.Item2));
+        }
+
         public static float CalculateDistanceOfPointToLine(Tuple<float, float> referencePoint, Tuple<float, float> lineStartingPoint, Tuple<float, float> lineEndingPoint)
         {
             float numerator = (lineEndingPoint.Item1 - lineStartingPoint.Item1) * (referencePoint.Item2 - lineStartingPoint.Item2) - (lineEndingPoint.Item2 - lineStartingPoint.Item2) * (referencePoint.Item1 - lineStartingPoint.Item1);
@@ -488,6 +493,11 @@ namespace EmbroideryCreator
             float zResult = firstVector.Item1 * secondVector.Item2 - firstVector.Item2 * secondVector.Item1;
 
             return new Tuple<float, float, float>(xResult, yResult, zResult);
+        }
+
+        public static float NormOfVector(Tuple<float, float> vector)
+        {
+            return (float)Math.Sqrt(vector.Item1 * vector.Item1 + vector.Item2 * vector.Item2);
         }
 
         public static float NormOfVector(Tuple<float, float, float> vector)
@@ -671,6 +681,14 @@ namespace EmbroideryCreator
                     pointToCheck.Item1 <= rectangleTopLeftCorner.Item1 + width &&
                     pointToCheck.Item2 >= rectangleTopLeftCorner.Item2 &&
                     pointToCheck.Item2 <= rectangleTopLeftCorner.Item2 + height;
+        }
+
+        public static bool IsPointInsideRectangleExclusive(Tuple<double, double> pointToCheck, Tuple<double, double> rectangleTopLeftCorner, double width, double height)
+        {
+            return pointToCheck.Item1 > rectangleTopLeftCorner.Item1 &&
+                    pointToCheck.Item1 < rectangleTopLeftCorner.Item1 + width &&
+                    pointToCheck.Item2 > rectangleTopLeftCorner.Item2 &&
+                    pointToCheck.Item2 < rectangleTopLeftCorner.Item2 + height;
         }
 
         //This function doesn't check the slope and alignment of the points

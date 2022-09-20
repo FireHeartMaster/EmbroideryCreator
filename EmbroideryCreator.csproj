@@ -111,6 +111,7 @@
     <Compile Include="SavePdfDialog.Designer.cs">
       <DependentUpon>SavePdfDialog.cs</DependentUpon>
     </Compile>
+    <Compile Include="SelectionToolData.cs" />
     <Compile Include="SerializerHelper.cs" />
     <Compile Include="TableColor.cs" />
     <Compile Include="UndoStateManager.cs" />

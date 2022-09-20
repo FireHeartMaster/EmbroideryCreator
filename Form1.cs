@@ -814,13 +814,14 @@ namespace EmbroideryCreator
             mainPictureBox.Image = imageAndOperationsData.ResultingImage;
             threadPictureBox.Image = imageAndOperationsData.ThreadImage;
             symbolsPictureBox.Image = imageAndOperationsData.SymbolsImage;
+            backstitchPictureBox.Image = imageAndOperationsData.BackstitchImage;
         }
 
         private void PaintSelection()
         {
             if (drawingToolsControl.selectionToolData.MatrixOfIndexesAndColors != null)
             {
-                drawingToolsControl.selectionToolData.PaintMatrix(this, imageAndOperationsData, drawingToolsControl.selectionToolData.currentPositionPoint);
+                drawingToolsControl.selectionToolData.PaintSelectionRectangle(this, imageAndOperationsData, drawingToolsControl.selectionToolData.currentPositionPoint);
                 RegisterChange();
             }
         }
@@ -1472,7 +1473,7 @@ namespace EmbroideryCreator
             imageAndOperationsData.AddNewColor(newColor);
         }
 
-        private void AddNewBackstitchColor(Color newColor)
+        public void AddNewBackstitchColor(Color newColor)
         {
             int indexToAdd = imageAndOperationsData.AddNewBackstitchColor(newColor);
 

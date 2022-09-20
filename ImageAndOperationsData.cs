@@ -40,6 +40,8 @@ namespace EmbroideryCreator
         public List<Color> GetBackstitchColors() => backstitchColors.Values.ToList<Color>();
         public Dictionary<int, List<Tuple<int, int>>> GetPositionsOfEachColor() => positionsOfEachColor;
 
+        public Dictionary<int, HashSet<BackstitchLine>> GetBackstitchLines() => backstitchLines;
+
         public int BorderThicknessInNumberOfPixels { get; private set; } = 1;
         public int GridThicknessInNumberOfPixels { get; private set; } = 1;
 
@@ -62,7 +64,7 @@ namespace EmbroideryCreator
             }
         }
 
-        public int GetIndexFromColor(Color color)
+        public int GetIndexFromCrossStitchColor(Color color)
         {
             if (colorMeans.Count == 0) return -1;
 
@@ -72,6 +74,18 @@ namespace EmbroideryCreator
             }
 
             return 0;
+        }
+
+        public int GetIndexFromBackstitchColor(Color color)
+        {
+            if (backstitchColors.Count == 0) return -1;
+
+            for (int i = backstitchColors.Count - 1; i >= 0; i--)
+            {
+                if (backstitchColors[i].A == color.A && backstitchColors[i].R == color.R && backstitchColors[i].G == color.G && backstitchColors[i].B == color.B) return i;
+            }
+
+            return -1;
         }
 
         public void ChangeColorByIndex(int indexToUpdate, Color newColor)
@@ -1269,7 +1283,7 @@ namespace EmbroideryCreator
             }
         }
 
-        public void AddNewBackstitchLine(int indexToAddLine, Tuple<float, float> startingPosition, Tuple<float, float> endingPosition)
+        public void AddNewBackstitchLine(int indexToAddLine, Tuple<float, float> startingPosition, Tuple<float, float> endingPosition, bool paintNewBackstitchLine = true)
         {
             if (startingPosition == endingPosition) return;
             if (Math.Round(startingPosition.Item1, 1) == Math.Round(endingPosition.Item1, 1) && Math.Round(startingPosition.Item2, 1) == Math.Round(endingPosition.Item2, 1)) return;
@@ -1280,7 +1294,10 @@ namespace EmbroideryCreator
                 BackstitchLine newBackstitchLine = new BackstitchLine(startingPosition, endingPosition);
                 backstitchLines[indexToAddLine].Add(newBackstitchLine);
 
-                PaintBackstitchLine(backstitchColors[indexToAddLine], newBackstitchLine);
+                if (paintNewBackstitchLine)
+                {
+                    PaintBackstitchLine(backstitchColors[indexToAddLine], newBackstitchLine);
+                }
             }
         }
 
@@ -1326,7 +1343,7 @@ namespace EmbroideryCreator
             return new Tuple<int, BackstitchLine>(indexFound, backstitchLineFound);
         }
 
-        private void RemoveBackstitchLine(int indexToRemoveLine, BackstitchLine backstitchLine)
+        public void RemoveBackstitchLine(int indexToRemoveLine, BackstitchLine backstitchLine)
         {
             if (backstitchLine.startingPosition.Item1 >= 0 && backstitchLine.startingPosition.Item1 < matrixOfNewColors.GetLength(0) &&
                     backstitchLine.endingPosition.Item2 >= 0 && backstitchLine.endingPosition.Item2 < matrixOfNewColors.GetLength(1))
