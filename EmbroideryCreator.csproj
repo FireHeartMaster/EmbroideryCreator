@@ -85,6 +85,12 @@
     <Compile Include="ImageAndOperationsDataSerialized.cs" />
     <Compile Include="ImageTransformations.cs" />
     <Compile Include="MachineEmbroidery.cs" />
+    <Compile Include="MachineFileDetailsDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="MachineFileDetailsDialog.Designer.cs">
+      <DependentUpon>MachineFileDetailsDialog.cs</DependentUpon>
+    </Compile>
     <Compile Include="PdfManager.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -119,6 +125,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MachineFileDetailsDialog.resx">
+      <DependentUpon>MachineFileDetailsDialog.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

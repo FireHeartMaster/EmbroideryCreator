@@ -1500,7 +1500,7 @@ namespace EmbroideryCreator
             }
         }
 
-        public void CreateMachinePath(string pathToSaveWithoutExtension)
+        public void CreateMachinePath(string pathToSaveWithoutExtension, int squareSize = 18, int numberOfRepetitionsPerStitch = 1)
         {
             MachineEmbroidery machineEmbroidery = new MachineEmbroidery();
             //machineEmbroidery.CreatePath(positionsOfEachColor);
@@ -1524,7 +1524,7 @@ namespace EmbroideryCreator
 
             //}
 
-            machineEmbroidery.CreatePathAndDstFile(pathToSaveWithoutExtension, positionsOfEachColorToEmbroider, 18, matrixOfNewColors.GetLength(0), matrixOfNewColors.GetLength(1));
+            machineEmbroidery.CreatePathAndDstFile(pathToSaveWithoutExtension, positionsOfEachColorToEmbroider, squareSize, matrixOfNewColors.GetLength(0), matrixOfNewColors.GetLength(1), numberOfRepetitionsPerStitch);
         }
     }
 

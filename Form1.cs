@@ -74,6 +74,9 @@ namespace EmbroideryCreator
         private int titleCharacterLengthToCheck = 18;
         private ColorFamily colorFamilyConversion = ColorFamily.Dmc;
 
+        private int realThreadSquareSize = 18;
+        private int numberOfTimesToStitchTheSameStitch = 1;
+
         public MainForm()
         {
             InitializeComponent();
@@ -1171,15 +1174,24 @@ namespace EmbroideryCreator
                 saveImageFileDialog.Filter = "Embroidery|*.dst;";
                 string filePathWithoutExtension = "";
 
-                if (saveImageFileDialog.ShowDialog() == DialogResult.OK)
+                using(MachineFileDetailsDialog machineFileDetailsDialog = new MachineFileDetailsDialog(realThreadSquareSize, numberOfTimesToStitchTheSameStitch))
                 {
-                    if (saveImageFileDialog.FileNames[0].LastIndexOf(".") != -1)
+                    if(machineFileDetailsDialog.ShowDialog() == DialogResult.OK)
                     {
-                        int lengthOfSubstring = saveImageFileDialog.FileNames[0].LastIndexOf(".");
-                        pathToSaveFileWithoutExtension = saveImageFileDialog.FileNames[0].Substring(0, lengthOfSubstring);
-                        imageAndOperationsData.CreateMachinePath(pathToSaveFileWithoutExtension);
-                        //quickSaveButton.Enabled = true;
-                        //quickSaveButton.BackgroundImage = Properties.Resources.QuickSaveIcon;
+                        realThreadSquareSize = machineFileDetailsDialog.squareSize;
+                        numberOfTimesToStitchTheSameStitch = machineFileDetailsDialog.numberOfRepetitionsPerStitch;
+
+                        if (saveImageFileDialog.ShowDialog() == DialogResult.OK)
+                        {
+                            if (saveImageFileDialog.FileNames[0].LastIndexOf(".") != -1)
+                            {
+                                int lengthOfSubstring = saveImageFileDialog.FileNames[0].LastIndexOf(".");
+                                pathToSaveFileWithoutExtension = saveImageFileDialog.FileNames[0].Substring(0, lengthOfSubstring);
+                                imageAndOperationsData.CreateMachinePath(pathToSaveFileWithoutExtension, machineFileDetailsDialog.squareSize, machineFileDetailsDialog.numberOfRepetitionsPerStitch);
+                                //quickSaveButton.Enabled = true;
+                                //quickSaveButton.BackgroundImage = Properties.Resources.QuickSaveIcon;
+                            }
+                        }
                     }
                 }
             }

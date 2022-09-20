@@ -7,15 +7,18 @@ using System.Threading.Tasks;
 
 namespace EmbroideryCreator
 {
-    class MachineEmbroidery
+    public class MachineEmbroidery
     {
         /* Definition used here:
          * right diagonal: diagonal with upper part on the right side
          * left diagonal: diagonal with upper part on the left side
          */
 
-        public void CreatePathAndDstFile(string pathToSaveWithoutExtension, Dictionary<int, List<Tuple<int, int>>> positionsOfEachColor, int sizeOfEachPixel, int horizontalSize, int verticalSize)
+        private int numberOfRepetitionsPerStitch = 1;
+
+        public void CreatePathAndDstFile(string pathToSaveWithoutExtension, Dictionary<int, List<Tuple<int, int>>> positionsOfEachColor, int sizeOfEachPixel, int horizontalSize, int verticalSize, int numberOfRepetitionsPerStitch = 1)
         {
+            this.numberOfRepetitionsPerStitch = numberOfRepetitionsPerStitch;
             LinkedList<Tuple<StitchType, Tuple<int, int>>> path = CreatePath(positionsOfEachColor, horizontalSize, verticalSize);
             ConvertEmbroideryPathToDstFile(pathToSaveWithoutExtension, path, sizeOfEachPixel);
         }
@@ -484,6 +487,8 @@ namespace EmbroideryCreator
 
         private void CreateStitchForColorPathStartingByCertainTypeOfDiagonal(List<Tuple<int, int>> positionsForTheSpecifiedColor, LinkedList<Tuple<StitchType, Tuple<int, int>>> listOfStitches, bool startsAtEvenDiagonalParity, int horizontalSize, int verticalSize)
         {
+            //Trying to add some precision between different diagonals of the same color or between different colors,
+            //so I try to make the machine to come back everytime to the same starting point
             listOfStitches.AddLast(new Tuple<StitchType, Tuple<int, int>>(StitchType.JumpStitch, new Tuple<int, int>(0, 0)));
             listOfStitches.AddLast(new Tuple<StitchType, Tuple<int, int>>(StitchType.JumpStitch, new Tuple<int, int>(10, 0)));
             listOfStitches.AddLast(new Tuple<StitchType, Tuple<int, int>>(StitchType.JumpStitch, new Tuple<int, int>(0, 0)));
@@ -519,7 +524,38 @@ namespace EmbroideryCreator
                     //    listOfStitches.Add(new Tuple<StitchType, Tuple<int, int>>(StitchType.JumpStitch, node));
                     //    alreadyJumpedToThisNextPath = true;
                     //}
-                    listOfStitches.AddLast(new Tuple<StitchType, Tuple<int, int>>(StitchType.NormalStitch, node));
+
+                    Tuple<int, int> positionBeforeNextStitch;
+                    if(listOfStitches.Count > 0 && listOfStitches.Last.Value.Item1 == StitchType.NormalStitch)
+                    {
+                        positionBeforeNextStitch = listOfStitches.Last.Value.Item2;
+
+                        int numberOfTimesTheCurrentStitchWasStitched = 0;
+                        bool nextOrPrevious = true;
+                        while(numberOfTimesTheCurrentStitchWasStitched != numberOfRepetitionsPerStitch)
+                        {
+                            if (nextOrPrevious)
+                            {
+                                listOfStitches.AddLast(new Tuple<StitchType, Tuple<int, int>>(StitchType.NormalStitch, node));
+                            }
+                            else
+                            {
+                                listOfStitches.AddLast(new Tuple<StitchType, Tuple<int, int>>(StitchType.NormalStitch, positionBeforeNextStitch));
+                            }
+
+                            nextOrPrevious = !nextOrPrevious;
+                            numberOfTimesTheCurrentStitchWasStitched++;
+                        }
+
+                        if(numberOfRepetitionsPerStitch % 2 == 0)
+                        {
+                            listOfStitches.AddLast(new Tuple<StitchType, Tuple<int, int>>(StitchType.NormalStitch, node));
+                        }
+                    }
+                    else
+                    {
+                        listOfStitches.AddLast(new Tuple<StitchType, Tuple<int, int>>(StitchType.NormalStitch, node));
+                    }
                 }
             }
 
@@ -889,7 +925,7 @@ namespace EmbroideryCreator
     }
 
 
-    enum StitchType
+    public enum StitchType
     {
         NormalStitch, 
         JumpStitch,
